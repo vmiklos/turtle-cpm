@@ -447,12 +447,15 @@ func initDatabase(db *CpmDatabase) error {
 }
 
 func closeDatabase(db *CpmDatabase) error {
-	db.Database.Close()
+	err := db.Database.Close()
+	if err != nil {
+		return fmt.Errorf("db.Database.Close() failed: %s", err)
+	}
 
 	os.Remove(db.PermanentPath)
 	// TODO harcoded uid
 	cmd := exec.Command("gpg", "--encrypt", "--sign", "-a", "-r", "03915096", "-o", db.PermanentPath, db.TempFile.Name())
-	err := cmd.Start()
+	err = cmd.Start()
 	if err != nil {
 		return fmt.Errorf("cmd.Start(gpg encrypt) failed: %s", err)
 	}

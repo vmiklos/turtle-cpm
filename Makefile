@@ -1,6 +1,7 @@
 GO_OBJECTS = \
-	main.go \
 	cpm.go \
+	cpm_test.go \
+	main.go \
 
 build: cpm
 
