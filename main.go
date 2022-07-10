@@ -353,8 +353,10 @@ func newRootCommand(db *sql.DB) *cobra.Command {
 func getCommands() []string {
 	return []string{
 		"--help",
+		"completion",
 		"create",
 		"delete",
+		"help",
 		"import",
 		"search",
 		"update",
@@ -473,11 +475,14 @@ func main() {
 		}
 	}
 	var cmd = newRootCommand(db.Database)
-	if !commandFound {
+	var args []string
+	if commandFound {
+		args = os.Args[1:]
+	} else {
 		// Default to the search subcommand.
-		args := append([]string{"search"}, os.Args[1:]...)
-		cmd.SetArgs(args)
+		args = append([]string{"search"}, os.Args[1:]...)
 	}
+	cmd.SetArgs(args)
 
 	err = cmd.Execute()
 	if err != nil {
