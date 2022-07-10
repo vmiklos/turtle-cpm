@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"os/user"
@@ -439,7 +439,7 @@ func openDatabase() (*CpmDatabase, error) {
 	return &db, nil
 }
 
-func closeDatabase(db *CpmDatabase) {
+func closeDatabase(db *CpmDatabase) error {
 	db.Database.Close()
 
 	os.Remove(db.PermanentPath)
@@ -447,22 +447,34 @@ func closeDatabase(db *CpmDatabase) {
 	cmd := exec.Command("gpg", "--encrypt", "--sign", "-a", "-r", "03915096", "-o", db.PermanentPath, db.TempFile.Name())
 	err := cmd.Start()
 	if err != nil {
-		log.Fatalf("cmd.Start(gpg encrypt) failed: %s", err)
+		return fmt.Errorf("cmd.Start(gpg encrypt) failed: %s", err)
 	}
 	err = cmd.Wait()
 	if err != nil {
-		log.Fatalf("cmd.Wait(gpg encrypt) failed: %s", err)
+		return fmt.Errorf("cmd.Wait(gpg encrypt) failed: %s", err)
 	}
 
-	os.Remove(db.TempFile.Name())
+	err = os.Remove(db.TempFile.Name())
+	if err != nil {
+		return fmt.Errorf("os.Remove(db.TempFile) failed: %s", err)
+	}
+
+	return nil
 }
 
-func main() {
+// Main is the commandline interface to this package.
+func Main(stream io.Writer) int {
 	db, err := openDatabase()
 	if err != nil {
-		log.Fatalf("openDatabase() failed: %s", err)
+		fmt.Fprintf(stream, "openDatabase() failed: %s", err)
+		return 1
 	}
-	defer closeDatabase(db)
+	defer func() {
+		err = closeDatabase(db)
+		if err != nil {
+			fmt.Fprintf(stream, "closeDatabase() failed: %s", err)
+		}
+	}()
 
 	var commandFound bool
 	commands := getCommands()
@@ -483,9 +495,18 @@ func main() {
 		args = append([]string{"search"}, os.Args[1:]...)
 	}
 	cmd.SetArgs(args)
+	cmd.SetOut(stream)
+	cmd.SetErr(stream)
 
 	err = cmd.Execute()
 	if err != nil {
-		log.Fatalf("rootCmd.Execute() failed: %s", err)
+		// cobra reported its error already itself.
+		return 1
 	}
+
+	return 0
+}
+
+func main() {
+	os.Exit(Main(os.Stdout))
 }
