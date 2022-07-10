@@ -439,6 +439,9 @@ func openDatabase() (*CpmDatabase, error) {
 	return &db, nil
 }
 
+// OpenDatabase opens the database before running a subcommand.
+var OpenDatabase = openDatabase
+
 func closeDatabase(db *CpmDatabase) error {
 	db.Database.Close()
 
@@ -462,17 +465,20 @@ func closeDatabase(db *CpmDatabase) error {
 	return nil
 }
 
+// CloseDatabase opens the database before running a subcommand.
+var CloseDatabase = closeDatabase
+
 // Main is the commandline interface to this package.
 func Main(stream io.Writer) int {
-	db, err := openDatabase()
+	db, err := OpenDatabase()
 	if err != nil {
-		fmt.Fprintf(stream, "openDatabase() failed: %s", err)
+		fmt.Fprintf(stream, "OpenDatabase() failed: %s", err)
 		return 1
 	}
 	defer func() {
-		err = closeDatabase(db)
+		err = CloseDatabase(db)
 		if err != nil {
-			fmt.Fprintf(stream, "closeDatabase() failed: %s", err)
+			fmt.Fprintf(stream, "CloseDatabase() failed: %s", err)
 		}
 	}()
 
