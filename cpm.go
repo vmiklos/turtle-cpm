@@ -423,6 +423,13 @@ func openDatabase() (*CpmDatabase, error) {
 		return nil, fmt.Errorf("sql.Open() failed: %s", err)
 	}
 
+	return &db, nil
+}
+
+// OpenDatabase opens the database before running a subcommand.
+var OpenDatabase = openDatabase
+
+func initDatabase(db *CpmDatabase) error {
 	query, err := db.Database.Prepare(`create table if not exists passwords (
 		machine text not null,
 		service text not null,
@@ -432,15 +439,12 @@ func openDatabase() (*CpmDatabase, error) {
 		unique(machine, service, user, type)
 	)`)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	query.Exec()
 
-	return &db, nil
+	return nil
 }
-
-// OpenDatabase opens the database before running a subcommand.
-var OpenDatabase = openDatabase
 
 func closeDatabase(db *CpmDatabase) error {
 	db.Database.Close()
@@ -481,6 +485,11 @@ func Main(stream io.Writer) int {
 			fmt.Fprintf(stream, "CloseDatabase() failed: %s", err)
 		}
 	}()
+
+	err = initDatabase(db)
+	if err != nil {
+		fmt.Fprintf(stream, "initDatabase() failed: %s", err)
+	}
 
 	var commandFound bool
 	commands := getCommands()
