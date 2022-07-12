@@ -8,7 +8,7 @@ build: cpm
 cpm: Makefile ${GO_OBJECTS}
 	go build
 
-check: build check-format check-lint
+check: build check-format check-lint check-unit
 	@echo "make check: ok"
 
 check-lint:
@@ -16,3 +16,6 @@ check-lint:
 
 check-format:
 	[ -z "$(shell gofmt -l ${GO_OBJECTS})" ]
+
+check-unit:
+	go test

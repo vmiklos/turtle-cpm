@@ -8,43 +8,89 @@ import (
 	"testing"
 )
 
-func openMockDatabase() (*CpmDatabase, error) {
-	var db CpmDatabase
-	var err error
-	db.Database, err = sql.Open("sqlite3", ":memory:")
+func createTestDatabase() (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		return nil, fmt.Errorf("sql.Open() failed: %s", err)
 	}
 
-	return &db, nil
+	return db, nil
 }
 
-func closeMockDatabase(db *CpmDatabase) error {
-	err := db.Database.Close()
-	if err != nil {
-		return fmt.Errorf("db.Database.Close() failed: %s", err)
+func openTestDatabase(sqlDb *sql.DB) func() (*CpmDatabase, error) {
+	return func() (*CpmDatabase, error) {
+		var db CpmDatabase
+		db.Database = sqlDb
+		return &db, nil
 	}
+}
 
+func closeTestDatabase(db *CpmDatabase) error {
 	return nil
 }
 
 func TestInsert(t *testing.T) {
+	db, err := createTestDatabase()
+	defer db.Close()
+	if err != nil {
+		t.Errorf("createTestDatabase() err = %q, want nil", err)
+	}
 	OldOpenDatabase := OpenDatabase
-	OpenDatabase = openMockDatabase
+	OpenDatabase = openTestDatabase(db)
 	defer func() { OpenDatabase = OldOpenDatabase }()
 	OldCloseDatabase := CloseDatabase
-	CloseDatabase = closeMockDatabase
+	CloseDatabase = closeTestDatabase
 	defer func() { CloseDatabase = OldCloseDatabase }()
-
-	os.Args = []string{"", "create", "-m", "mymachine", "-s", "myservice", "-u", "myuser", "-p", "mypassword"}
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	expectedType := "plain"
+	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
 	buf := new(bytes.Buffer)
 
-	ret := Main(buf)
+	actualRet := Main(buf)
 
-	wantedRet := 0
-	if ret != wantedRet {
-		t.Errorf("Main() return = %q, want %q", ret, wantedRet)
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-
-	// TODO also assert that the password is indeed stored
+	rows, err := db.Query("select machine, service, user, password, type from passwords")
+	if err != nil {
+		t.Errorf("db.Query() err = %q, want nil", err)
+	}
+	var actualMachine string
+	var actualService string
+	var actualUser string
+	var actualPassword string
+	var actualType string
+	expectedNext := true
+	actualNext := rows.Next()
+	if actualNext != expectedNext {
+		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	}
+	err = rows.Scan(&actualMachine, &actualService, &actualUser, &actualPassword, &actualType)
+	if err != nil {
+		t.Errorf("rows.Scan() = %q, want nil", err)
+	}
+	if actualMachine != expectedMachine {
+		t.Errorf("actualMachine = %q, want %q", actualMachine, expectedMachine)
+	}
+	if actualService != expectedService {
+		t.Errorf("actualService = %q, want %q", actualService, expectedService)
+	}
+	if actualUser != expectedUser {
+		t.Errorf("actualUser = %q, want %q", actualUser, expectedUser)
+	}
+	if actualPassword != expectedPassword {
+		t.Errorf("actualPassword = %q, want %q", actualPassword, expectedPassword)
+	}
+	if actualType != expectedType {
+		t.Errorf("actualType = %q, want %q", actualType, expectedType)
+	}
+	expectedNext = false
+	actualNext = rows.Next()
+	if actualNext != expectedNext {
+		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	}
 }
