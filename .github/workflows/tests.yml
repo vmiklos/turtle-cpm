@@ -1,0 +1,20 @@
+name: tests
+on:
+  push:
+    branches-ignore:
+      - 'private/**'
+  pull_request:
+    branches-ignore:
+      - 'private/**'
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.16.x
+      - name: Run make check
+        run: |
+          scripts/ci-build.sh
