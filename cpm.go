@@ -429,8 +429,8 @@ func openDatabase() (*CpmDatabase, error) {
 // OpenDatabase opens the database before running a subcommand.
 var OpenDatabase = openDatabase
 
-func initDatabase(db *CpmDatabase) error {
-	query, err := db.Database.Prepare(`create table if not exists passwords (
+func initDatabase(db *sql.DB) error {
+	query, err := db.Prepare(`create table if not exists passwords (
 		machine text not null,
 		service text not null,
 		user text not null,
@@ -489,7 +489,7 @@ func Main(stream io.Writer) int {
 		}
 	}()
 
-	err = initDatabase(db)
+	err = initDatabase(db.Database)
 	if err != nil {
 		fmt.Fprintf(stream, "initDatabase() failed: %s", err)
 	}

@@ -94,3 +94,44 @@ func TestInsert(t *testing.T) {
 		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
 	}
 }
+
+func TestSelect(t *testing.T) {
+	db, err := createTestDatabase()
+	defer db.Close()
+	if err != nil {
+		t.Errorf("createTestDatabase() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = openTestDatabase(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = closeTestDatabase
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	expectedType := "plain"
+	err = initDatabase(db)
+	if err != nil {
+		t.Errorf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	if err != nil {
+		t.Errorf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Errorf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
