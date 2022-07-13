@@ -209,3 +209,48 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
 	}
 }
+
+func TestDelete(t *testing.T) {
+	db, err := createTestDatabase()
+	defer db.Close()
+	if err != nil {
+		t.Errorf("createTestDatabase() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = openTestDatabase(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = closeTestDatabase
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	expectedType := "plain"
+	err = initDatabase(db)
+	if err != nil {
+		t.Errorf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	if err != nil {
+		t.Errorf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "delete", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	rows, err := db.Query("select machine, service, user, password, type from passwords")
+	if err != nil {
+		t.Errorf("db.Query() err = %q, want nil", err)
+	}
+	expectedNext := false
+	actualNext := rows.Next()
+	if actualNext != expectedNext {
+		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	}
+}
