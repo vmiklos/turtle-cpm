@@ -1,6 +1,7 @@
 # turtle-cpm
 
 [![tests](https://github.com/vmiklos/turtle-cpm/workflows/tests/badge.svg)](https://github.com/vmiklos/turtle-cpm/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/vmiklos/turtle-cpm)](https://goreportcard.com/report/github.com/vmiklos/turtle-cpm)
 
 The turtle console password manager is a replacement of the now gone
 <https://www.harry-b.de/dokuwiki/doku.php?id=harry:cpm>.
