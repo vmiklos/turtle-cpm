@@ -339,7 +339,7 @@ func newReadCommand(db *sql.DB) *cobra.Command {
 func newRootCommand(db *sql.DB) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "cpm",
-		Short: "cpm is a console password manager",
+		Short: "turtle-cpm is a console password manager",
 	}
 	cmd.AddCommand(newCreateCommand(db))
 	cmd.AddCommand(newReadCommand(db))

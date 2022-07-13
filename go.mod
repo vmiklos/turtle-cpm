@@ -1,4 +1,4 @@
-module cpm
+module github.com/vmiklos/turtle-cpm
 
 go 1.16
 
