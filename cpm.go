@@ -72,10 +72,13 @@ func newUpdateCommand(db *sql.DB) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			query, err := db.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
 			if err != nil {
-				return fmt.Errorf("db.Prepare(update) failed: %s", err)
+				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
 
 			_, err = query.Exec(password, machine, service, user, passwordType)
+			if err != nil {
+				return fmt.Errorf("db.Exec() failed: %s", err)
+			}
 
 			return nil
 		},
@@ -104,10 +107,13 @@ func newDeleteCommand(db *sql.DB) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			query, err := db.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
 			if err != nil {
-				return fmt.Errorf("db.Prepare(delete) failed: %s", err)
+				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
 
 			_, err = query.Exec(machine, service, user, passwordType)
+			if err != nil {
+				return fmt.Errorf("db.Exec() failed: %s", err)
+			}
 
 			return nil
 		},
