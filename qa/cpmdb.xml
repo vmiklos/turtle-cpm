@@ -4,6 +4,7 @@
     <node label="myservice">
       <node label="myuser">
         <node label="mypassword"/>
+        <node label="totppassword" totp="true"/>
       </node>
     </node>
   </node>
