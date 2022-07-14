@@ -459,8 +459,7 @@ func closeDatabase(db *CpmDatabase) error {
 	}
 
 	os.Remove(db.PermanentPath)
-	// TODO harcoded uid
-	cmd := exec.Command("gpg", "--encrypt", "--sign", "-a", "-r", "03915096", "-o", db.PermanentPath, db.TempFile.Name())
+	cmd := exec.Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", db.PermanentPath, db.TempFile.Name())
 	err = cmd.Start()
 	if err != nil {
 		return fmt.Errorf("cmd.Start(gpg encrypt) failed: %s", err)
