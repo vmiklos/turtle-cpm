@@ -362,6 +362,31 @@ func TestImport(t *testing.T) {
 	if actualType != expectedType {
 		t.Errorf("actualType = %q, want %q", actualType, expectedType)
 	}
+	expectedPassword = "totppassword"
+	expectedType = "totp"
+	actualNext = rows.Next()
+	if actualNext != expectedNext {
+		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	}
+	err = rows.Scan(&actualMachine, &actualService, &actualUser, &actualPassword, &actualType)
+	if err != nil {
+		t.Errorf("rows.Scan() = %q, want nil", err)
+	}
+	if actualMachine != expectedMachine {
+		t.Errorf("actualMachine = %q, want %q", actualMachine, expectedMachine)
+	}
+	if actualService != expectedService {
+		t.Errorf("actualService = %q, want %q", actualService, expectedService)
+	}
+	if actualUser != expectedUser {
+		t.Errorf("actualUser = %q, want %q", actualUser, expectedUser)
+	}
+	if actualPassword != expectedPassword {
+		t.Errorf("actualPassword = %q, want %q", actualPassword, expectedPassword)
+	}
+	if actualType != expectedType {
+		t.Errorf("actualType = %q, want %q", actualType, expectedType)
+	}
 	expectedNext = false
 	actualNext = rows.Next()
 	if actualNext != expectedNext {
