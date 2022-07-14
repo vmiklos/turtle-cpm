@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+  <node label="mymachine">
+    <node label="myservice">
+      <node label="myuser">
+        <node label="mypassword"/>
+      </node>
+    </node>
+  </node>
+</root>

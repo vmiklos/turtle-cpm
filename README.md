@@ -12,7 +12,7 @@ Notable features:
 
 - simple DB format: encrypted sqlite (via `gpg`), tracking machines -> services -> users -> passwords
 
-- supports plain passwords and also TOTP secrets, via `oathtool`
+- supports plain passwords and also TOTP shared secrets, calculating the actual TOTP code via `oathtool`
 
 - can import the original CPM's XML database
 
