@@ -163,6 +163,9 @@ type XMLMachines struct {
 	Machines []XMLMachine `xml:"node"`
 }
 
+// Command returns the Cmd struct to execute the named program
+var Command = exec.Command
+
 func newImportCommand(db *sql.DB) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "import",
@@ -183,7 +186,7 @@ func newImportCommand(db *sql.DB) *cobra.Command {
 			}
 
 			os.Remove(decryptedPath)
-			gpg := exec.Command("gpg", "--decrypt", "-a", "-o", decryptedPath+".gz", encryptedPath)
+			gpg := Command("gpg", "--decrypt", "-a", "-o", decryptedPath+".gz", encryptedPath)
 			err = gpg.Start()
 			if err != nil {
 				return fmt.Errorf("cmd.Start() failed: %s", err)
@@ -193,7 +196,7 @@ func newImportCommand(db *sql.DB) *cobra.Command {
 				return fmt.Errorf("cmd.Wait() failed: %s", err)
 			}
 
-			gunzip := exec.Command("gunzip", decryptedPath+".gz")
+			gunzip := Command("gunzip", decryptedPath+".gz")
 			err = gunzip.Start()
 			if err != nil {
 				return fmt.Errorf("cmd.Start(gunzip) failed: %s", err)
