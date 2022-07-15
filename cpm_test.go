@@ -487,3 +487,44 @@ func TestSelectUserFilter(t *testing.T) {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
 }
+
+func TestSelectTypeFilter(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine", "myservice", "myuser", "mypassword", "plain")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine", "myservice", "myuser", "mypassword", "totp")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "-t", "totp"}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	// totp is found, plain is not found.
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP shared secret, password: mypassword\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
