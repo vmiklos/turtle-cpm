@@ -10,7 +10,7 @@
 #
 
 if [ -n "${GITHUB_WORKFLOW}" ]; then
-    go get -u golang.org/x/lint/golint
+    go install golang.org/x/lint/golint@latest
 fi
 
 make -j$(getconf _NPROCESSORS_ONLN) check

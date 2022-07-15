@@ -11,7 +11,8 @@ import (
 	"testing"
 )
 
-func createTestDatabase() (*sql.DB, error) {
+// CreateDatabaseForTesting creates an in-memory database.
+func CreateDatabaseForTesting() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		return nil, fmt.Errorf("sql.Open() failed: %s", err)
@@ -20,7 +21,8 @@ func createTestDatabase() (*sql.DB, error) {
 	return db, nil
 }
 
-func openTestDatabase(sqlDb *sql.DB) func() (*CpmDatabase, error) {
+// OpenDatabaseForTesting implements OpenDatabase and takes an already opened sql.DB.
+func OpenDatabaseForTesting(sqlDb *sql.DB) func() (*CpmDatabase, error) {
 	return func() (*CpmDatabase, error) {
 		var db CpmDatabase
 		db.Database = sqlDb
@@ -28,21 +30,31 @@ func openTestDatabase(sqlDb *sql.DB) func() (*CpmDatabase, error) {
 	}
 }
 
-func closeTestDatabase(db *CpmDatabase) error {
+// CloseDatabaseForTesting implements CloseDatabase and does nothing.
+func CloseDatabaseForTesting(db *CpmDatabase) error {
 	return nil
 }
 
+func ContainsString(items []string, item string) bool {
+	for _, i := range items {
+		if i == item {
+			return true
+		}
+	}
+	return false
+}
+
 func TestInsert(t *testing.T) {
-	db, err := createTestDatabase()
+	db, err := CreateDatabaseForTesting()
 	defer db.Close()
 	if err != nil {
-		t.Errorf("createTestDatabase() err = %q, want nil", err)
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	OldOpenDatabase := OpenDatabase
-	OpenDatabase = openTestDatabase(db)
+	OpenDatabase = OpenDatabaseForTesting(db)
 	defer func() { OpenDatabase = OldOpenDatabase }()
 	OldCloseDatabase := CloseDatabase
-	CloseDatabase = closeTestDatabase
+	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -56,59 +68,35 @@ func TestInsert(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	rows, err := db.Query("select machine, service, user, password, type from passwords")
+	results, err := readPasswords(db, "", "", "", "", false, []string{})
 	if err != nil {
-		t.Errorf("db.Query() err = %q, want nil", err)
+		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
-	var actualMachine string
-	var actualService string
-	var actualUser string
-	var actualPassword string
-	var actualType string
-	expectedNext := true
-	actualNext := rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	actualLength := len(results)
+	expectedLength := 1
+	if actualLength != expectedLength {
+		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
 	}
-	err = rows.Scan(&actualMachine, &actualService, &actualUser, &actualPassword, &actualType)
-	if err != nil {
-		t.Errorf("rows.Scan() = %q, want nil", err)
-	}
-	if actualMachine != expectedMachine {
-		t.Errorf("actualMachine = %q, want %q", actualMachine, expectedMachine)
-	}
-	if actualService != expectedService {
-		t.Errorf("actualService = %q, want %q", actualService, expectedService)
-	}
-	if actualUser != expectedUser {
-		t.Errorf("actualUser = %q, want %q", actualUser, expectedUser)
-	}
-	if actualPassword != expectedPassword {
-		t.Errorf("actualPassword = %q, want %q", actualPassword, expectedPassword)
-	}
-	if actualType != expectedType {
-		t.Errorf("actualType = %q, want %q", actualType, expectedType)
-	}
-	expectedNext = false
-	actualNext = rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
+	expectedContains := true
+	if actualContains != expectedContains {
+		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }
 
 func TestSelect(t *testing.T) {
-	db, err := createTestDatabase()
+	db, err := CreateDatabaseForTesting()
 	defer db.Close()
 	if err != nil {
-		t.Errorf("createTestDatabase() err = %q, want nil", err)
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	OldOpenDatabase := OpenDatabase
-	OpenDatabase = openTestDatabase(db)
+	OpenDatabase = OpenDatabaseForTesting(db)
 	defer func() { OpenDatabase = OldOpenDatabase }()
 	OldCloseDatabase := CloseDatabase
-	CloseDatabase = closeTestDatabase
+	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -117,11 +105,11 @@ func TestSelect(t *testing.T) {
 	expectedType := "plain"
 	err = initDatabase(db)
 	if err != nil {
-		t.Errorf("initDatabase() = %q, want nil", err)
+		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
 	err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
-		t.Errorf("createPassword() = %q, want nil", err)
+		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
 	buf := new(bytes.Buffer)
@@ -130,26 +118,70 @@ func TestSelect(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
 	actualOutput := buf.String()
 	if actualOutput != expectedOutput {
-		t.Errorf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
+
+func TestSelectTotpCode(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	OldCommand := Command
+	Command = CommandForTesting(t)
+	defer func() { Command = OldCommand }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "totppassword"
+	expectedType := "totp"
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "--totp", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP code, password: output-from-oathtool\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
 }
 
 func TestUpdate(t *testing.T) {
-	db, err := createTestDatabase()
+	db, err := CreateDatabaseForTesting()
 	defer db.Close()
 	if err != nil {
-		t.Errorf("createTestDatabase() err = %q, want nil", err)
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	OldOpenDatabase := OpenDatabase
-	OpenDatabase = openTestDatabase(db)
+	OpenDatabase = OpenDatabaseForTesting(db)
 	defer func() { OpenDatabase = OldOpenDatabase }()
 	OldCloseDatabase := CloseDatabase
-	CloseDatabase = closeTestDatabase
+	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -158,11 +190,11 @@ func TestUpdate(t *testing.T) {
 	expectedType := "plain"
 	err = initDatabase(db)
 	if err != nil {
-		t.Errorf("initDatabase() = %q, want nil", err)
+		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
 	err = createPassword(db, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
-		t.Errorf("createPassword() = %q, want nil", err)
+		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "update", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
 	buf := new(bytes.Buffer)
@@ -171,59 +203,35 @@ func TestUpdate(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	rows, err := db.Query("select machine, service, user, password, type from passwords")
+	results, err := readPasswords(db, "", "", "", "", false, []string{})
 	if err != nil {
-		t.Errorf("db.Query() err = %q, want nil", err)
+		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
-	var actualMachine string
-	var actualService string
-	var actualUser string
-	var actualPassword string
-	var actualType string
-	expectedNext := true
-	actualNext := rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	actualLength := len(results)
+	expectedLength := 1
+	if actualLength != expectedLength {
+		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
 	}
-	err = rows.Scan(&actualMachine, &actualService, &actualUser, &actualPassword, &actualType)
-	if err != nil {
-		t.Errorf("rows.Scan() = %q, want nil", err)
-	}
-	if actualMachine != expectedMachine {
-		t.Errorf("actualMachine = %q, want %q", actualMachine, expectedMachine)
-	}
-	if actualService != expectedService {
-		t.Errorf("actualService = %q, want %q", actualService, expectedService)
-	}
-	if actualUser != expectedUser {
-		t.Errorf("actualUser = %q, want %q", actualUser, expectedUser)
-	}
-	if actualPassword != expectedPassword {
-		t.Errorf("actualPassword = %q, want %q", actualPassword, expectedPassword)
-	}
-	if actualType != expectedType {
-		t.Errorf("actualType = %q, want %q", actualType, expectedType)
-	}
-	expectedNext = false
-	actualNext = rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
+	expectedContains := true
+	if actualContains != expectedContains {
+		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }
 
 func TestDelete(t *testing.T) {
-	db, err := createTestDatabase()
+	db, err := CreateDatabaseForTesting()
 	defer db.Close()
 	if err != nil {
-		t.Errorf("createTestDatabase() err = %q, want nil", err)
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	OldOpenDatabase := OpenDatabase
-	OpenDatabase = openTestDatabase(db)
+	OpenDatabase = OpenDatabaseForTesting(db)
 	defer func() { OpenDatabase = OldOpenDatabase }()
 	OldCloseDatabase := CloseDatabase
-	CloseDatabase = closeTestDatabase
+	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -232,11 +240,11 @@ func TestDelete(t *testing.T) {
 	expectedType := "plain"
 	err = initDatabase(db)
 	if err != nil {
-		t.Errorf("initDatabase() = %q, want nil", err)
+		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
 	err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
-		t.Errorf("createPassword() = %q, want nil", err)
+		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "delete", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
 	buf := new(bytes.Buffer)
@@ -245,16 +253,16 @@ func TestDelete(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	rows, err := db.Query("select machine, service, user, password, type from passwords")
+	results, err := readPasswords(db, "", "", "", "", false, []string{})
 	if err != nil {
-		t.Errorf("db.Query() err = %q, want nil", err)
+		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
-	expectedNext := false
-	actualNext := rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	actualLength := len(results)
+	expectedLength := 0
+	if actualLength != expectedLength {
+		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
 	}
 }
 
@@ -277,43 +285,49 @@ func copyPath(inPath, outPath string) error {
 	return nil
 }
 
-func MockCommand(name string, arg ...string) *exec.Cmd {
-	if len(arg) == 5 && name == "gpg" && arg[0] == "--decrypt" && arg[1] == "-a" && arg[2] == "-o" {
-		decryptedPath := arg[3]
-		// arg[4] would be the encryptedPath, but we fake it
-		encryptedPath := "qa/cpmdb.xml"
-		err := copyPath(encryptedPath, decryptedPath)
-		if err != nil {
-			panic(fmt.Sprintf("copyPath() failed: %s", err))
+func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd {
+	return func(name string, arg ...string) *exec.Cmd {
+		if len(arg) == 5 && name == "gpg" && arg[0] == "--decrypt" && arg[1] == "-a" && arg[2] == "-o" {
+			decryptedPath := arg[3]
+			// arg[4] would be the encryptedPath, but we fake it
+			encryptedPath := "qa/cpmdb.xml"
+			err := copyPath(encryptedPath, decryptedPath)
+			if err != nil {
+				t.Fatalf("copyPath() failed: %s", err)
+			}
+			return exec.Command("true")
 		}
-		return exec.Command("true")
-	}
-	if len(arg) == 1 && name == "gunzip" {
-		compressedPath := arg[0]
-		uncompressedPath := strings.ReplaceAll(compressedPath, ".gz", "")
-		err := copyPath(compressedPath, uncompressedPath)
-		if err != nil {
-			panic(fmt.Sprintf("copyPath() failed: %s", err))
+		if len(arg) == 1 && name == "gunzip" {
+			compressedPath := arg[0]
+			uncompressedPath := strings.ReplaceAll(compressedPath, ".gz", "")
+			err := copyPath(compressedPath, uncompressedPath)
+			if err != nil {
+				t.Fatalf("copyPath() failed: %s", err)
+			}
+			return exec.Command("true")
 		}
-		return exec.Command("true")
+		if len(arg) == 3 && name == "oathtool" && arg[0] == "-b" && arg[1] == "--totp" && arg[2] == "totppassword" {
+			return exec.Command("echo", "output-from-oathtool")
+		}
+		t.Fatalf("CommandForTesting: unhandled command: %v", arg)
+		panic("unreachable")
 	}
-	panic(fmt.Sprintf("MockCommand: unhandled command: %v", arg))
 }
 
 func TestImport(t *testing.T) {
-	db, err := createTestDatabase()
+	db, err := CreateDatabaseForTesting()
 	defer db.Close()
 	if err != nil {
-		t.Errorf("createTestDatabase() err = %q, want nil", err)
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	OldOpenDatabase := OpenDatabase
-	OpenDatabase = openTestDatabase(db)
+	OpenDatabase = OpenDatabaseForTesting(db)
 	defer func() { OpenDatabase = OldOpenDatabase }()
 	OldCloseDatabase := CloseDatabase
-	CloseDatabase = closeTestDatabase
+	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
 	OldCommand := Command
-	Command = MockCommand
+	Command = CommandForTesting(t)
 	defer func() { Command = OldCommand }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -327,69 +341,26 @@ func TestImport(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Errorf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	rows, err := db.Query("select machine, service, user, password, type from passwords")
+	results, err := readPasswords(db, "", "", "", "", false, []string{})
 	if err != nil {
-		t.Errorf("db.Query() err = %q, want nil", err)
+		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
-	var actualMachine string
-	var actualService string
-	var actualUser string
-	var actualPassword string
-	var actualType string
-	expectedNext := true
-	actualNext := rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	actualLength := len(results)
+	expectedLength := 2
+	if actualLength != expectedLength {
+		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
 	}
-	err = rows.Scan(&actualMachine, &actualService, &actualUser, &actualPassword, &actualType)
-	if err != nil {
-		t.Errorf("rows.Scan() = %q, want nil", err)
-	}
-	if actualMachine != expectedMachine {
-		t.Errorf("actualMachine = %q, want %q", actualMachine, expectedMachine)
-	}
-	if actualService != expectedService {
-		t.Errorf("actualService = %q, want %q", actualService, expectedService)
-	}
-	if actualUser != expectedUser {
-		t.Errorf("actualUser = %q, want %q", actualUser, expectedUser)
-	}
-	if actualPassword != expectedPassword {
-		t.Errorf("actualPassword = %q, want %q", actualPassword, expectedPassword)
-	}
-	if actualType != expectedType {
-		t.Errorf("actualType = %q, want %q", actualType, expectedType)
+	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
+	expectedContains := true
+	if actualContains != expectedContains {
+		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 	expectedPassword = "totppassword"
-	expectedType = "totp"
-	actualNext = rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
-	}
-	err = rows.Scan(&actualMachine, &actualService, &actualUser, &actualPassword, &actualType)
-	if err != nil {
-		t.Errorf("rows.Scan() = %q, want nil", err)
-	}
-	if actualMachine != expectedMachine {
-		t.Errorf("actualMachine = %q, want %q", actualMachine, expectedMachine)
-	}
-	if actualService != expectedService {
-		t.Errorf("actualService = %q, want %q", actualService, expectedService)
-	}
-	if actualUser != expectedUser {
-		t.Errorf("actualUser = %q, want %q", actualUser, expectedUser)
-	}
-	if actualPassword != expectedPassword {
-		t.Errorf("actualPassword = %q, want %q", actualPassword, expectedPassword)
-	}
-	if actualType != expectedType {
-		t.Errorf("actualType = %q, want %q", actualType, expectedType)
-	}
-	expectedNext = false
-	actualNext = rows.Next()
-	if actualNext != expectedNext {
-		t.Errorf("rows.Next() = %v, want %v", actualNext, expectedNext)
+	expectedType = "TOTP shared secret"
+	actualContains = ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
+	if actualContains != expectedContains {
+		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }
