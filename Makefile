@@ -21,5 +21,4 @@ check-unit:
 	go test
 
 check-cover:
-	courtney -v
-	@echo -e "Coverage report is now available:\ngo tool cover -html=coverage.out"
+	courtney -e
