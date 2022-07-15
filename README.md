@@ -3,8 +3,8 @@
 [![tests](https://github.com/vmiklos/turtle-cpm/workflows/tests/badge.svg)](https://github.com/vmiklos/turtle-cpm/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/vmiklos/turtle-cpm)](https://goreportcard.com/report/github.com/vmiklos/turtle-cpm)
 
-The turtle console password manager is a replacement of the now gone
-<https://www.harry-b.de/dokuwiki/doku.php?id=harry:cpm>.
+The turtle console password manager is a replacement of the now gone [cpm
+project](https://www.harry-b.de/dokuwiki/doku.php?id=harry:cpm).
 
 ## Description
 
@@ -22,6 +22,5 @@ Notable features:
 
 ## The turtle
 
-turtle-cpm is turtle to be explicitly different from cpm, which is an independent from the original
-C codebase. It's turtle because this project is no longer implemented in C, so might be a little bit
-slower (though not significantly in practice).
+The turtle-cpm codebase is independent from the original cpm. It's turtle because this project is
+not in C, so might be a little bit slower (though not significantly in practice).
