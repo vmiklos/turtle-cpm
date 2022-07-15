@@ -364,3 +364,126 @@ func TestImport(t *testing.T) {
 		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }
+
+func TestSelectMachineFilter(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "-m", "mymachine1"}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	// mymachine1 is found, mymachine2 is not found.
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
+
+func TestSelectServiceFilter(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "-s", "myservice1"}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	// myservice1 is found, myservice2 is not found.
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
+
+func TestSelectUserFilter(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	err = createPassword(db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "-u", "myuser1"}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	// myuser1 is found, myuser2 is not found.
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
