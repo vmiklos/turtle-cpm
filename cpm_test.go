@@ -289,15 +289,25 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 	return func(name string, arg ...string) *exec.Cmd {
 		if len(arg) == 5 && name == "gpg" && arg[0] == "--decrypt" && arg[1] == "-a" && arg[2] == "-o" {
 			decryptedPath := arg[3]
-			// arg[4] would be the encryptedPath, but we fake it
-			encryptedPath := "qa/cpmdb.xml"
-			err := copyPath(encryptedPath, decryptedPath)
+			encryptedPath := arg[4]
+			var encryptedQaPath string
+			if strings.HasSuffix(encryptedPath, ".cpmdb") {
+				encryptedQaPath = "qa/cpmdb.xml"
+			} else if strings.HasSuffix(encryptedPath, "passwords.db") {
+				encryptedQaPath = "qa/passwords.db"
+			} else {
+				t.Fatalf("unexpected encryted path: %s", encryptedPath)
+			}
+			err := copyPath(encryptedQaPath, decryptedPath)
 			if err != nil {
 				t.Fatalf("copyPath() failed: %s", err)
 			}
 			return exec.Command("true")
-		}
-		if len(arg) == 1 && name == "gunzip" {
+		} else if len(arg) > 0 && name == "gpg" && arg[0] == "--encrypt" {
+			// No need to overwrite our empty database template with the current one. Tests that
+			// care about the resulting database can use CreateDatabaseForTesting().
+			return exec.Command("true")
+		} else if len(arg) == 1 && name == "gunzip" {
 			compressedPath := arg[0]
 			uncompressedPath := strings.ReplaceAll(compressedPath, ".gz", "")
 			err := copyPath(compressedPath, uncompressedPath)
@@ -305,8 +315,7 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 				t.Fatalf("copyPath() failed: %s", err)
 			}
 			return exec.Command("true")
-		}
-		if len(arg) == 3 && name == "oathtool" && arg[0] == "-b" && arg[1] == "--totp" && arg[2] == "totppassword" {
+		} else if len(arg) == 3 && name == "oathtool" && arg[0] == "-b" && arg[1] == "--totp" && arg[2] == "totppassword" {
 			return exec.Command("echo", "output-from-oathtool")
 		}
 		t.Fatalf("CommandForTesting: unhandled command: %v", arg)
@@ -565,6 +574,53 @@ func TestSelectImplicitFilter(t *testing.T) {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
+
+func RemoveForTesting(name string) error {
+	if strings.HasSuffix(name, "passwords.db") {
+		// Don't remove it, CommandForTesting() will not execute gpg to re-create this.
+		return nil
+	}
+
+	return os.Remove(name)
+}
+
+func StatForTesting(name string) (os.FileInfo, error) {
+	if strings.HasSuffix(name, "passwords.db") {
+		return os.Stat("qa/passwords.db")
+	}
+
+	return os.Stat(name)
+}
+
+func TestSelectFromDisk(t *testing.T) {
+	// Intentionally not mocking OpenDatabase and CloseDatabase in this test.
+	OldCommand := Command
+	Command = CommandForTesting(t)
+	defer func() { Command = OldCommand }()
+	OldRemove := Remove
+	Remove = RemoveForTesting
+	defer func() { Remove = OldRemove }()
+	OldStat := Stat
+	Stat = StatForTesting
+	defer func() { Stat = OldStat }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
 	actualOutput := buf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)

@@ -235,6 +235,9 @@ type XMLMachines struct {
 // Command returns the Cmd struct to execute the named program
 var Command = exec.Command
 
+// Remove removes the named file or (empty) directory.
+var Remove = os.Remove
+
 func newImportCommand(db *sql.DB) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "import",
@@ -249,12 +252,12 @@ func newImportCommand(db *sql.DB) *cobra.Command {
 			encryptedPath := usr.HomeDir + "/.cpmdb"
 			decryptedFile, err := ioutil.TempFile("", "cpm")
 			decryptedPath := decryptedFile.Name()
-			defer os.Remove(decryptedPath)
+			defer Remove(decryptedPath)
 			if err != nil {
 				return fmt.Errorf("ioutil.TempFile() failed: %s", err)
 			}
 
-			os.Remove(decryptedPath)
+			Remove(decryptedPath)
 			gpg := Command("gpg", "--decrypt", "-a", "-o", decryptedPath+".gz", encryptedPath)
 			err = gpg.Start()
 			if err != nil {
@@ -393,8 +396,11 @@ type CpmDatabase struct {
 	Database      *sql.DB
 }
 
+// Stat returns a FileInfo describing the named file.
+var Stat = os.Stat
+
 func pathExists(path string) bool {
-	_, err := os.Stat(path)
+	_, err := Stat(path)
 	return err == nil
 }
 
@@ -429,8 +435,8 @@ func openDatabase() (*CpmDatabase, error) {
 		return nil, fmt.Errorf("getDatabasePath() failed: %s", err)
 	}
 	if pathExists(db.PermanentPath) {
-		os.Remove(db.TempFile.Name())
-		cmd := exec.Command("gpg", "--decrypt", "-a", "-o", db.TempFile.Name(), db.PermanentPath)
+		Remove(db.TempFile.Name())
+		cmd := Command("gpg", "--decrypt", "-a", "-o", db.TempFile.Name(), db.PermanentPath)
 		err := cmd.Start()
 		if err != nil {
 			return nil, fmt.Errorf("cmd.Start() failed: %s", err)
@@ -475,8 +481,8 @@ func closeDatabase(db *CpmDatabase) error {
 		return fmt.Errorf("db.Database.Close() failed: %s", err)
 	}
 
-	os.Remove(db.PermanentPath)
-	cmd := exec.Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", db.PermanentPath, db.TempFile.Name())
+	Remove(db.PermanentPath)
+	cmd := Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", db.PermanentPath, db.TempFile.Name())
 	err = cmd.Start()
 	if err != nil {
 		return fmt.Errorf("cmd.Start(gpg encrypt) failed: %s", err)
@@ -486,9 +492,9 @@ func closeDatabase(db *CpmDatabase) error {
 		return fmt.Errorf("cmd.Wait(gpg encrypt) failed: %s", err)
 	}
 
-	err = os.Remove(db.TempFile.Name())
+	err = Remove(db.TempFile.Name())
 	if err != nil {
-		return fmt.Errorf("os.Remove(db.TempFile) failed: %s", err)
+		return fmt.Errorf("Remove(db.TempFile) failed: %s", err)
 	}
 
 	return nil
