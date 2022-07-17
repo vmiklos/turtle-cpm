@@ -26,6 +26,12 @@ func OpenDatabaseForTesting(sqlDb *sql.DB) func() (*CpmDatabase, error) {
 	return func() (*CpmDatabase, error) {
 		var db CpmDatabase
 		db.Database = sqlDb
+
+		err := initDatabase(db.Database)
+		if err != nil {
+			return nil, fmt.Errorf("initDatabase() failed: %s", err)
+		}
+
 		return &db, nil
 	}
 }
