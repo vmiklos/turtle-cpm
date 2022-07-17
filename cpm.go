@@ -507,19 +507,23 @@ var CloseDatabase = closeDatabase
 func Main(stream io.Writer) int {
 	db, err := OpenDatabase()
 	if err != nil {
+		// notest
 		fmt.Fprintf(stream, "OpenDatabase() failed: %s", err)
 		return 1
 	}
 	defer func() {
 		err = CloseDatabase(db)
 		if err != nil {
+			// notest
 			fmt.Fprintf(stream, "CloseDatabase() failed: %s", err)
 		}
 	}()
 
 	err = initDatabase(db.Database)
 	if err != nil {
+		// notest
 		fmt.Fprintf(stream, "initDatabase() failed: %s", err)
+		return 1
 	}
 
 	var commandFound bool

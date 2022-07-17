@@ -303,9 +303,19 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 				t.Fatalf("copyPath() failed: %s", err)
 			}
 			return exec.Command("true")
-		} else if len(arg) > 0 && name == "gpg" && arg[0] == "--encrypt" {
-			// No need to overwrite our empty database template with the current one. Tests that
-			// care about the resulting database can use CreateDatabaseForTesting().
+		} else if len(arg) == 7 && name == "gpg" && arg[0] == "--encrypt" && arg[1] == "--sign" && arg[2] == "-a" && arg[3] == "--default-recipient-self" && arg[4] == "-o" {
+			encryptedPath := arg[5]
+			decryptedPath := arg[6]
+			var encryptedQaPath string
+			if strings.HasSuffix(encryptedPath, "passwords.db") {
+				encryptedQaPath = "qa/passwords.db"
+			} else {
+				t.Fatalf("unexpected encryted path: %s", encryptedPath)
+			}
+			err := copyPath(decryptedPath, encryptedQaPath)
+			if err != nil {
+				t.Fatalf("copyPath() failed: %s", err)
+			}
 			return exec.Command("true")
 		} else if len(arg) == 1 && name == "gunzip" {
 			compressedPath := arg[0]
@@ -582,8 +592,7 @@ func TestSelectImplicitFilter(t *testing.T) {
 
 func RemoveForTesting(name string) error {
 	if strings.HasSuffix(name, "passwords.db") {
-		// Don't remove it, CommandForTesting() will not execute gpg to re-create this.
-		return nil
+		return os.Remove("qa/passwords.db")
 	}
 
 	return os.Remove(name)
@@ -597,7 +606,7 @@ func StatForTesting(name string) (os.FileInfo, error) {
 	return os.Stat(name)
 }
 
-func TestSelectFromDisk(t *testing.T) {
+func TestOpenCloseDatabase(t *testing.T) {
 	// Intentionally not mocking OpenDatabase and CloseDatabase in this test.
 	OldCommand := Command
 	Command = CommandForTesting(t)
@@ -611,15 +620,28 @@ func TestSelectFromDisk(t *testing.T) {
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
-	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	expectedPassword := "mypassword"
+	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
 	buf := new(bytes.Buffer)
+	os.Remove("qa/passwords.db")
 
 	actualRet := Main(buf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main(create) = %v, want %v, output is %q", actualRet, expectedRet, buf.String())
 	}
+
+	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	buf = new(bytes.Buffer)
+
+	actualRet = Main(buf)
+
+	expectedRet = 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main(search) = %q, want %q", actualRet, expectedRet)
+	}
+
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
 	actualOutput := buf.String()
 	if actualOutput != expectedOutput {
