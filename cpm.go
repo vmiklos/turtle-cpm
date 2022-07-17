@@ -452,6 +452,11 @@ func openDatabase() (*CpmDatabase, error) {
 		return nil, fmt.Errorf("sql.Open() failed: %s", err)
 	}
 
+	err = initDatabase(db.Database)
+	if err != nil {
+		return nil, fmt.Errorf("initDatabase() failed: %s", err)
+	}
+
 	return &db, nil
 }
 
@@ -475,6 +480,7 @@ func initDatabase(db *sql.DB) error {
 	return nil
 }
 
+// The database is only closed in case of no errors.
 func closeDatabase(db *CpmDatabase) error {
 	err := db.Database.Close()
 	if err != nil {
@@ -492,16 +498,18 @@ func closeDatabase(db *CpmDatabase) error {
 		return fmt.Errorf("cmd.Wait(gpg encrypt) failed: %s", err)
 	}
 
-	err = Remove(db.TempFile.Name())
-	if err != nil {
-		return fmt.Errorf("Remove(db.TempFile) failed: %s", err)
-	}
-
 	return nil
 }
 
 // CloseDatabase opens the database before running a subcommand.
 var CloseDatabase = closeDatabase
+
+// The database is always cleaned to avoid decrypted data on disk (even in case of a failure).
+func cleanDatabase(db *CpmDatabase) {
+	if db.TempFile != nil {
+		Remove(db.TempFile.Name())
+	}
+}
 
 // Main is the commandline interface to this package.
 func Main(stream io.Writer) int {
@@ -511,20 +519,7 @@ func Main(stream io.Writer) int {
 		fmt.Fprintf(stream, "OpenDatabase() failed: %s", err)
 		return 1
 	}
-	defer func() {
-		err = CloseDatabase(db)
-		if err != nil {
-			// notest
-			fmt.Fprintf(stream, "CloseDatabase() failed: %s", err)
-		}
-	}()
-
-	err = initDatabase(db.Database)
-	if err != nil {
-		// notest
-		fmt.Fprintf(stream, "initDatabase() failed: %s", err)
-		return 1
-	}
+	defer cleanDatabase(db)
 
 	var commandFound bool
 	commands := getCommands()
@@ -554,5 +549,11 @@ func Main(stream io.Writer) int {
 		return 1
 	}
 
+	err = CloseDatabase(db)
+	if err != nil {
+		// notest
+		fmt.Fprintf(stream, "CloseDatabase() failed: %s", err)
+		return 1
+	}
 	return 0
 }
