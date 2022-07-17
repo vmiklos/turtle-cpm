@@ -11,8 +11,9 @@
 
 if [ -n "${GITHUB_WORKFLOW}" ]; then
     go install golang.org/x/lint/golint@latest
+    go install github.com/dave/courtney@latest
 fi
 
-make -j$(getconf _NPROCESSORS_ONLN) check
+make check
 
 # vim:set shiftwidth=4 softtabstop=4 expandtab:

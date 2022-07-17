@@ -17,8 +17,6 @@ check-lint:
 check-format:
 	[ -z "$(shell gofmt -l ${GO_OBJECTS})" ]
 
+# Without coverage: 'go test'.
 check-unit:
-	go test
-
-check-cover:
 	courtney -e
