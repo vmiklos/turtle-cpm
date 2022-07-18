@@ -98,7 +98,7 @@ func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser, wantedT
 	return results, nil
 }
 
-func newCreateCommand(db *sql.DB) *cobra.Command {
+func newCreateCommand(db *CpmDatabase) *cobra.Command {
 	var machine string
 	var service string
 	var user string
@@ -108,7 +108,7 @@ func newCreateCommand(db *sql.DB) *cobra.Command {
 		Use:   "create",
 		Short: "creates a new password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := createPassword(db, machine, service, user, password, passwordType)
+			err := createPassword(db.Database, machine, service, user, password, passwordType)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)
 			}
@@ -129,7 +129,7 @@ func newCreateCommand(db *sql.DB) *cobra.Command {
 	return cmd
 }
 
-func newUpdateCommand(db *sql.DB) *cobra.Command {
+func newUpdateCommand(db *CpmDatabase) *cobra.Command {
 	var machine string
 	var service string
 	var user string
@@ -139,7 +139,7 @@ func newUpdateCommand(db *sql.DB) *cobra.Command {
 		Use:   "update",
 		Short: "updates an existing password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			query, err := db.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
+			query, err := db.Database.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
@@ -165,7 +165,7 @@ func newUpdateCommand(db *sql.DB) *cobra.Command {
 	return cmd
 }
 
-func newDeleteCommand(db *sql.DB) *cobra.Command {
+func newDeleteCommand(db *CpmDatabase) *cobra.Command {
 	var machine string
 	var service string
 	var user string
@@ -174,7 +174,7 @@ func newDeleteCommand(db *sql.DB) *cobra.Command {
 		Use:   "delete",
 		Short: "deletes an existing password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			query, err := db.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
+			query, err := db.Database.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
@@ -238,7 +238,7 @@ var Command = exec.Command
 // Remove removes the named file or (empty) directory.
 var Remove = os.Remove
 
-func newImportCommand(db *sql.DB) *cobra.Command {
+func newImportCommand(db *CpmDatabase) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "import",
 		Short: "imports an old XML database",
@@ -315,7 +315,7 @@ func newImportCommand(db *sql.DB) *cobra.Command {
 								passwordType = "plain"
 							}
 
-							err = createPassword(db, machineLabel, serviceLabel, userLabel, passwordLabel, passwordType)
+							err = createPassword(db.Database, machineLabel, serviceLabel, userLabel, passwordLabel, passwordType)
 							if err != nil {
 								return fmt.Errorf("createPassword(machine='%s', service='%s', user='%s', type='%s') failed: %s", machineLabel, serviceLabel, userLabel, passwordType, err)
 							}
@@ -331,7 +331,7 @@ func newImportCommand(db *sql.DB) *cobra.Command {
 	return cmd
 }
 
-func newReadCommand(db *sql.DB) *cobra.Command {
+func newReadCommand(db *CpmDatabase) *cobra.Command {
 	var machineFlag string
 	var serviceFlag string
 	var userFlag string
@@ -341,7 +341,7 @@ func newReadCommand(db *sql.DB) *cobra.Command {
 		Use:   "search",
 		Short: "searches passwords",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			results, err := readPasswords(db, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, args)
+			results, err := readPasswords(db.Database, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, args)
 			if err != nil {
 				return fmt.Errorf("readPasswords() failed: %s", err)
 			}
@@ -362,10 +362,26 @@ func newReadCommand(db *sql.DB) *cobra.Command {
 	return cmd
 }
 
-func newRootCommand(db *sql.DB) *cobra.Command {
+func newRootCommand(db *CpmDatabase) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "cpm",
 		Short: "turtle-cpm is a console password manager",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			err := OpenDatabase(db)
+			if err != nil {
+				return fmt.Errorf("OpenDatabase() failed: %s", err)
+			}
+
+			return nil
+		},
+		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+			err := CloseDatabase(db)
+			if err != nil {
+				return fmt.Errorf("CloseDatabase() failed: %s", err)
+			}
+
+			return nil
+		},
 	}
 	cmd.AddCommand(newCreateCommand(db))
 	cmd.AddCommand(newReadCommand(db))
@@ -513,12 +529,6 @@ func cleanDatabase(db *CpmDatabase) {
 // Main is the commandline interface to this package.
 func Main(stream io.Writer) int {
 	var db CpmDatabase
-	err := OpenDatabase(&db)
-	if err != nil {
-		// notest
-		fmt.Fprintf(stream, "OpenDatabase() failed: %s", err)
-		return 1
-	}
 	defer cleanDatabase(&db)
 
 	var commandFound bool
@@ -531,7 +541,7 @@ func Main(stream io.Writer) int {
 			}
 		}
 	}
-	var cmd = newRootCommand(db.Database)
+	var cmd = newRootCommand(&db)
 	var args []string
 	if commandFound {
 		args = os.Args[1:]
@@ -543,17 +553,11 @@ func Main(stream io.Writer) int {
 	cmd.SetOut(stream)
 	cmd.SetErr(stream)
 
-	err = cmd.Execute()
+	err := cmd.Execute()
 	if err != nil {
 		// cobra reported its error already itself.
 		return 1
 	}
 
-	err = CloseDatabase(&db)
-	if err != nil {
-		// notest
-		fmt.Fprintf(stream, "CloseDatabase() failed: %s", err)
-		return 1
-	}
 	return 0
 }

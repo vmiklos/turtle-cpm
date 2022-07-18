@@ -6,6 +6,8 @@
   to specify a UID manually.
 - Search now shows both plain passwords and TOTP shared secrets by default, so in case a site only
   has a TOTP shared secret, there is a search result instead of confusing empty output.
+- The decrypted database is removed from disk even in case of application failure.
+- More tests: 100% statement coverage.
 
 ## 1.0
 
