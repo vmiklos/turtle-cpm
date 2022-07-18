@@ -22,17 +22,16 @@ func CreateDatabaseForTesting() (*sql.DB, error) {
 }
 
 // OpenDatabaseForTesting implements OpenDatabase and takes an already opened sql.DB.
-func OpenDatabaseForTesting(sqlDb *sql.DB) func() (*CpmDatabase, error) {
-	return func() (*CpmDatabase, error) {
-		var db CpmDatabase
+func OpenDatabaseForTesting(sqlDb *sql.DB) func(*CpmDatabase) error {
+	return func(db *CpmDatabase) error {
 		db.Database = sqlDb
 
 		err := initDatabase(db.Database)
 		if err != nil {
-			return nil, fmt.Errorf("initDatabase() failed: %s", err)
+			return fmt.Errorf("initDatabase() failed: %s", err)
 		}
 
-		return &db, nil
+		return nil
 	}
 }
 

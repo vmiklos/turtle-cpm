@@ -422,42 +422,41 @@ func getDatabasePath() (string, error) {
 	return databasePath, nil
 }
 
-func openDatabase() (*CpmDatabase, error) {
-	var db CpmDatabase
+func openDatabase(db *CpmDatabase) error {
 	var err error
 	db.TempFile, err = ioutil.TempFile("", "cpm")
 	if err != nil {
-		return nil, fmt.Errorf("ioutil.TempFile() failed: %s", err)
+		return fmt.Errorf("ioutil.TempFile() failed: %s", err)
 	}
 
 	db.PermanentPath, err = getDatabasePath()
 	if err != nil {
-		return nil, fmt.Errorf("getDatabasePath() failed: %s", err)
+		return fmt.Errorf("getDatabasePath() failed: %s", err)
 	}
 	if pathExists(db.PermanentPath) {
 		Remove(db.TempFile.Name())
 		cmd := Command("gpg", "--decrypt", "-a", "-o", db.TempFile.Name(), db.PermanentPath)
 		err := cmd.Start()
 		if err != nil {
-			return nil, fmt.Errorf("cmd.Start() failed: %s", err)
+			return fmt.Errorf("cmd.Start() failed: %s", err)
 		}
 		err = cmd.Wait()
 		if err != nil {
-			return nil, fmt.Errorf("cmd.Wait() failed: %s", err)
+			return fmt.Errorf("cmd.Wait() failed: %s", err)
 		}
 	}
 
 	db.Database, err = sql.Open("sqlite3", db.TempFile.Name())
 	if err != nil {
-		return nil, fmt.Errorf("sql.Open() failed: %s", err)
+		return fmt.Errorf("sql.Open() failed: %s", err)
 	}
 
 	err = initDatabase(db.Database)
 	if err != nil {
-		return nil, fmt.Errorf("initDatabase() failed: %s", err)
+		return fmt.Errorf("initDatabase() failed: %s", err)
 	}
 
-	return &db, nil
+	return nil
 }
 
 // OpenDatabase opens the database before running a subcommand.
@@ -513,13 +512,14 @@ func cleanDatabase(db *CpmDatabase) {
 
 // Main is the commandline interface to this package.
 func Main(stream io.Writer) int {
-	db, err := OpenDatabase()
+	var db CpmDatabase
+	err := OpenDatabase(&db)
 	if err != nil {
 		// notest
 		fmt.Fprintf(stream, "OpenDatabase() failed: %s", err)
 		return 1
 	}
-	defer cleanDatabase(db)
+	defer cleanDatabase(&db)
 
 	var commandFound bool
 	commands := getCommands()
@@ -549,7 +549,7 @@ func Main(stream io.Writer) int {
 		return 1
 	}
 
-	err = CloseDatabase(db)
+	err = CloseDatabase(&db)
 	if err != nil {
 		// notest
 		fmt.Fprintf(stream, "CloseDatabase() failed: %s", err)
