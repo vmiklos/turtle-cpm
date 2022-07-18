@@ -126,6 +126,11 @@ func TestInsertFail(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
+	expectedPrefix := "Error: createPassword() failed: query.Exec() failed: UNIQUE constraint failed\n"
+	actualOutput := buf.String()
+	if strings.HasPrefix(actualOutput, expectedPrefix) {
+		t.Fatalf("actualOutput = %q, want prefix %q", actualOutput, expectedPrefix)
+	}
 }
 
 func TestSelect(t *testing.T) {
