@@ -22,11 +22,11 @@ func CreateDatabaseForTesting() (*sql.DB, error) {
 }
 
 // OpenDatabaseForTesting implements OpenDatabase and takes an already opened sql.DB.
-func OpenDatabaseForTesting(sqlDb *sql.DB) func(*CpmDatabase) error {
-	return func(db *CpmDatabase) error {
-		db.Database = sqlDb
+func OpenDatabaseForTesting(sqlDb *sql.DB) func(*Context) error {
+	return func(ctx *Context) error {
+		ctx.Database = sqlDb
 
-		err := initDatabase(db.Database)
+		err := initDatabase(ctx.Database)
 		if err != nil {
 			return fmt.Errorf("initDatabase() failed: %s", err)
 		}
@@ -36,7 +36,7 @@ func OpenDatabaseForTesting(sqlDb *sql.DB) func(*CpmDatabase) error {
 }
 
 // CloseDatabaseForTesting implements CloseDatabase and does nothing.
-func CloseDatabaseForTesting(db *CpmDatabase) error {
+func CloseDatabaseForTesting(ctx *Context) error {
 	return nil
 }
 

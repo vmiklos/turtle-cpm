@@ -98,7 +98,7 @@ func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser, wantedT
 	return results, nil
 }
 
-func newCreateCommand(db *CpmDatabase) *cobra.Command {
+func newCreateCommand(ctx *Context) *cobra.Command {
 	var machine string
 	var service string
 	var user string
@@ -108,7 +108,7 @@ func newCreateCommand(db *CpmDatabase) *cobra.Command {
 		Use:   "create",
 		Short: "creates a new password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := createPassword(db.Database, machine, service, user, password, passwordType)
+			err := createPassword(ctx.Database, machine, service, user, password, passwordType)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)
 			}
@@ -129,7 +129,7 @@ func newCreateCommand(db *CpmDatabase) *cobra.Command {
 	return cmd
 }
 
-func newUpdateCommand(db *CpmDatabase) *cobra.Command {
+func newUpdateCommand(ctx *Context) *cobra.Command {
 	var machine string
 	var service string
 	var user string
@@ -139,7 +139,7 @@ func newUpdateCommand(db *CpmDatabase) *cobra.Command {
 		Use:   "update",
 		Short: "updates an existing password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			query, err := db.Database.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
+			query, err := ctx.Database.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
@@ -165,7 +165,7 @@ func newUpdateCommand(db *CpmDatabase) *cobra.Command {
 	return cmd
 }
 
-func newDeleteCommand(db *CpmDatabase) *cobra.Command {
+func newDeleteCommand(ctx *Context) *cobra.Command {
 	var machine string
 	var service string
 	var user string
@@ -174,7 +174,7 @@ func newDeleteCommand(db *CpmDatabase) *cobra.Command {
 		Use:   "delete",
 		Short: "deletes an existing password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			query, err := db.Database.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
+			query, err := ctx.Database.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
@@ -238,7 +238,7 @@ var Command = exec.Command
 // Remove removes the named file or (empty) directory.
 var Remove = os.Remove
 
-func newImportCommand(db *CpmDatabase) *cobra.Command {
+func newImportCommand(ctx *Context) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "import",
 		Short: "imports an old XML database",
@@ -315,7 +315,7 @@ func newImportCommand(db *CpmDatabase) *cobra.Command {
 								passwordType = "plain"
 							}
 
-							err = createPassword(db.Database, machineLabel, serviceLabel, userLabel, passwordLabel, passwordType)
+							err = createPassword(ctx.Database, machineLabel, serviceLabel, userLabel, passwordLabel, passwordType)
 							if err != nil {
 								return fmt.Errorf("createPassword(machine='%s', service='%s', user='%s', type='%s') failed: %s", machineLabel, serviceLabel, userLabel, passwordType, err)
 							}
@@ -331,7 +331,7 @@ func newImportCommand(db *CpmDatabase) *cobra.Command {
 	return cmd
 }
 
-func newReadCommand(db *CpmDatabase) *cobra.Command {
+func newReadCommand(ctx *Context) *cobra.Command {
 	var machineFlag string
 	var serviceFlag string
 	var userFlag string
@@ -341,7 +341,7 @@ func newReadCommand(db *CpmDatabase) *cobra.Command {
 		Use:   "search",
 		Short: "searches passwords",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			results, err := readPasswords(db.Database, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, args)
+			results, err := readPasswords(ctx.Database, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, args)
 			if err != nil {
 				return fmt.Errorf("readPasswords() failed: %s", err)
 			}
@@ -362,12 +362,12 @@ func newReadCommand(db *CpmDatabase) *cobra.Command {
 	return cmd
 }
 
-func newRootCommand(db *CpmDatabase) *cobra.Command {
+func newRootCommand(ctx *Context) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "cpm",
 		Short: "turtle-cpm is a console password manager",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			err := OpenDatabase(db)
+			err := OpenDatabase(ctx)
 			if err != nil {
 				return fmt.Errorf("OpenDatabase() failed: %s", err)
 			}
@@ -375,7 +375,7 @@ func newRootCommand(db *CpmDatabase) *cobra.Command {
 			return nil
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
-			err := CloseDatabase(db)
+			err := CloseDatabase(ctx)
 			if err != nil {
 				return fmt.Errorf("CloseDatabase() failed: %s", err)
 			}
@@ -383,11 +383,11 @@ func newRootCommand(db *CpmDatabase) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.AddCommand(newCreateCommand(db))
-	cmd.AddCommand(newReadCommand(db))
-	cmd.AddCommand(newUpdateCommand(db))
-	cmd.AddCommand(newDeleteCommand(db))
-	cmd.AddCommand(newImportCommand(db))
+	cmd.AddCommand(newCreateCommand(ctx))
+	cmd.AddCommand(newReadCommand(ctx))
+	cmd.AddCommand(newUpdateCommand(ctx))
+	cmd.AddCommand(newDeleteCommand(ctx))
+	cmd.AddCommand(newImportCommand(ctx))
 
 	return cmd
 }
@@ -405,8 +405,8 @@ func getCommands() []string {
 	}
 }
 
-// CpmDatabase is an opened tempfile, containing an sqlite database.
-type CpmDatabase struct {
+// Context is state that is preserved during PreRun / Run / PostRun.
+type Context struct {
 	TempFile      *os.File
 	PermanentPath string
 	Database      *sql.DB
@@ -438,20 +438,20 @@ func getDatabasePath() (string, error) {
 	return databasePath, nil
 }
 
-func openDatabase(db *CpmDatabase) error {
+func openDatabase(ctx *Context) error {
 	var err error
-	db.TempFile, err = ioutil.TempFile("", "cpm")
+	ctx.TempFile, err = ioutil.TempFile("", "cpm")
 	if err != nil {
 		return fmt.Errorf("ioutil.TempFile() failed: %s", err)
 	}
 
-	db.PermanentPath, err = getDatabasePath()
+	ctx.PermanentPath, err = getDatabasePath()
 	if err != nil {
 		return fmt.Errorf("getDatabasePath() failed: %s", err)
 	}
-	if pathExists(db.PermanentPath) {
-		Remove(db.TempFile.Name())
-		cmd := Command("gpg", "--decrypt", "-a", "-o", db.TempFile.Name(), db.PermanentPath)
+	if pathExists(ctx.PermanentPath) {
+		Remove(ctx.TempFile.Name())
+		cmd := Command("gpg", "--decrypt", "-a", "-o", ctx.TempFile.Name(), ctx.PermanentPath)
 		err := cmd.Start()
 		if err != nil {
 			return fmt.Errorf("cmd.Start() failed: %s", err)
@@ -462,12 +462,12 @@ func openDatabase(db *CpmDatabase) error {
 		}
 	}
 
-	db.Database, err = sql.Open("sqlite3", db.TempFile.Name())
+	ctx.Database, err = sql.Open("sqlite3", ctx.TempFile.Name())
 	if err != nil {
 		return fmt.Errorf("sql.Open() failed: %s", err)
 	}
 
-	err = initDatabase(db.Database)
+	err = initDatabase(ctx.Database)
 	if err != nil {
 		return fmt.Errorf("initDatabase() failed: %s", err)
 	}
@@ -496,14 +496,14 @@ func initDatabase(db *sql.DB) error {
 }
 
 // The database is only closed in case of no errors.
-func closeDatabase(db *CpmDatabase) error {
-	err := db.Database.Close()
+func closeDatabase(ctx *Context) error {
+	err := ctx.Database.Close()
 	if err != nil {
 		return fmt.Errorf("db.Database.Close() failed: %s", err)
 	}
 
-	Remove(db.PermanentPath)
-	cmd := Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", db.PermanentPath, db.TempFile.Name())
+	Remove(ctx.PermanentPath)
+	cmd := Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", ctx.PermanentPath, ctx.TempFile.Name())
 	err = cmd.Start()
 	if err != nil {
 		return fmt.Errorf("cmd.Start(gpg encrypt) failed: %s", err)
@@ -520,16 +520,16 @@ func closeDatabase(db *CpmDatabase) error {
 var CloseDatabase = closeDatabase
 
 // The database is always cleaned to avoid decrypted data on disk (even in case of a failure).
-func cleanDatabase(db *CpmDatabase) {
-	if db.TempFile != nil {
-		Remove(db.TempFile.Name())
+func cleanDatabase(ctx *Context) {
+	if ctx.TempFile != nil {
+		Remove(ctx.TempFile.Name())
 	}
 }
 
 // Main is the commandline interface to this package.
 func Main(stream io.Writer) int {
-	var db CpmDatabase
-	defer cleanDatabase(&db)
+	var ctx Context
+	defer cleanDatabase(&ctx)
 
 	var commandFound bool
 	commands := getCommands()
@@ -541,7 +541,7 @@ func Main(stream io.Writer) int {
 			}
 		}
 	}
-	var cmd = newRootCommand(&db)
+	var cmd = newRootCommand(&ctx)
 	var args []string
 	if commandFound {
 		args = os.Args[1:]
