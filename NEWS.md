@@ -1,5 +1,10 @@
 # Version descriptions
 
+## main
+
+- Added overview documentation to augment the existing automatically generated reference
+  documentation. (`cpm -h`, `cpm create -h`, etc.)
+
 ## 2.0
 
 - While encrypting the database, the `gpg` invocation now defaults to the self recipient, so no need
