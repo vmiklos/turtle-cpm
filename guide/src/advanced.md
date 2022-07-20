@@ -25,3 +25,28 @@ cpmsync
 
 This allows searching in your passwords even when you're offline. Keep in mind that editing the
 database on the slaves is not a good idea as the next sync will overwrite your local changes.
+
+## Importing the old CPM XML database
+
+In case you used the old `cpm` tool, it used to store its data at `~/.cpmdb` as an XML file,
+compressed and encrypted. If you want to import that into turtle-cpm's database, you can do so
+using:
+
+```sh
+cpm import
+```
+
+## Reference documentation
+
+Apart from this guide, reference documentation is available in `cpm` itself. You can learn about the
+possible subcommands using:
+
+```sh
+cpm -h
+```
+
+You can also check all the available options for one given subcommand using e.g.:
+
+```sh
+cpm create -h
+```

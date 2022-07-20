@@ -394,6 +394,7 @@ func newRootCommand(ctx *Context) *cobra.Command {
 
 func getCommands() []string {
 	return []string{
+		"-h",
 		"--help",
 		"completion",
 		"create",
