@@ -1,6 +1,6 @@
 # Version descriptions
 
-## main
+## 2.0
 
 - While encrypting the database, the `gpg` invocation now defaults to the self recipient, so no need
   to specify a UID manually.
