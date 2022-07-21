@@ -26,6 +26,17 @@ cpmsync
 This allows searching in your passwords even when you're offline. Keep in mind that editing the
 database on the slaves is not a good idea as the next sync will overwrite your local changes.
 
+## Toolkit integration
+
+In case you have scripts to generate your local configuration files containing passwords from
+templates, `cpm` can be integrated into such a workflow, using the quiet mode of the search
+subcommand. For example, if you have an app password at your mail provider, and you want to generate
+your mutt configuration, you can query just the password from `cpm` using:
+
+```sh
+cpm -q -m accounts.example.com -u $USER-mail-$HOSTNAME
+```
+
 ## Importing the old CPM XML database
 
 In case you used the old `cpm` tool, it used to store its data at `~/.cpmdb` as an XML file,

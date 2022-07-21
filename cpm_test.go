@@ -75,7 +75,7 @@ func TestInsert(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, "", "", "", "", false, []string{})
+	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -174,6 +174,47 @@ func TestSelect(t *testing.T) {
 	}
 }
 
+func TestQuietSelect(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	expectedType := "plain"
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-q"}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "mypassword\n"
+	actualOutput := buf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
+
 func TestSelectTotpCode(t *testing.T) {
 	db, err := CreateDatabaseForTesting()
 	defer db.Close()
@@ -252,7 +293,7 @@ func TestUpdate(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, "", "", "", "", false, []string{})
+	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -302,7 +343,7 @@ func TestDelete(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, "", "", "", "", false, []string{})
+	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -409,7 +450,7 @@ func TestImport(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, "", "", "", "", false, []string{})
+	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}

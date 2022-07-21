@@ -29,7 +29,7 @@ func createPassword(db *sql.DB, machine, service, user, password, passwordType s
 	return nil
 }
 
-func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser, wantedType string, totp bool, args []string) ([]string, error) {
+func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser, wantedType string, totp, quiet bool, args []string) ([]string, error) {
 	var results []string
 	if totp {
 		wantedType = "totp"
@@ -92,7 +92,13 @@ func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser, wantedT
 			}
 		}
 
-		results = append(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", machine, service, user, passwordType, password))
+		var result string
+		if quiet {
+			result = password
+		} else {
+			result = fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", machine, service, user, passwordType, password)
+		}
+		results = append(results, result)
 	}
 
 	return results, nil
@@ -337,11 +343,12 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	var userFlag string
 	var typeFlag string
 	var totpFlag bool
+	var quietFlag bool
 	var cmd = &cobra.Command{
 		Use:   "search",
 		Short: "searches passwords",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			results, err := readPasswords(ctx.Database, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, args)
+			results, err := readPasswords(ctx.Database, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, quietFlag, args)
 			if err != nil {
 				return fmt.Errorf("readPasswords() failed: %s", err)
 			}
@@ -358,6 +365,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&userFlag, "user", "u", "", "user (required)")
 	cmd.Flags().StringVarP(&typeFlag, "type", "t", "", "password type ('plain' or 'totp', default: '')")
 	cmd.Flags().BoolVarP(&totpFlag, "totp", "T", false, "show current TOTP, not the TOTP key (default: false, implies '--type totp')")
+	cmd.Flags().BoolVarP(&quietFlag, "quiet", "q", false, "quite mode: only print the password itself (default: false)")
 
 	return cmd
 }

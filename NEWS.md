@@ -4,6 +4,7 @@
 
 - Added overview documentation to augment the existing automatically generated reference
   documentation. (`cpm -h`, `cpm create -h`, etc.)
+- New quite mode during search, to consume the output from scripts.
 
 ## 2.0
 
