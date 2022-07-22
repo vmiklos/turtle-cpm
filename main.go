@@ -1,8 +1,12 @@
 package main
 
-import "os"
+import (
+	"os"
+
+	"github.com/vmiklos/turtle-cpm/commands"
+)
 
 func main() {
 	// notest
-	os.Exit(Main(os.Stdout))
+	os.Exit(commands.Main(os.Stdout))
 }
