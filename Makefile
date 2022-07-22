@@ -1,6 +1,6 @@
 GO_OBJECTS = \
-	cpm.go \
-	cpm_test.go \
+	commands/commands.go \
+	commands/commands_test.go \
 	main.go \
 
 build: cpm
@@ -17,6 +17,6 @@ check-lint:
 check-format:
 	[ -z "$(shell gofmt -l ${GO_OBJECTS})" ]
 
-# Without coverage: 'go test'.
+# Without coverage: 'go test ./...'.
 check-unit:
-	courtney -e
+	courtney -e ./...
