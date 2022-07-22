@@ -12,6 +12,7 @@ import (
 	"os/user"
 	"strings"
 
+	// register sqlite driver
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/cobra"
 )
@@ -370,7 +371,8 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	return cmd
 }
 
-func newRootCommand(ctx *Context) *cobra.Command {
+// NewRootCommand creates the parent of all subcommands.
+func NewRootCommand(ctx *Context) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "cpm",
 		Short: "turtle-cpm is a console password manager",
@@ -550,7 +552,7 @@ func Main(stream io.Writer) int {
 			}
 		}
 	}
-	var cmd = newRootCommand(&ctx)
+	var cmd = NewRootCommand(&ctx)
 	var args []string
 	if commandFound {
 		args = os.Args[1:]
