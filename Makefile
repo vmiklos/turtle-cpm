@@ -2,6 +2,7 @@ GO_OBJECTS = \
 	commands/commands.go \
 	commands/commands_test.go \
 	main.go \
+	man/generate.go \
 
 build: cpm
 
@@ -12,7 +13,7 @@ check: build check-format check-lint check-unit
 	@echo "make check: ok"
 
 check-lint:
-	golint -set_exit_status
+	golint -set_exit_status ./...
 
 check-format:
 	[ -z "$(shell gofmt -l ${GO_OBJECTS})" ]
@@ -20,3 +21,6 @@ check-format:
 # Without coverage: 'go test ./...'.
 check-unit:
 	courtney -e ./...
+
+generate-man:
+	go run man/generate.go

@@ -61,3 +61,5 @@ You can also check all the available options for one given subcommand using e.g.
 ```sh
 cpm create -h
 ```
+
+An alternative to this is the manual pages under `man/`, which provide the same information.
