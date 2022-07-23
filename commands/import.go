@@ -44,6 +44,7 @@ type XMLMachines struct {
 	XMLName  xml.Name     `xml:"root"`
 	Machines []XMLMachine `xml:"node"`
 }
+
 func newImportCommand(ctx *Context) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "import",
