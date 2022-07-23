@@ -21,6 +21,9 @@ your cpm database.
 Optionally, you can install [oathtool](https://www.nongnu.org/oath-toolkit/) in case you're
 interested in TOTP support.
 
+Optionally, you can install [pwgen](http://sourceforge.net/projects/pwgen/) in case you want to have
+auto-generated passwords.
+
 ## Build from source
 
 You can install cpm using:

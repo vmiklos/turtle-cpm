@@ -3,11 +3,25 @@ package commands
 import (
 	"database/sql"
 	"fmt"
+	"io"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
-func createPassword(db *sql.DB, machine, service, user, password, passwordType string) error {
+func createPassword(out io.Writer, db *sql.DB, machine, service, user, password, passwordType string) error {
+	if len(password) == 0 {
+		// Length of 15 and no symbols matches current Firefox.
+		output, err := Command("pwgen", "--secure", "15", "1").Output()
+		if err != nil {
+			return fmt.Errorf("Command(pwgen) failed: %s", err)
+		}
+		password = strings.TrimSpace(string(output))
+		if out != nil {
+			fmt.Fprintf(out, "Generated password: %s\n", password)
+		}
+	}
+
 	query, err := db.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
 	if err != nil {
 		return fmt.Errorf("db.Prepare() failed: %s", err)
@@ -30,7 +44,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 		Use:   "create",
 		Short: "creates a new password",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := createPassword(ctx.Database, machine, service, user, password, passwordType)
+			err := createPassword(cmd.OutOrStdout(), ctx.Database, machine, service, user, password, passwordType)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)
 			}
@@ -44,8 +58,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 	cmd.MarkFlagRequired("service")
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (required)")
 	cmd.MarkFlagRequired("user")
-	cmd.Flags().StringVarP(&password, "password", "p", "", "password (required)")
-	cmd.MarkFlagRequired("password")
+	cmd.Flags().StringVarP(&password, "password", "p", "", "password")
 	cmd.Flags().StringVarP(&passwordType, "type", "t", "plain", "password type ('plain' or 'totp', default: plain)")
 
 	return cmd

@@ -5,8 +5,13 @@ most of the time, though.
 
 ## Creating
 
-You can generate a password using e.g. [pwgen](http://sourceforge.net/projects/pwgen/). Then ask cpm
-to remember it using:
+You can ask cpm to generate a password for you and remember it using:
+
+```sh
+cpm create -m mymachine -s myservice -u myuser
+```
+
+Or in case you already have a preferred password:
 
 ```sh
 cpm create -m mymachine -s myservice -u myuser -p mypassword
