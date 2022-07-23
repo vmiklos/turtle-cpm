@@ -24,3 +24,6 @@ check-unit:
 
 generate-man:
 	go run man/generate.go
+
+run-guide:
+	cd guide && mdbook serve --hostname 127.0.0.1
