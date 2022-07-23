@@ -47,6 +47,23 @@ using:
 cpm import
 ```
 
+## Inspecting the encrypted database manually
+
+In case you want to inspect the SQLite database of `cpm` manually, you need to decrypt it yourself,
+using:
+
+```sh
+gpg --decrypt -a -o decrypted.db ~/.local/state/cpm/passwords.db
+```
+
+After this, you can inspect the database using a GUI like:
+
+```sh
+sqlitebrowser decrypted.db
+```
+
+Don't forget to delete the decrypted database after you're done with your investigation.
+
 ## Reference documentation
 
 Apart from this guide, reference documentation is available in `cpm` itself. You can learn about the
