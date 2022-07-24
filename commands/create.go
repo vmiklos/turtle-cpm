@@ -17,9 +17,7 @@ func createPassword(out io.Writer, db *sql.DB, machine, service, user, password,
 			return fmt.Errorf("Command(pwgen) failed: %s", err)
 		}
 		password = strings.TrimSpace(string(output))
-		if out != nil {
-			fmt.Fprintf(out, "Generated password: %s\n", password)
-		}
+		fmt.Fprintf(out, "Generated password: %s\n", password)
 	}
 
 	query, err := db.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
