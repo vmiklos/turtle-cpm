@@ -28,17 +28,18 @@ error. You can update or delete a password, though (see below).
 
 ## Reading
 
-You can search in your passwords by entering a search term. You can do this explicitly:
-
-```sh
-cpm search -m mymachine -s myservice -u myuser
-```
-
-Given that usually you have a single password on a website, you can be much more implicit and just
-search using:
+You can search in your passwords by entering a search term. You can do this implicitly:
 
 ```sh
 cpm mymachine
+```
+
+In the less likely case when you have multiple passwords on a website, you can be much more explicit
+and search using:
+
+
+```sh
+cpm search -m mymachine -s myservice -u myuser
 ```
 
 ## TOTP support
