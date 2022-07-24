@@ -9,10 +9,10 @@ GO_OBJECTS = \
 	main.go \
 	man/generate.go \
 
-build: cpm
+build: turtle-cpm
 
-cpm: Makefile ${GO_OBJECTS}
-	go build ./...
+turtle-cpm: Makefile ${GO_OBJECTS}
+	go build .
 
 check: build check-format check-lint check-unit
 	@echo "make check: ok"
@@ -25,6 +25,7 @@ check-format:
 
 # Without coverage: 'go test ./...'.
 check-unit:
+	go build ./...
 	courtney -e ./...
 
 generate-man:
