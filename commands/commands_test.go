@@ -199,13 +199,12 @@ func TestSelect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -241,13 +240,12 @@ func TestQuietSelect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-q"}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -286,13 +284,12 @@ func TestSelectTotpCode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "--totp", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -328,13 +325,12 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "update", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -379,13 +375,12 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "delete", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -540,17 +535,16 @@ func TestSelectMachineFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	err = createPassword(buf, db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-m", "mymachine1"}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -582,17 +576,16 @@ func TestSelectServiceFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	err = createPassword(buf, db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-s", "myservice1"}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -624,17 +617,16 @@ func TestSelectUserFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	err = createPassword(buf, db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-u", "myuser1"}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -666,17 +658,16 @@ func TestSelectTypeFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, "mymachine", "myservice", "myuser", "mypassword", "plain")
+	_, err = createPassword(db, "mymachine", "myservice", "myuser", "mypassword", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	err = createPassword(buf, db, "mymachine", "myservice", "myuser", "mypassword", "totp")
+	_, err = createPassword(db, "mymachine", "myservice", "myuser", "mypassword", "totp")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-t", "totp"}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
@@ -708,18 +699,17 @@ func TestSelectImplicitFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	buf := new(bytes.Buffer)
-	err = createPassword(buf, db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(db, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	err = createPassword(buf, db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(db, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	// Implicit search, also not telling that myservice1 is a service.
 	os.Args = []string{"", "myservice1"}
-	buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
 
