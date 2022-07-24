@@ -6,6 +6,7 @@
   documentation. (`cpm -h`, `cpm create -h`, etc.)
 - New quiet mode during search, to consume the output from scripts
 - Added manpages
+- New password generation during create, the password flag is now optional.
 
 ## 2.0
 
