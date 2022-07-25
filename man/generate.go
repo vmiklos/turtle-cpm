@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/spf13/cobra/doc"
-	"github.com/vmiklos/turtle-cpm/commands"
+	"vmiklos.hu/go/turtle-cpm/commands"
 )
 
 func main() {

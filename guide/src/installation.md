@@ -29,7 +29,7 @@ auto-generated passwords.
 You can install cpm using:
 
 ```sh
-go install github.com/vmiklos/turtle-cpm@latest
+go install vmiklos.hu/go/turtle-cpm@latest
 ```
 
 If you don't have the original cpm around, you can make a symlink to allow less typing:
