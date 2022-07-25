@@ -1,7 +1,7 @@
 # turtle-cpm
 
 [![tests](https://github.com/vmiklos/turtle-cpm/workflows/tests/badge.svg)](https://github.com/vmiklos/turtle-cpm/actions)
-[![Go Report Card](https://goreportcard.com/badge/github.com/vmiklos/turtle-cpm)](https://goreportcard.com/report/github.com/vmiklos/turtle-cpm)
+[![Go Report Card](https://goreportcard.com/badge/vmiklos.hu/go/turtle-cpm)](https://goreportcard.com/report/vmiklos.hu/go/turtle-cpm)
 
 The turtle console password manager handles your plain text passwords and your TOTP shared secrets.
 
