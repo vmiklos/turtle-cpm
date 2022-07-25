@@ -58,13 +58,13 @@ func newImportCommand(ctx *Context) *cobra.Command {
 
 			encryptedPath := usr.HomeDir + "/.cpmdb"
 			decryptedFile, err := ioutil.TempFile("", "cpm")
-			decryptedPath := decryptedFile.Name()
-			defer Remove(decryptedPath)
 			if err != nil {
 				return fmt.Errorf("ioutil.TempFile() failed: %s", err)
 			}
 
-			Remove(decryptedPath)
+			decryptedPath := decryptedFile.Name()
+			defer Remove(decryptedPath)
+
 			gpg := Command("gpg", "--decrypt", "-a", "-o", decryptedPath+".gz", encryptedPath)
 			err = gpg.Start()
 			if err != nil {
@@ -75,7 +75,7 @@ func newImportCommand(ctx *Context) *cobra.Command {
 				return fmt.Errorf("cmd.Wait() failed: %s", err)
 			}
 
-			gunzip := Command("gunzip", decryptedPath+".gz")
+			gunzip := Command("gunzip", "--force", decryptedPath+".gz")
 			err = gunzip.Start()
 			if err != nil {
 				return fmt.Errorf("cmd.Start(gunzip) failed: %s", err)

@@ -450,8 +450,8 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 				t.Fatalf("copyPath() failed: %s", err)
 			}
 			return exec.Command("true")
-		} else if len(arg) == 1 && name == "gunzip" {
-			compressedPath := arg[0]
+		} else if len(arg) == 2 && name == "gunzip" && arg[0] == "--force" {
+			compressedPath := arg[1]
 			uncompressedPath := strings.ReplaceAll(compressedPath, ".gz", "")
 			err := copyPath(compressedPath, uncompressedPath)
 			if err != nil {
