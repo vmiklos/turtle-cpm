@@ -69,13 +69,19 @@ cpm --totp twitter
 
 ## Update and deletion
 
-Update is quite similar to creation:
+Update is quite similar to creation. You can generate a new password using:
+
+```sh
+cpm update -m mymachine -s myservice -u myuser
+```
+
+If you want to specify a new password explicitly, you can do that using:
 
 ```sh
 cpm update -m mymachine -s myservice -u myuser -p mynewpassword
 ```
 
-Finally if you really want to delete a password, you can do so by using:
+Finally if you want to delete a password, you can do so by using:
 
 ```sh
 cpm delete -m mymachine -s myservice -u myuser

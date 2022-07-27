@@ -16,16 +16,28 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 		Use:   "update",
 		Short: "updates an existing password",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			generatedPassword := password
+			if len(password) == 0 {
+				var err error
+				generatedPassword, err = generatePassword()
+				if err != nil {
+					return fmt.Errorf("generatePassword() failed: %s", err)
+				}
+			}
+
 			query, err := ctx.Database.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
 
-			_, err = query.Exec(password, machine, service, user, passwordType)
+			_, err = query.Exec(generatedPassword, machine, service, user, passwordType)
 			if err != nil {
 				return fmt.Errorf("db.Exec() failed: %s", err)
 			}
 
+			if generatedPassword != password {
+				fmt.Fprintf(cmd.OutOrStdout(), "Generated new password: %s\n", generatedPassword)
+			}
 			return nil
 		},
 	}
@@ -35,8 +47,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	cmd.MarkFlagRequired("service")
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (required)")
 	cmd.MarkFlagRequired("user")
-	cmd.Flags().StringVarP(&password, "password", "p", "", "new password (required)")
-	cmd.MarkFlagRequired("password")
+	cmd.Flags().StringVarP(&password, "password", "p", "", "new password")
 	cmd.Flags().StringVarP(&passwordType, "type", "t", "plain", "password type ('plain' or 'totp', default: plain)")
 
 	return cmd
