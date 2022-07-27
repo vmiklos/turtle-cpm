@@ -1,5 +1,9 @@
 # Version descriptions
 
+## main
+
+- New password generation during update, the password flag is now optional.
+
 ## 3.0
 
 - Added overview documentation to augment the existing automatically generated reference
