@@ -1,6 +1,6 @@
 # Version descriptions
 
-## main
+## 3.0
 
 - Added overview documentation to augment the existing automatically generated reference
   documentation. (`cpm -h`, `cpm create -h`, etc.)
