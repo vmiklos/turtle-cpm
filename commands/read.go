@@ -106,11 +106,11 @@ func newReadCommand(ctx *Context) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVarP(&machineFlag, "machine", "m", "", "machine (required)")
-	cmd.Flags().StringVarP(&serviceFlag, "service", "s", "", "service (required)")
-	cmd.Flags().StringVarP(&userFlag, "user", "u", "", "user (required)")
-	cmd.Flags().StringVarP(&typeFlag, "type", "t", "", "password type ('plain' or 'totp', default: '')")
-	cmd.Flags().BoolVarP(&totpFlag, "totp", "T", false, "show current TOTP, not the TOTP key (default: false, implies '--type totp')")
+	cmd.Flags().StringVarP(&machineFlag, "machine", "m", "", `machine (default: "")`)
+	cmd.Flags().StringVarP(&serviceFlag, "service", "s", "", `service (default: "")`)
+	cmd.Flags().StringVarP(&userFlag, "user", "u", "", `user (default: "")`)
+	cmd.Flags().StringVarP(&typeFlag, "type", "t", "", `password type ('plain' or 'totp', default: "")`)
+	cmd.Flags().BoolVarP(&totpFlag, "totp", "T", false, `show current TOTP, not the TOTP key (default: false, implies "--type totp")`)
 	cmd.Flags().BoolVarP(&quietFlag, "quiet", "q", false, "quite mode: only print the password itself (default: false)")
 
 	return cmd

@@ -8,20 +8,16 @@ most of the time, though.
 You can ask cpm to generate a password for you and remember it using:
 
 ```sh
-cpm create -m mymachine -s myservice -u myuser
+cpm create -m mymachine -u myuser
 ```
 
-Or in case you already have a preferred password:
+Or in case you already have non-HTTP service or a preferred password:
 
 ```sh
 cpm create -m mymachine -s myservice -u myuser -p mypassword
 ```
 
-A couple of useful conventions:
-
-- `mymachine` can be e.g. the domain of the website
-
-- `myserivce` can be e.g. just `http` if this is not some special protocol like LDAP or SSH
+When the machine is not yours, it can be e.g. the domain of a website.
 
 If you try to insert two passwords for the same machine/service/user combination, you will get an
 error. You can update or delete a password, though (see below).
@@ -50,7 +46,7 @@ TOTP is one from of Two-Factor Authentication (2FA), currently used by many popu
 shared secret and then add it to cpm using:
 
 ```sh
-cpm create -m mymachine -s myservice -u myuser -p "MY TOTP SHARED SECRET" -t totp
+cpm create -m mymachine -u myuser -p "MY TOTP SHARED SECRET" -t totp
 ```
 
 When searching, it's a good idea to first narrow down your search results to a single hit, e.g.
@@ -72,16 +68,22 @@ cpm --totp twitter
 Update is quite similar to creation. You can generate a new password using:
 
 ```sh
-cpm update -m mymachine -s myservice -u myuser
+cpm update -m mymachine -u myuser
 ```
 
-If you want to specify a new password explicitly, you can do that using:
+If you want to specify a service or a new password explicitly, you can do that using:
 
 ```sh
 cpm update -m mymachine -s myservice -u myuser -p mynewpassword
 ```
 
 Finally if you want to delete a password, you can do so by using:
+
+```sh
+cpm delete -m mymachine -u myuser
+```
+
+Or if you want to specify the service explicitly:
 
 ```sh
 cpm delete -m mymachine -s myservice -u myuser
