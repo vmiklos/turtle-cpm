@@ -3,6 +3,7 @@
 ## main
 
 - New password generation during update, the password flag is now optional.
+- The service flag is now optional in general, and defaults to "http".
 
 ## 3.0
 
