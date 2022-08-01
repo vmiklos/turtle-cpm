@@ -1,11 +1,16 @@
 GO_OBJECTS = \
-	commands/commands_test.go \
 	commands/create.go \
+	commands/create_test.go \
 	commands/delete.go \
+	commands/delete_test.go \
 	commands/import.go \
+	commands/import_test.go \
 	commands/read.go \
+	commands/read_test.go \
 	commands/root.go \
+	commands/root_test.go \
 	commands/update.go \
+	commands/update_test.go \
 	main.go \
 	man/generate.go \
 

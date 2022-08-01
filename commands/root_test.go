@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"bytes"
 	"database/sql"
 	"fmt"
 	"io"
@@ -40,34 +39,6 @@ func CloseDatabaseForTesting(ctx *Context) error {
 	return nil
 }
 
-func ContainsString(items []string, item string) bool {
-	for _, i := range items {
-		if i == item {
-			return true
-		}
-	}
-	return false
-}
-
-func copyPath(inPath, outPath string) error {
-	outFile, err := os.Create(outPath)
-	if err != nil {
-		return fmt.Errorf("os.Create() failed: %s", err)
-	}
-
-	inFile, err := os.Open(inPath)
-	if err != nil {
-		return fmt.Errorf("os.Open() failed: %s", err)
-	}
-
-	_, err = io.Copy(outFile, inFile)
-	if err != nil {
-		return fmt.Errorf("io.Copy() failed: %s", err)
-	}
-
-	return nil
-}
-
 func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd {
 	return func(name string, arg ...string) *exec.Cmd {
 		if len(arg) == 5 && name == "gpg" && arg[0] == "--decrypt" && arg[1] == "-a" && arg[2] == "-o" {
@@ -81,9 +52,9 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 			} else {
 				t.Fatalf("unexpected encryted path: %s", encryptedPath)
 			}
-			err := copyPath(encryptedQaPath, decryptedPath)
+			err := CopyPath(encryptedQaPath, decryptedPath)
 			if err != nil {
-				t.Fatalf("copyPath() failed: %s", err)
+				t.Fatalf("CopyPath() failed: %s", err)
 			}
 			return exec.Command("true")
 		} else if len(arg) == 7 && name == "gpg" && arg[0] == "--encrypt" && arg[1] == "--sign" && arg[2] == "-a" && arg[3] == "--default-recipient-self" && arg[4] == "-o" {
@@ -95,17 +66,17 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 			} else {
 				t.Fatalf("unexpected encryted path: %s", encryptedPath)
 			}
-			err := copyPath(decryptedPath, encryptedQaPath)
+			err := CopyPath(decryptedPath, encryptedQaPath)
 			if err != nil {
-				t.Fatalf("copyPath() failed: %s", err)
+				t.Fatalf("CopyPath() failed: %s", err)
 			}
 			return exec.Command("true")
 		} else if len(arg) == 2 && name == "gunzip" && arg[0] == "--force" {
 			compressedPath := arg[1]
 			uncompressedPath := strings.ReplaceAll(compressedPath, ".gz", "")
-			err := copyPath(compressedPath, uncompressedPath)
+			err := CopyPath(compressedPath, uncompressedPath)
 			if err != nil {
-				t.Fatalf("copyPath() failed: %s", err)
+				t.Fatalf("CopyPath() failed: %s", err)
 			}
 			return exec.Command("true")
 		} else if len(arg) == 3 && name == "oathtool" && arg[0] == "-b" && arg[1] == "--totp" && arg[2] == "totppassword" {
@@ -115,57 +86,6 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 		}
 		t.Fatalf("CommandForTesting: unhandled command: %v", arg)
 		panic("unreachable")
-	}
-}
-
-func TestImport(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
-	OldCommand := Command
-	Command = CommandForTesting(t)
-	defer func() { Command = OldCommand }()
-	expectedMachine := "mymachine"
-	expectedService := "myservice"
-	expectedUser := "myuser"
-	expectedPassword := "mypassword"
-	expectedType := "plain"
-	os.Args = []string{"", "import"}
-	buf := new(bytes.Buffer)
-
-	actualRet := Main(buf)
-
-	expectedRet := 0
-	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
-	}
-	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
-	if err != nil {
-		t.Fatalf("readPasswords() err = %q, want nil", err)
-	}
-	actualLength := len(results)
-	expectedLength := 2
-	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
-	}
-	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
-	expectedContains := true
-	if actualContains != expectedContains {
-		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
-	}
-	expectedPassword = "totppassword"
-	expectedType = "TOTP shared secret"
-	actualContains = ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
-	if actualContains != expectedContains {
-		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }
 
@@ -183,4 +103,34 @@ func StatForTesting(name string) (os.FileInfo, error) {
 	}
 
 	return os.Stat(name)
+}
+
+// ContainsString checks if `items` contains `item`.
+func ContainsString(items []string, item string) bool {
+	for _, i := range items {
+		if i == item {
+			return true
+		}
+	}
+	return false
+}
+
+// CopyPath copies from inPath to outPath, assuming they are file paths.
+func CopyPath(inPath, outPath string) error {
+	outFile, err := os.Create(outPath)
+	if err != nil {
+		return fmt.Errorf("os.Create() failed: %s", err)
+	}
+
+	inFile, err := os.Open(inPath)
+	if err != nil {
+		return fmt.Errorf("os.Open() failed: %s", err)
+	}
+
+	_, err = io.Copy(outFile, inFile)
+	if err != nil {
+		return fmt.Errorf("io.Copy() failed: %s", err)
+	}
+
+	return nil
 }
