@@ -1,6 +1,6 @@
 # Version descriptions
 
-## main
+## 4.0
 
 - New password generation during update, the password flag is now optional.
 - The service flag is now optional in general, and defaults to "http".
