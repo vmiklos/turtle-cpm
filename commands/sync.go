@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -17,12 +16,9 @@ func newSyncCommand(ctx *Context) *cobra.Command {
 				return fmt.Errorf("getDatabasePath() failed: %s", err)
 			}
 
-			command := Command("scp", "cpm:"+databasePath, databasePath)
-			command.Stdout = os.Stdout
-			command.Stderr = os.Stderr
-			err = command.Run()
+			err = runCommand("scp", "cpm:"+databasePath, databasePath)
 			if err != nil {
-				return fmt.Errorf("command.Run() failed: %s", err)
+				return fmt.Errorf("runCommand() failed: %s", err)
 			}
 
 			ctx.NoWriteBack = true

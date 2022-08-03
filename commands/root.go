@@ -120,14 +120,9 @@ func openDatabase(ctx *Context) error {
 	}
 	if pathExists(ctx.PermanentPath) {
 		Remove(ctx.TempFile.Name())
-		cmd := Command("gpg", "--decrypt", "-a", "-o", ctx.TempFile.Name(), ctx.PermanentPath)
-		err := cmd.Start()
+		err := runCommand("gpg", "--decrypt", "-a", "-o", ctx.TempFile.Name(), ctx.PermanentPath)
 		if err != nil {
-			return fmt.Errorf("cmd.Start() failed: %s", err)
-		}
-		err = cmd.Wait()
-		if err != nil {
-			return fmt.Errorf("cmd.Wait() failed: %s", err)
+			return fmt.Errorf("runCommand() failed: %s", err)
 		}
 	}
 
@@ -173,14 +168,9 @@ func closeDatabase(ctx *Context) error {
 	}
 
 	Remove(ctx.PermanentPath)
-	cmd := Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", ctx.PermanentPath, ctx.TempFile.Name())
-	err = cmd.Start()
+	err = runCommand("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", ctx.PermanentPath, ctx.TempFile.Name())
 	if err != nil {
-		return fmt.Errorf("cmd.Start(gpg encrypt) failed: %s", err)
-	}
-	err = cmd.Wait()
-	if err != nil {
-		return fmt.Errorf("cmd.Wait(gpg encrypt) failed: %s", err)
+		return fmt.Errorf("runCommand() failed: %s", err)
 	}
 
 	return nil
@@ -191,6 +181,20 @@ func cleanDatabase(ctx *Context) {
 	if ctx.TempFile != nil {
 		Remove(ctx.TempFile.Name())
 	}
+}
+
+// runCommand is a wrapper around Command() to invoke it in an interactive mode.
+func runCommand(name string, arg ...string) error {
+	cmd := Command(name, arg...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("cmd.Run(%s) failed: %s", name, err)
+	}
+
+	return nil
 }
 
 // Main is the commandline interface to this package.
