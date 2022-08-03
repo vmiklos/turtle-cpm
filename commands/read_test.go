@@ -379,4 +379,5 @@ func TestOpenCloseDatabase(t *testing.T) {
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
+	os.Remove("qa/passwords.db")
 }

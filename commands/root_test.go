@@ -83,6 +83,12 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 			return exec.Command("echo", "output-from-oathtool")
 		} else if name == "pwgen" {
 			return exec.Command("echo", "output-from-pwgen")
+		} else if name == "scp" && len(arg) == 2 && strings.HasPrefix(arg[0], "cpm:") && strings.HasSuffix(arg[0], "passwords.db") && strings.HasSuffix(arg[1], "passwords.db") {
+			err := CopyPath("qa/remote.db", "qa/passwords.db")
+			if err != nil {
+				t.Fatalf("CopyPath() failed: %s", err)
+			}
+			return exec.Command("true")
 		}
 		t.Fatalf("CommandForTesting: unhandled command: %v", arg)
 		panic("unreachable")

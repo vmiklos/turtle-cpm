@@ -16,11 +16,10 @@ Host cpm
         Hostname myserver.example.com
 ```
 
-Finally put `scripts/cpmsync.sh` somewhere in your `$PATH`, so you can copy from your master to your
-slave using:
+Finally pull the remote database to your local one, using:
 
 ```sh
-cpmsync
+cpm sync
 ```
 
 This allows searching in your passwords even when you're offline. Keep in mind that editing the
