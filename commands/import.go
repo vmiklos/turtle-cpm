@@ -65,24 +65,14 @@ func newImportCommand(ctx *Context) *cobra.Command {
 			decryptedPath := decryptedFile.Name()
 			defer Remove(decryptedPath)
 
-			gpg := Command("gpg", "--decrypt", "-a", "-o", decryptedPath+".gz", encryptedPath)
-			err = gpg.Start()
+			err = runCommand("gpg", "--decrypt", "-a", "-o", decryptedPath+".gz", encryptedPath)
 			if err != nil {
-				return fmt.Errorf("cmd.Start() failed: %s", err)
-			}
-			err = gpg.Wait()
-			if err != nil {
-				return fmt.Errorf("cmd.Wait() failed: %s", err)
+				return fmt.Errorf("runCommand() failed: %s", err)
 			}
 
-			gunzip := Command("gunzip", "--force", decryptedPath+".gz")
-			err = gunzip.Start()
+			err = runCommand("gunzip", "--force", decryptedPath+".gz")
 			if err != nil {
-				return fmt.Errorf("cmd.Start(gunzip) failed: %s", err)
-			}
-			err = gunzip.Wait()
-			if err != nil {
-				return fmt.Errorf("cmd.Wait(gunzip) failed: %s", err)
+				return fmt.Errorf("runCommand() failed: %s", err)
 			}
 
 			// Parse the XML.
