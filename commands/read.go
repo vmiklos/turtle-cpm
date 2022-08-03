@@ -103,6 +103,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 				fmt.Fprintf(cmd.OutOrStdout(), "%s\n", result)
 			}
 
+			ctx.NoWriteBack = true
 			return nil
 		},
 	}

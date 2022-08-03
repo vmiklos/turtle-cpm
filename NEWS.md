@@ -4,6 +4,7 @@
 
 - `scripts/cpmsync.sh` is now a built-in subcommand, `cpm sync`. No need to install it manually
   anymore.
+- `cpm search` no longer encrypts the database at the end, to be a little bit faster.
 
 ## 4.0
 
