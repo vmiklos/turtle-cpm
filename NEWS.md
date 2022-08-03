@@ -1,5 +1,10 @@
 # Version descriptions
 
+## main
+
+- `scripts/cpmsync.sh` is now a built-in subcommand, `cpm sync`. No need to install it manually
+  anymore.
+
 ## 4.0
 
 - New password generation during update, the password flag is now optional.

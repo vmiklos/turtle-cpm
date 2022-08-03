@@ -56,6 +56,7 @@ func NewRootCommand(ctx *Context) *cobra.Command {
 	cmd.AddCommand(newUpdateCommand(ctx))
 	cmd.AddCommand(newDeleteCommand(ctx))
 	cmd.AddCommand(newImportCommand(ctx))
+	cmd.AddCommand(newSyncCommand(ctx))
 
 	return cmd
 }
@@ -71,6 +72,7 @@ func getCommands() []string {
 		"import",
 		"search",
 		"update",
+		"sync",
 	}
 }
 
@@ -79,6 +81,7 @@ type Context struct {
 	TempFile      *os.File
 	PermanentPath string
 	Database      *sql.DB
+	NoWriteBack   bool
 }
 
 func pathExists(path string) bool {
@@ -163,6 +166,10 @@ func closeDatabase(ctx *Context) error {
 	err := ctx.Database.Close()
 	if err != nil {
 		return fmt.Errorf("db.Database.Close() failed: %s", err)
+	}
+
+	if ctx.NoWriteBack {
+		return nil
 	}
 
 	Remove(ctx.PermanentPath)
