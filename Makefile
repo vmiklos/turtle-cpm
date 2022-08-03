@@ -10,6 +10,7 @@ GO_OBJECTS = \
 	commands/root.go \
 	commands/root_test.go \
 	commands/sync.go \
+	commands/sync_test.go \
 	commands/update.go \
 	commands/update_test.go \
 	main.go \

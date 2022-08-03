@@ -120,9 +120,10 @@ func openDatabase(ctx *Context) error {
 	}
 	if pathExists(ctx.PermanentPath) {
 		Remove(ctx.TempFile.Name())
-		err := runCommand("gpg", "--decrypt", "-a", "-o", ctx.TempFile.Name(), ctx.PermanentPath)
+		command := Command("gpg", "--decrypt", "-a", "-o", ctx.TempFile.Name(), ctx.PermanentPath)
+		err = command.Run()
 		if err != nil {
-			return fmt.Errorf("runCommand() failed: %s", err)
+			return fmt.Errorf("Command() failed: %s", err)
 		}
 	}
 
@@ -168,9 +169,10 @@ func closeDatabase(ctx *Context) error {
 	}
 
 	Remove(ctx.PermanentPath)
-	err = runCommand("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", ctx.PermanentPath, ctx.TempFile.Name())
+	command := Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", ctx.PermanentPath, ctx.TempFile.Name())
+	err = command.Run()
 	if err != nil {
-		return fmt.Errorf("runCommand() failed: %s", err)
+		return fmt.Errorf("Command() failed: %s", err)
 	}
 
 	return nil
