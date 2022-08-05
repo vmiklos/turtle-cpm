@@ -10,7 +10,7 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 	var machine string
 	var service string
 	var user string
-	var passwordType string
+	var passwordType PasswordType = "plain"
 	var cmd = &cobra.Command{
 		Use:   "delete",
 		Short: "deletes an existing password",
@@ -33,7 +33,7 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&service, "service", "s", "http", "service")
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (required)")
 	cmd.MarkFlagRequired("user")
-	cmd.Flags().StringVarP(&passwordType, "type", "t", "plain", `password type ("plain" or "totp")`)
+	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
 
 	return cmd
 }
