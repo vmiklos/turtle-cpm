@@ -5,6 +5,8 @@
 - `scripts/cpmsync.sh` is now a built-in subcommand, `cpm sync`. No need to install it manually
   anymore.
 - `cpm search` no longer encrypts the database at the end, to be a little bit faster.
+- create/search/update/delete's -t flag now has a proper type, so it errors on invalid values (other
+  than `plain` or `totp`)
 
 ## 4.0
 

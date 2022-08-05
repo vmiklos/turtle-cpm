@@ -87,7 +87,8 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	var machineFlag string
 	var serviceFlag string
 	var userFlag string
-	var typeFlag PasswordType = "plain"
+	// show all types by default
+	var typeFlag PasswordType
 	var totpFlag bool
 	var quietFlag bool
 	var cmd = &cobra.Command{
