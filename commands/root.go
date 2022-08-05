@@ -2,6 +2,7 @@ package commands
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -197,6 +198,36 @@ func runCommand(name string, arg ...string) error {
 	}
 
 	return nil
+}
+
+// PasswordType is an enum of possible password types.
+type PasswordType string
+
+const (
+	// PasswordTypePlain is a password sent to a server as-is.
+	PasswordTypePlain PasswordType = "plain"
+	// PasswordTypeTotp is a TOTP shared secret.
+	PasswordTypeTotp PasswordType = "totp"
+)
+
+func (t *PasswordType) String() string {
+	return string(*t)
+}
+
+// Set sets the value of `t` from `v`.
+func (t *PasswordType) Set(v string) error {
+	switch v {
+	case "plain", "totp":
+		*t = PasswordType(v)
+		return nil
+	default:
+		return errors.New(`must be one of "plain", or "totp"`)
+	}
+}
+
+// Type returns the type of `t` as a string.
+func (t *PasswordType) Type() string {
+	return "PasswordType"
 }
 
 // Main is the commandline interface to this package.

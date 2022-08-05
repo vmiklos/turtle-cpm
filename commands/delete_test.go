@@ -22,7 +22,7 @@ func TestDelete(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
-	expectedType := "plain"
+	var expectedType PasswordType = "plain"
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)

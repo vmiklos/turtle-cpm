@@ -17,7 +17,7 @@ func generatePassword() (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-func createPassword(db *sql.DB, machine, service, user, password, passwordType string) (string, error) {
+func createPassword(db *sql.DB, machine, service, user, password string, passwordType PasswordType) (string, error) {
 	if len(password) == 0 {
 		var err error
 		password, err = generatePassword()
@@ -43,7 +43,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 	var service string
 	var user string
 	var password string
-	var passwordType string
+	var passwordType PasswordType = "plain"
 	var cmd = &cobra.Command{
 		Use:   "create",
 		Short: "creates a new password",
@@ -65,7 +65,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (required)")
 	cmd.MarkFlagRequired("user")
 	cmd.Flags().StringVarP(&password, "password", "p", "", "password")
-	cmd.Flags().StringVarP(&passwordType, "type", "t", "plain", `password type ("plain" or "totp")`)
+	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
 
 	return cmd
 }
