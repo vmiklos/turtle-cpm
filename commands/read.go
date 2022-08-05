@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser, wantedType string, totp, quiet bool, args []string) ([]string, error) {
+func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser string, wantedType PasswordType, totp, quiet bool, args []string) ([]string, error) {
 	var results []string
 	if totp {
 		wantedType = "totp"
@@ -24,7 +24,7 @@ func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser, wantedT
 		var service string
 		var user string
 		var password string
-		var passwordType string
+		var passwordType PasswordType
 		err = rows.Scan(&machine, &service, &user, &password, &passwordType)
 		if err != nil {
 			return nil, fmt.Errorf("rows.Scan() failed: %s", err)
@@ -87,7 +87,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	var machineFlag string
 	var serviceFlag string
 	var userFlag string
-	var typeFlag string
+	var typeFlag PasswordType = "plain"
 	var totpFlag bool
 	var quietFlag bool
 	var cmd = &cobra.Command{
@@ -110,7 +110,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&machineFlag, "machine", "m", "", `machine (default: "")`)
 	cmd.Flags().StringVarP(&serviceFlag, "service", "s", "", `service (default: "")`)
 	cmd.Flags().StringVarP(&userFlag, "user", "u", "", `user (default: "")`)
-	cmd.Flags().StringVarP(&typeFlag, "type", "t", "", `password type ('plain' or 'totp', default: "")`)
+	cmd.Flags().VarP(&typeFlag, "type", "t", `password type ("plain" or "totp")`)
 	cmd.Flags().BoolVarP(&totpFlag, "totp", "T", false, `show current TOTP, not the TOTP key (default: false, implies "--type totp")`)
 	cmd.Flags().BoolVarP(&quietFlag, "quiet", "q", false, "quite mode: only print the password itself (default: false)")
 
