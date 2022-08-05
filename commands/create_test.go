@@ -25,7 +25,7 @@ func TestInsert(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	expectedType := "plain"
-	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
+	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword, "-t", "plain"}
 	buf := new(bytes.Buffer)
 
 	actualRet := Main(buf)
@@ -187,5 +187,33 @@ func TestInsertFail(t *testing.T) {
 	actualOutput := buf.String()
 	if strings.HasPrefix(actualOutput, expectedPrefix) {
 		t.Fatalf("actualOutput = %q, want prefix %q", actualOutput, expectedPrefix)
+	}
+}
+
+// Insert fails because -t mytype is not a valid type.
+func TestInsertFailBadType(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword, "-t", "mytype"}
+	buf := new(bytes.Buffer)
+
+	actualRet := Main(buf)
+
+	expectedRet := 1
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 }

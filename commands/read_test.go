@@ -22,7 +22,7 @@ func TestSelect(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
-	expectedType := "plain"
+	var expectedType PasswordType = "plain"
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -63,7 +63,7 @@ func TestQuietSelect(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
-	expectedType := "plain"
+	var expectedType PasswordType = "plain"
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -107,7 +107,7 @@ func TestSelectTotpCode(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "totppassword"
-	expectedType := "totp"
+	var expectedType PasswordType = "totp"
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)

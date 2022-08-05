@@ -105,7 +105,7 @@ func newImportCommand(ctx *Context) *cobra.Command {
 						userLabel := user.Label
 						for _, password := range user.Passwords {
 							passwordLabel := password.Label
-							var passwordType string
+							var passwordType PasswordType
 							if password.Totp == "true" {
 								passwordType = "totp"
 							} else {

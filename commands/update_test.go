@@ -23,7 +23,7 @@ func TestUpdate(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
-	expectedType := "plain"
+	var expectedType PasswordType = "plain"
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -80,7 +80,7 @@ func TestPwgenUpdate(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "output-from-pwgen"
-	expectedType := "plain"
+	var expectedType PasswordType = "plain"
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
