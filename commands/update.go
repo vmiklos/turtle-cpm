@@ -11,7 +11,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	var service string
 	var user string
 	var password string
-	var passwordType string
+	var passwordType PasswordType = "plain"
 	var cmd = &cobra.Command{
 		Use:   "update",
 		Short: "updates an existing password",
@@ -47,7 +47,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (required)")
 	cmd.MarkFlagRequired("user")
 	cmd.Flags().StringVarP(&password, "password", "p", "", "new password")
-	cmd.Flags().StringVarP(&passwordType, "type", "t", "plain", `password type ("plain" or "totp")`)
+	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
 
 	return cmd
 }
