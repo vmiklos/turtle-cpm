@@ -29,11 +29,8 @@ auto-generated passwords.
 You can install cpm using:
 
 ```sh
-go install vmiklos.hu/go/turtle-cpm@latest
+go install vmiklos.hu/go/cpm@latest
 ```
 
-If you don't have the original cpm around, you can make a symlink to allow less typing:
-
-```sh
-ln -s $(go env GOPATH)/bin/turtle-cpm ~/bin/cpm
-```
+If `$(go env GOPATH)/bin` is not in your `PATH` yet, you may want to add it, so typing `cpm` will
+invoke the installed executable.

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"vmiklos.hu/go/turtle-cpm/commands"
+	"vmiklos.hu/go/cpm/commands"
 )
 
 func main() {
