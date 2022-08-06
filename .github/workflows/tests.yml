@@ -17,4 +17,4 @@ jobs:
           go-version: 1.16.x
       - name: Run make check
         run: |
-          scripts/ci-build.sh
+          tools/ci-build.sh
