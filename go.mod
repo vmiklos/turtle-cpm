@@ -1,4 +1,4 @@
-module vmiklos.hu/go/turtle-cpm
+module vmiklos.hu/go/cpm
 
 go 1.16
 

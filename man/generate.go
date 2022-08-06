@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra/doc"
-	"vmiklos.hu/go/turtle-cpm/commands"
+	"vmiklos.hu/go/cpm/commands"
 )
 
 func main() {
