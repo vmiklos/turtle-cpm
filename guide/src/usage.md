@@ -30,12 +30,12 @@ You can search in your passwords by entering a search term. You can do this impl
 cpm mymachine
 ```
 
-In the less likely case when you have multiple passwords on a website, you can be much more explicit
-and search using:
+In the less likely case when you have multiple passwords on a website or you want to hide TOTP
+shared secrets, you can be much more explicit and search using:
 
 
 ```sh
-cpm search -m mymachine -s myservice -u myuser
+cpm search -m mymachine -s myservice -u myuser -t plain
 ```
 
 ## TOTP support
@@ -71,10 +71,10 @@ Update is quite similar to creation. You can generate a new password using:
 cpm update -m mymachine -u myuser
 ```
 
-If you want to specify a service or a new password explicitly, you can do that using:
+If you want to specify a service, a type or a new password explicitly, you can do that using:
 
 ```sh
-cpm update -m mymachine -s myservice -u myuser -p mynewpassword
+cpm update -m mymachine -s myservice -u myuser -t plain -p mynewpassword
 ```
 
 Finally if you want to delete a password, you can do so by using:
@@ -83,8 +83,8 @@ Finally if you want to delete a password, you can do so by using:
 cpm delete -m mymachine -u myuser
 ```
 
-Or if you want to specify the service explicitly:
+Or if you want to specify the service or type explicitly:
 
 ```sh
-cpm delete -m mymachine -s myservice -u myuser
+cpm delete -m mymachine -s myservice -u myuser -t plain
 ```
