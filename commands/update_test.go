@@ -42,7 +42,7 @@ func TestUpdate(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedBuf := ""
+	expectedBuf := "Updated 1 password\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
@@ -100,7 +100,7 @@ func TestPwgenUpdate(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedBuf := "Generated new password: output-from-pwgen\n"
+	expectedBuf := "Generated new password: output-from-pwgen\nUpdated 1 password\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}

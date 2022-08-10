@@ -20,10 +20,16 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
 
-			_, err = query.Exec(machine, service, user, passwordType)
+			result, err := query.Exec(machine, service, user, passwordType)
 			if err != nil {
 				return fmt.Errorf("db.Exec() failed: %s", err)
 			}
+
+			affected, err := result.RowsAffected()
+			if err != nil {
+				return fmt.Errorf("result.RowsAffected() failed: %s", err)
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "Deleted %v password\n", affected)
 
 			return nil
 		},
