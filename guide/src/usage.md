@@ -34,15 +34,20 @@ an error. You can update or delete a password, though (see below).
 
 ## Reading
 
-You can search in your passwords by entering a search term. You can do this implicitly:
+You can search in your passwords by entering a search term. You can do this interactively:
 
 ```sh
-$ cpm example.com
+$ cpm
+Search term: example.com
 machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
 
-In the less likely case when you have multiple passwords on a website or you want to hide TOTP
-shared secrets, you can be much more explicit and search using:
+The search term can also be specified as an argument if non-interactive mode is wanted.
+
+Lastly, you can search your passwords by entering specifying search filters:
+
+- when you have multiple services or users on a machine
+- you want to hide TOTP shared secrets
 
 ```sh
 $ cpm search -m example.com -s http -u myuser -t plain

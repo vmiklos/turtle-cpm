@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -95,6 +96,17 @@ func newReadCommand(ctx *Context) *cobra.Command {
 		Use:   "search",
 		Short: "searches passwords",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(machineFlag) == 0 && len(serviceFlag) == 0 && len(userFlag) == 0 && len(typeFlag) == 0 && len(args) == 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "Search term: ")
+				reader := bufio.NewReader(cmd.InOrStdin())
+				term, err := reader.ReadString('\n')
+				if err != nil {
+					return fmt.Errorf("ReadString() failed: %s", err)
+				}
+
+				args = append(args, strings.TrimSuffix(term, "\n"))
+			}
+
 			results, err := readPasswords(ctx.Database, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, quietFlag, args)
 			if err != nil {
 				return fmt.Errorf("readPasswords() failed: %s", err)
