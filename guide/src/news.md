@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- create: add interactive mode in case `--machine` or `--user` is not specified
+
 ## 5.0
 
 - `scripts/cpmsync.sh` is now a built-in subcommand, `cpm sync`. No need to install it manually

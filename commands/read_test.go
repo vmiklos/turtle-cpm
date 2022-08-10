@@ -32,16 +32,17 @@ func TestSelect(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -73,16 +74,17 @@ func TestQuietSelect(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-q"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "mypassword\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -117,16 +119,17 @@ func TestSelectTotpCode(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "--totp", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP code, password: output-from-oathtool\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -157,9 +160,10 @@ func TestSelectMachineFilter(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-m", "mymachine1"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	// mymachine1 is found, mymachine2 is not found.
 	expectedRet := 0
@@ -167,7 +171,7 @@ func TestSelectMachineFilter(t *testing.T) {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -198,9 +202,10 @@ func TestSelectServiceFilter(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-s", "myservice1"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	// myservice1 is found, myservice2 is not found.
 	expectedRet := 0
@@ -208,7 +213,7 @@ func TestSelectServiceFilter(t *testing.T) {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -239,9 +244,10 @@ func TestSelectUserFilter(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-u", "myuser1"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	// myuser1 is found, myuser2 is not found.
 	expectedRet := 0
@@ -249,7 +255,7 @@ func TestSelectUserFilter(t *testing.T) {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -280,9 +286,10 @@ func TestSelectTypeFilter(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "-t", "totp"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	// totp is found, plain is not found.
 	expectedRet := 0
@@ -290,7 +297,7 @@ func TestSelectTypeFilter(t *testing.T) {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP shared secret, password: mypassword\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -322,9 +329,10 @@ func TestSelectImplicitFilter(t *testing.T) {
 	}
 	// Implicit search, also not telling that myservice1 is a service.
 	os.Args = []string{"", "myservice1"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	// myservice1 is found, myservice2 is not found.
 	expectedRet := 0
@@ -332,7 +340,7 @@ func TestSelectImplicitFilter(t *testing.T) {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
@@ -354,20 +362,22 @@ func TestOpenCloseDatabase(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 	os.Remove("qa/passwords.db")
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main(create) = %v, want %v, output is %q", actualRet, expectedRet, buf.String())
+		t.Fatalf("Main(create) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
 	}
 
 	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf = new(bytes.Buffer)
+	inBuf = new(bytes.Buffer)
+	outBuf = new(bytes.Buffer)
 
-	actualRet = Main(buf)
+	actualRet = Main(inBuf, outBuf)
 
 	expectedRet = 0
 	if actualRet != expectedRet {
@@ -375,7 +385,7 @@ func TestOpenCloseDatabase(t *testing.T) {
 	}
 
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}

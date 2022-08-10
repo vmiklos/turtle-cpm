@@ -231,7 +231,7 @@ func (t *PasswordType) Type() string {
 }
 
 // Main is the commandline interface to this package.
-func Main(stream io.Writer) int {
+func Main(input io.Reader, output io.Writer) int {
 	var ctx Context
 	defer cleanDatabase(&ctx)
 
@@ -254,8 +254,9 @@ func Main(stream io.Writer) int {
 		args = append([]string{"search"}, os.Args[1:]...)
 	}
 	cmd.SetArgs(args)
-	cmd.SetOut(stream)
-	cmd.SetErr(stream)
+	cmd.SetIn(input)
+	cmd.SetOut(output)
+	cmd.SetErr(output)
 
 	err := cmd.Execute()
 	if err != nil {

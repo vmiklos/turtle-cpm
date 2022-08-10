@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -48,6 +49,24 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 		Use:   "create",
 		Short: "creates a new password",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			reader := bufio.NewReader(cmd.InOrStdin())
+			if len(machine) == 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "Machine: ")
+				line, err := reader.ReadString('\n')
+				if err != nil {
+					return fmt.Errorf("ReadString() failed: %s", err)
+				}
+				machine = strings.TrimSuffix(line, "\n")
+			}
+			if len(user) == 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "User: ")
+				line, err := reader.ReadString('\n')
+				if err != nil {
+					return fmt.Errorf("ReadString() failed: %s", err)
+				}
+				user = strings.TrimSuffix(line, "\n")
+			}
+
 			generatedPassword, err := createPassword(ctx.Database, machine, service, user, password, passwordType)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)
@@ -59,12 +78,10 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVarP(&machine, "machine", "m", "", "machine (required)")
-	cmd.MarkFlagRequired("machine")
+	cmd.Flags().StringVarP(&machine, "machine", "m", "", "machine (default: ask)")
 	cmd.Flags().StringVarP(&service, "service", "s", "http", "service")
-	cmd.Flags().StringVarP(&user, "user", "u", "", "user (required)")
-	cmd.MarkFlagRequired("user")
-	cmd.Flags().StringVarP(&password, "password", "p", "", "password")
+	cmd.Flags().StringVarP(&user, "user", "u", "", "user (default: ask)")
+	cmd.Flags().StringVarP(&password, "password", "p", "", "password (default: generate)")
 	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
 
 	return cmd

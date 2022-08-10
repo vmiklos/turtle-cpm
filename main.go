@@ -8,5 +8,5 @@ import (
 
 func main() {
 	// notest
-	os.Exit(commands.Main(os.Stdout))
+	os.Exit(commands.Main(os.Stdin, os.Stdout))
 }
