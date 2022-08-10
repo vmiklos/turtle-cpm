@@ -30,7 +30,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
 
-			_, err = query.Exec(generatedPassword, machine, service, user, passwordType)
+			result, err := query.Exec(generatedPassword, machine, service, user, passwordType)
 			if err != nil {
 				return fmt.Errorf("db.Exec() failed: %s", err)
 			}
@@ -38,6 +38,13 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 			if generatedPassword != password {
 				fmt.Fprintf(cmd.OutOrStdout(), "Generated new password: %s\n", generatedPassword)
 			}
+
+			affected, err := result.RowsAffected()
+			if err != nil {
+				return fmt.Errorf("result.RowsAffected() failed: %s", err)
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "Updated %v password\n", affected)
+
 			return nil
 		},
 	}
