@@ -28,9 +28,10 @@ func TestImport(t *testing.T) {
 	expectedPassword := "mypassword"
 	expectedType := "plain"
 	os.Args = []string{"", "import"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {

@@ -8,10 +8,20 @@ most of the time, though.
 You can ask cpm to generate a password for you and remember it using:
 
 ```sh
-cpm create -m mymachine -u myuser
+$ cpm create
+Machine: example.com
+User: myuser
+Generated password: 7U1FvIzubR95Itg
 ```
 
-Or in case you already have non-HTTP service or a preferred password:
+Specifying parameters can be useful if:
+
+- you want to avoid interactive questions
+- you want to specify a non-HTTP service or
+- you have preferred password
+
+Example for such usage:
+
 
 ```sh
 cpm create -m mymachine -s myservice -u myuser -p mypassword
@@ -19,8 +29,8 @@ cpm create -m mymachine -s myservice -u myuser -p mypassword
 
 When the machine is not yours, it can be e.g. the domain of a website.
 
-If you try to insert two passwords for the same machine/service/user combination, you will get an
-error. You can update or delete a password, though (see below).
+If you try to insert two passwords for the same machine/service/user/password type combination, you
+will get an error. You can update or delete a password, though (see below).
 
 ## Reading
 

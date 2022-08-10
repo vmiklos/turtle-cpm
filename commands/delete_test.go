@@ -32,9 +32,10 @@ func TestDelete(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "delete", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {

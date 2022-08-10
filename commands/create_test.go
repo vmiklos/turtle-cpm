@@ -26,17 +26,18 @@ func TestInsert(t *testing.T) {
 	expectedPassword := "mypassword"
 	expectedType := "plain"
 	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword, "-t", "plain"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedBuf := ""
-	if buf.String() != expectedBuf {
-		t.Fatalf("Main() output is %q, want %q", buf.String(), expectedBuf)
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
 	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
@@ -71,17 +72,18 @@ func TestNoServiceInsert(t *testing.T) {
 	expectedPassword := "mypassword"
 	expectedType := "plain"
 	os.Args = []string{"", "create", "-m", expectedMachine, "-u", expectedUser, "-p", expectedPassword}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedBuf := ""
-	if buf.String() != expectedBuf {
-		t.Fatalf("Main() output is %q, want %q", buf.String(), expectedBuf)
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
 	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
@@ -120,17 +122,18 @@ func TestPwgenInsert(t *testing.T) {
 	expectedPassword := "output-from-pwgen"
 	expectedType := "plain"
 	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedBuf := "Generated password: output-from-pwgen\n"
-	if buf.String() != expectedBuf {
-		t.Fatalf("Main() output is %q, want %q", buf.String(), expectedBuf)
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
 	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
@@ -166,10 +169,11 @@ func TestInsertFail(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
 	// First run succeeds.
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
@@ -177,14 +181,14 @@ func TestInsertFail(t *testing.T) {
 	}
 
 	// Second run fails as the machine/service/user already has a password.
-	actualRet = Main(buf)
+	actualRet = Main(inBuf, outBuf)
 
 	expectedRet = 1
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedPrefix := "Error: createPassword() failed: query.Exec() failed: UNIQUE constraint failed\n"
-	actualOutput := buf.String()
+	actualOutput := outBuf.String()
 	if strings.HasPrefix(actualOutput, expectedPrefix) {
 		t.Fatalf("actualOutput = %q, want prefix %q", actualOutput, expectedPrefix)
 	}
@@ -208,12 +212,61 @@ func TestInsertFailBadType(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword, "-t", "mytype"}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 1
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+}
+
+func TestInteractiveInsert(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	expectedType := "plain"
+	os.Args = []string{"", "create", "-s", expectedService, "-p", expectedPassword, "-t", "plain"}
+	inBuf := new(bytes.Buffer)
+	inBuf.Write([]byte(expectedMachine + "\n" + expectedUser + "\n"))
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedBuf := "Machine: User: "
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
+	}
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
+	if err != nil {
+		t.Fatalf("readPasswords() err = %q, want nil", err)
+	}
+	actualLength := len(results)
+	expectedLength := 1
+	if actualLength != expectedLength {
+		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+	}
+	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
+	expectedContains := true
+	if actualContains != expectedContains {
+		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }

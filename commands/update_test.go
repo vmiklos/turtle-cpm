@@ -33,17 +33,18 @@ func TestUpdate(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "update", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedBuf := ""
-	if buf.String() != expectedBuf {
-		t.Fatalf("Main() output is %q, want %q", buf.String(), expectedBuf)
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
 	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
@@ -90,17 +91,18 @@ func TestPwgenUpdate(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	os.Args = []string{"", "update", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	buf := new(bytes.Buffer)
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
 
-	actualRet := Main(buf)
+	actualRet := Main(inBuf, outBuf)
 
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedBuf := "Generated new password: output-from-pwgen\n"
-	if buf.String() != expectedBuf {
-		t.Fatalf("Main() output is %q, want %q", buf.String(), expectedBuf)
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
 	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
 	if err != nil {
