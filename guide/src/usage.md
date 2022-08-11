@@ -87,12 +87,14 @@ machine: twitter.com, service: http, user: myuser, password type: TOTP code, pas
 Update is quite similar to creation. You can generate a new password using:
 
 ```sh
-$ cpm update -m example.com -u myuser
+$ cpm update
+Machine: example.com
+User: myuser
 Generated new password: D95Rx2PlOcPwKbL
 Updated 1 password
 ```
 
-If you want to specify a service, a type or a new password explicitly, you can do that using:
+You can also avoid interactivity and password generation by specifying parameters:
 
 ```sh
 $ cpm update -m mymachine -s myservice -u myuser -t plain -p mynewpassword
