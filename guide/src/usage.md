@@ -7,7 +7,7 @@ most of the time, though.
 
 You can ask cpm to generate a password for you and remember it using:
 
-```sh
+```console
 $ cpm create
 Machine: example.com
 User: myuser
@@ -23,7 +23,7 @@ Specifying parameters can be useful if:
 Example for such usage:
 
 
-```sh
+```console
 $ cpm create -m example.com -s http -u myuser -p 7U1FvIzubR95Itg
 ```
 
@@ -36,7 +36,7 @@ an error. You can update or delete a password, though (see below).
 
 You can search in your passwords by entering a search term. You can do this interactively:
 
-```sh
+```console
 $ cpm
 Search term: example.com
 machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
@@ -49,7 +49,7 @@ Lastly, you can search your passwords by entering specifying search filters:
 - when you have multiple services or users on a machine
 - you want to hide TOTP shared secrets
 
-```sh
+```console
 $ cpm search -m example.com -s http -u myuser -t plain
 machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
@@ -61,14 +61,14 @@ TOTP is one from of Two-Factor Authentication (2FA), currently used by many popu
 [TOTP](https://en.wikipedia.org/wiki/Time-based_one-time_password) purposes, just ask for the TOTP
 shared secret and then add it to cpm using:
 
-```sh
+```console
 $ cpm create -m mymachine -u myuser -p "MY TOTP SHARED SECRET" -t totp
 ```
 
 When searching, it's a good idea to first narrow down your search results to a single hit, e.g.
 first confirm that:
 
-```sh
+```console
 $ cpm twitter
 machine: twitter.com, service: http, user: myuser, password type: plain, password: ...
 machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password: ...
@@ -77,7 +77,7 @@ machine: twitter.com, service: http, user: myuser, password type: TOTP shared se
 just returns your password and your TOTP shared secret, and then you can generate the current TOTP
 code using:
 
-```sh
+```console
 $ cpm --totp twitter
 machine: twitter.com, service: http, user: myuser, password type: TOTP code, password: ...
 ```
@@ -86,7 +86,7 @@ machine: twitter.com, service: http, user: myuser, password type: TOTP code, pas
 
 Update is quite similar to creation. You can generate a new password using:
 
-```sh
+```console
 $ cpm update
 Machine: example.com
 User: myuser
@@ -96,21 +96,21 @@ Updated 1 password
 
 You can also avoid interactivity and password generation by specifying parameters:
 
-```sh
+```console
 $ cpm update -m mymachine -s myservice -u myuser -t plain -p mynewpassword
 Updated 1 password
 ```
 
 Finally if you want to delete a password, you can do so by using:
 
-```sh
+```console
 $ cpm delete -m example.com -u myuser
 Deleted 1 password
 ```
 
 Or if you want to specify the service or type explicitly:
 
-```sh
+```console
 $ cpm delete -m mymachine -s myservice -u myuser -t plain
 Deleted 1 password
 ```
