@@ -2,9 +2,8 @@
 
 ## main
 
-- create: add interactive mode in case `--machine` or `--user` is not specified
+- create, update and delete: add interactive mode in case `--machine` or `--user` is not specified
 - search: add interactive mode when no search terms are specified
-- update: add interactive mode in case `--machine` or `--user` is not specified
 
 ## 5.0
 

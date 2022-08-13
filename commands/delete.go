@@ -1,7 +1,9 @@
 package commands
 
 import (
+	"bufio"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -15,6 +17,24 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 		Use:   "delete",
 		Short: "deletes an existing password",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			reader := bufio.NewReader(cmd.InOrStdin())
+			if len(machine) == 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "Machine: ")
+				line, err := reader.ReadString('\n')
+				if err != nil {
+					return fmt.Errorf("ReadString() failed: %s", err)
+				}
+				machine = strings.TrimSuffix(line, "\n")
+			}
+			if len(user) == 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "User: ")
+				line, err := reader.ReadString('\n')
+				if err != nil {
+					return fmt.Errorf("ReadString() failed: %s", err)
+				}
+				user = strings.TrimSuffix(line, "\n")
+			}
+
 			query, err := ctx.Database.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
@@ -34,11 +54,9 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVarP(&machine, "machine", "m", "", "machine (required)")
-	cmd.MarkFlagRequired("machine")
+	cmd.Flags().StringVarP(&machine, "machine", "m", "", "machine (default: ask)")
 	cmd.Flags().StringVarP(&service, "service", "s", "http", "service")
-	cmd.Flags().StringVarP(&user, "user", "u", "", "user (required)")
-	cmd.MarkFlagRequired("user")
+	cmd.Flags().StringVarP(&user, "user", "u", "", "user (default: ask)")
 	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
 
 	return cmd
