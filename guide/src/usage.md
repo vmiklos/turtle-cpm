@@ -16,15 +16,16 @@ Generated password: 7U1FvIzubR95Itg
 
 Specifying parameters can be useful if:
 
-- you want to avoid interactive questions
-- you want to specify a non-HTTP service or
+- you want to avoid an interactive question for the machine
+- you want to specify a non-HTTP service
+- you want to avoid an interactive question for the user
+- you want to specify a password type
 - you have preferred password
 
 Example for such usage:
 
-
 ```console
-$ cpm create -m example.com -s http -u myuser -p 7U1FvIzubR95Itg
+$ cpm create -m example.com -s http -u myuser -t plain -p 7U1FvIzubR95Itg
 ```
 
 When the machine is not yours, it can be e.g. the domain of a website.
@@ -44,10 +45,7 @@ machine: example.com, service: http, user: myuser, password type: plain, passwor
 
 The search term can also be specified as an argument if non-interactive mode is wanted.
 
-Lastly, you can search your passwords by entering specifying search filters:
-
-- when you have multiple services or users on a machine
-- you want to hide TOTP shared secrets
+Or you can specify paramters to create additional filters for the search:
 
 ```console
 $ cpm search -m example.com -s http -u myuser -t plain
@@ -94,7 +92,7 @@ Generated new password: D95Rx2PlOcPwKbL
 Updated 1 password
 ```
 
-You can also avoid interactivity and password generation by specifying parameters:
+You can also specify parameters for `cpm update`:
 
 ```console
 $ cpm update -m mymachine -s myservice -u myuser -t plain -p mynewpassword
@@ -104,11 +102,13 @@ Updated 1 password
 Finally if you want to delete a password, you can do so by using:
 
 ```console
-$ cpm delete -m example.com -u myuser
+$ cpm delete
+Machine: mymachine
+User: myuser
 Deleted 1 password
 ```
 
-Or if you want to specify the service or type explicitly:
+You can also specify parameters for `cpm delete`:
 
 ```console
 $ cpm delete -m mymachine -s myservice -u myuser -t plain
