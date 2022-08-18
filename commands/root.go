@@ -15,6 +15,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GitCommit is initialized externally during the build. See the Makefile.
+var GitCommit string
+
 // Command returns the Cmd struct to execute the named program
 var Command = exec.Command
 
@@ -36,6 +39,10 @@ func NewRootCommand(ctx *Context) *cobra.Command {
 		Use:   "cpm",
 		Short: "turtle-cpm is a console password manager",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if len(os.Args) >= 2 && os.Args[1] == "version" {
+				return nil
+			}
+
 			err := OpenDatabase(ctx)
 			if err != nil {
 				return fmt.Errorf("OpenDatabase() failed: %s", err)
@@ -58,6 +65,7 @@ func NewRootCommand(ctx *Context) *cobra.Command {
 	cmd.AddCommand(newDeleteCommand(ctx))
 	cmd.AddCommand(newImportCommand(ctx))
 	cmd.AddCommand(newSyncCommand(ctx))
+	cmd.AddCommand(newVersionCommand(ctx))
 
 	return cmd
 }
@@ -74,6 +82,7 @@ func getCommands() []string {
 		"search",
 		"update",
 		"sync",
+		"version",
 	}
 }
 
@@ -160,18 +169,20 @@ func initDatabase(db *sql.DB) error {
 
 // The database is only closed in case of no errors.
 func closeDatabase(ctx *Context) error {
-	err := ctx.Database.Close()
-	if err != nil {
-		return fmt.Errorf("db.Database.Close() failed: %s", err)
-	}
-
 	if ctx.NoWriteBack {
 		return nil
 	}
 
+	if ctx.Database != nil {
+		err := ctx.Database.Close()
+		if err != nil {
+			return fmt.Errorf("db.Database.Close() failed: %s", err)
+		}
+	}
+
 	Remove(ctx.PermanentPath)
 	command := Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", ctx.PermanentPath, ctx.TempFile.Name())
-	err = command.Run()
+	err := command.Run()
 	if err != nil {
 		return fmt.Errorf("Command() failed: %s", err)
 	}

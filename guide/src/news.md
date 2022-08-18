@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- new `version` subcommand that shows the version number
+
 ## 6.0
 
 - create, update and delete: add interactive mode in case `--machine` or `--user` is not specified
