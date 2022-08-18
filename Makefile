@@ -13,13 +13,18 @@ GO_OBJECTS = \
 	commands/sync_test.go \
 	commands/update.go \
 	commands/update_test.go \
+	commands/version.go \
+	commands/version_test.go \
 	main.go \
 	man/generate.go \
+
+COMMANDS_PATH = vmiklos.hu/go/cpm/commands
+LDFLAGS = -X ${COMMANDS_PATH}.GitCommit=$(shell git describe)
 
 build: turtle-cpm
 
 turtle-cpm: Makefile ${GO_OBJECTS}
-	go build .
+	go build -ldflags "$(LDFLAGS)" .
 
 check: build check-format check-lint check-unit
 	@echo "make check: ok"
@@ -32,7 +37,7 @@ check-format:
 
 # Without coverage: 'go test ./...'.
 check-unit:
-	go build ./...
+	go build -ldflags "$(LDFLAGS)" ./...
 	courtney -e ./...
 
 generate-man:
