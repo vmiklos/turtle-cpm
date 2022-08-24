@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 7.0
 
 - new `version` subcommand that shows the version number
 
