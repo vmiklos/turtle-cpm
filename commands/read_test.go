@@ -436,3 +436,26 @@ func TestOpenCloseDatabase(t *testing.T) {
 	}
 	os.Remove("qa/passwords.db")
 }
+
+func TestParsePassword(t *testing.T) {
+	s := "otpauth://totp/Myserver:myuser?secret=mysecret&digits=6&algorithm=SHA1&issuer=Myserver&period=30"
+	expected := "mysecret"
+
+	actual, err := parsePassword(s)
+	if err != nil {
+		t.Fatalf("err = %q, want nil", err)
+	}
+
+	if actual != expected {
+		t.Fatalf("actual = %q, want %q", actual, expected)
+	}
+}
+
+func TestParsePasswordBadURL(t *testing.T) {
+	s := "otpauth://totp/Myserver:myuser?digits=6&algorithm=SHA1&issuer=Myserver&period=30"
+
+	_, err := parsePassword(s)
+	if err == nil {
+		t.Fatalf("err = nil, want !nil")
+	}
+}
