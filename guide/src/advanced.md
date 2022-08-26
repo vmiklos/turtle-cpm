@@ -93,4 +93,12 @@ otpauth://totp/Myserver:myuser?secret=...&digits=6&algorithm=SHA1&issuer=Myserve
 Where Myserver is some server-side app name and myuser is your user name.
 
 The benefit of storing the full URL in the `cpm` database is that later you can re-share them as QR
-codes, e.g. with `2fa-qr`.
+codes using e.g.:
+
+```console
+$ cpm -t totp --qrcode twitter
+machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password:
+...
+```
+
+The following lines will be a QR code you can scan with a mobile app.

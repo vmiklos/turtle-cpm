@@ -37,7 +37,7 @@ func TestImport(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, "", "", "", "", false, false, []string{})
+	results, err := readPasswords(db, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}

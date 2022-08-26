@@ -2,8 +2,11 @@ package commands
 
 import (
 	"bytes"
+	"io"
 	"os"
 	"testing"
+
+	"rsc.io/qr"
 )
 
 func TestSelect(t *testing.T) {
@@ -129,6 +132,56 @@ func TestSelectTotpCode(t *testing.T) {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP code, password: output-from-oathtool\n"
+	actualOutput := outBuf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
+
+func GenerateQrCodeForTesting(text string, l qr.Level, w io.Writer) {
+	w.Write([]byte("qrcode-output"))
+}
+
+func TestQrcodeSelect(t *testing.T) {
+	db, err := CreateDatabaseForTesting()
+	defer db.Close()
+	if err != nil {
+		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
+	}
+	OldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	defer func() { OpenDatabase = OldOpenDatabase }()
+	OldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	defer func() { CloseDatabase = OldCloseDatabase }()
+	OldGenerateQrCode := GenerateQrCode
+	GenerateQrCode = GenerateQrCodeForTesting
+	defer func() { GenerateQrCode = OldGenerateQrCode }()
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	var expectedType PasswordType = "totp"
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "--qrcode"}
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP shared secret, password:\n"
+	expectedOutput += "qrcode-output\n"
 	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
