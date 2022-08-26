@@ -2,11 +2,13 @@ package commands
 
 import (
 	"bufio"
+	"bytes"
 	"database/sql"
 	"fmt"
 	"net/url"
 	"strings"
 
+	"github.com/mdp/qrterminal/v3"
 	"github.com/spf13/cobra"
 )
 
@@ -35,10 +37,24 @@ func parsePassword(s string) (string, error) {
 	return secrets[0], nil
 }
 
-func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser string, wantedType PasswordType, totp, quiet bool, args []string) ([]string, error) {
+type searchOptions struct {
+	wantedMachine string
+	wantedService string
+	wantedUser    string
+	wantedType    PasswordType
+	totp          bool
+	quiet         bool
+	qrcode        bool
+	args          []string
+}
+
+// GenerateQrCode creates a QR Code and writes it out to io.Writer.
+var GenerateQrCode = qrterminal.Generate
+
+func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 	var results []string
-	if totp {
-		wantedType = "totp"
+	if opts.totp {
+		opts.wantedType = "totp"
 	}
 	rows, err := db.Query("select machine, service, user, password, type from passwords")
 	if err != nil {
@@ -57,34 +73,34 @@ func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser string, 
 			return nil, fmt.Errorf("rows.Scan() failed: %s", err)
 		}
 
-		if len(wantedMachine) > 0 && machine != wantedMachine {
+		if len(opts.wantedMachine) > 0 && machine != opts.wantedMachine {
 			continue
 		}
 
-		if len(wantedService) > 0 && service != wantedService {
+		if len(opts.wantedService) > 0 && service != opts.wantedService {
 			continue
 		}
 
-		if len(wantedUser) > 0 && user != wantedUser {
+		if len(opts.wantedUser) > 0 && user != opts.wantedUser {
 			continue
 		}
 
-		if len(wantedType) > 0 && passwordType != wantedType {
+		if len(opts.wantedType) > 0 && passwordType != opts.wantedType {
 			continue
 		}
 
-		if len(args) > 0 {
+		if len(opts.args) > 0 {
 			// Allow simply matching a sub-string: e.g. search for a service type or a part
 			// of a machine without explicitly telling if the query is a service or a
 			// machine.
 			s := fmt.Sprintf("%s %s %s %s", machine, service, user, passwordType)
-			if !strings.Contains(s, args[0]) {
+			if !strings.Contains(s, opts.args[0]) {
 				continue
 			}
 		}
 
 		if passwordType == "totp" {
-			if totp {
+			if opts.totp {
 				// This is a TOTP password and the current value is required: invoke
 				// oathtool to generate it.
 				passwordType = "TOTP code"
@@ -104,10 +120,17 @@ func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser string, 
 		}
 
 		var result string
-		if quiet {
+		if opts.quiet {
 			result = password
 		} else {
-			result = fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", machine, service, user, passwordType, password)
+			result = fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password:", machine, service, user, passwordType)
+			if opts.qrcode {
+				qrcode := new(bytes.Buffer)
+				GenerateQrCode(password, qrterminal.L, qrcode)
+				result += fmt.Sprintf("\n%s", qrcode)
+			} else {
+				result += fmt.Sprintf(" %s", password)
+			}
 		}
 		results = append(results, result)
 	}
@@ -123,6 +146,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	var typeFlag PasswordType
 	var totpFlag bool
 	var quietFlag bool
+	var qrcodeFlag bool
 	var cmd = &cobra.Command{
 		Use:   "search",
 		Short: "searches passwords",
@@ -138,7 +162,16 @@ func newReadCommand(ctx *Context) *cobra.Command {
 				args = append(args, strings.TrimSuffix(term, "\n"))
 			}
 
-			results, err := readPasswords(ctx.Database, machineFlag, serviceFlag, userFlag, typeFlag, totpFlag, quietFlag, args)
+			opts := searchOptions{}
+			opts.wantedMachine = machineFlag
+			opts.wantedService = serviceFlag
+			opts.wantedUser = userFlag
+			opts.wantedType = typeFlag
+			opts.totp = totpFlag
+			opts.quiet = quietFlag
+			opts.qrcode = qrcodeFlag
+			opts.args = args
+			results, err := readPasswords(ctx.Database, opts)
 			if err != nil {
 				return fmt.Errorf("readPasswords() failed: %s", err)
 			}
@@ -157,6 +190,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().VarP(&typeFlag, "type", "t", `password type ("plain" or "totp", default: "")`)
 	cmd.Flags().BoolVarP(&totpFlag, "totp", "T", false, `show the current TOTP code, not the TOTP shared secret (default: false, implies "--type totp")`)
 	cmd.Flags().BoolVarP(&quietFlag, "quiet", "q", false, "quite mode: only print the password itself (default: false)")
+	cmd.Flags().BoolVarP(&qrcodeFlag, "qrcode", "Q", false, "qrcode mode: print the TOTP shared secret as a QR code (default: false)")
 
 	return cmd
 }
