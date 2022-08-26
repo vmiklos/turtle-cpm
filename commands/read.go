@@ -4,10 +4,36 @@ import (
 	"bufio"
 	"database/sql"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
+
+// parsePassword parses a TOTP shared secret out of an otpauth:// URL, or just returns the input
+// as-is.
+func parsePassword(s string) (string, error) {
+	if !strings.HasPrefix(s, "otpauth://") {
+		return s, nil
+	}
+
+	u, err := url.Parse(s)
+	if err != nil {
+		return "", fmt.Errorf("url.Parse() failed: %s", err)
+	}
+
+	keyValues, err := url.ParseQuery(u.RawQuery)
+	if err != nil {
+		return "", fmt.Errorf("url.ParseQuery() failed: %s", err)
+	}
+
+	if !keyValues.Has("secret") {
+		return "", fmt.Errorf("no 'secret' key in URL")
+	}
+
+	secrets := keyValues["secret"]
+	return secrets[0], nil
+}
 
 func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser string, wantedType PasswordType, totp, quiet bool, args []string) ([]string, error) {
 	var results []string
@@ -62,7 +88,12 @@ func readPasswords(db *sql.DB, wantedMachine, wantedService, wantedUser string, 
 				// This is a TOTP password and the current value is required: invoke
 				// oathtool to generate it.
 				passwordType = "TOTP code"
-				output, err := Command("oathtool", "-b", "--totp", password).Output()
+				sharedSecret, err := parsePassword(password)
+				if err != nil {
+					return nil, fmt.Errorf("parsePassword() failed: %s", err)
+				}
+
+				output, err := Command("oathtool", "-b", "--totp", sharedSecret).Output()
 				if err != nil {
 					return nil, fmt.Errorf("exec.Command(oathtool) failed: %s", err)
 				}

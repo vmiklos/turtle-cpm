@@ -79,3 +79,18 @@ cpm create -h
 ```
 
 An alternative to this is the manual pages under `man/`, which provide the same information.
+
+## Re-sharing TOTP shared secrets
+
+TOTP shared secrets are typically transfered as QR codes, though there is usually a fallback option
+to get the shared secret string itself, which is what `cpm` can manage. However, the QR code also
+contains other information about the shared secret, and there are tools like
+[2fa-qr](https://stefansundin.github.io/2fa-qr/) that allow obtaining the full `otpauth://` URL from the
+QR code image. `cpm` supports storing these full URLs as well, they look something like this:
+
+otpauth://totp/Myserver:myuser?secret=...&digits=6&algorithm=SHA1&issuer=Myserver&period=30
+
+Where Myserver is some server-side app name and myuser is your user name.
+
+The benefit of storing the full URL in the `cpm` database is that later you can re-share them as QR
+codes, e.g. with `2fa-qr`.

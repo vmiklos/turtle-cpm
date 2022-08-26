@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- when specifying TOTP shared secrets, it is now supported to specify `otpauth://` URLs
+
 ## 7.0
 
 - new `version` subcommand that shows the version number
