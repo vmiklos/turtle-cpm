@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 7.1
 
 - when specifying TOTP shared secrets, it is now supported to specify `otpauth://` URLs
 - new `cpm --qrcode` option to show the TOTP shared secret as a qr code
