@@ -462,7 +462,7 @@ func TestOpenCloseDatabase(t *testing.T) {
 	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
-	os.Remove("qa/passwords.db")
+	os.Remove("fixtures/passwords.db")
 
 	actualRet := Main(inBuf, outBuf)
 
@@ -487,7 +487,7 @@ func TestOpenCloseDatabase(t *testing.T) {
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
-	os.Remove("qa/passwords.db")
+	os.Remove("fixtures/passwords.db")
 }
 
 func TestParsePassword(t *testing.T) {

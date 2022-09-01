@@ -46,9 +46,9 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 			encryptedPath := arg[4]
 			var encryptedQaPath string
 			if strings.HasSuffix(encryptedPath, ".cpmdb") {
-				encryptedQaPath = "qa/cpmdb.xml"
+				encryptedQaPath = "fixtures/cpmdb.xml"
 			} else if strings.HasSuffix(encryptedPath, "passwords.db") {
-				encryptedQaPath = "qa/passwords.db"
+				encryptedQaPath = "fixtures/passwords.db"
 			} else {
 				t.Fatalf("unexpected encryted path: %s", encryptedPath)
 			}
@@ -62,7 +62,7 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 			decryptedPath := arg[6]
 			var encryptedQaPath string
 			if strings.HasSuffix(encryptedPath, "passwords.db") {
-				encryptedQaPath = "qa/passwords.db"
+				encryptedQaPath = "fixtures/passwords.db"
 			} else {
 				t.Fatalf("unexpected encryted path: %s", encryptedPath)
 			}
@@ -84,7 +84,7 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 		} else if name == "pwgen" {
 			return exec.Command("echo", "output-from-pwgen")
 		} else if name == "scp" && len(arg) == 2 && strings.HasPrefix(arg[0], "cpm:") && strings.HasSuffix(arg[0], "passwords.db") && strings.HasSuffix(arg[1], "passwords.db") {
-			err := CopyPath("qa/remote.db", "qa/passwords.db")
+			err := CopyPath("fixtures/remote.db", "fixtures/passwords.db")
 			if err != nil {
 				t.Fatalf("CopyPath() failed: %s", err)
 			}
@@ -97,7 +97,7 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 
 func RemoveForTesting(name string) error {
 	if strings.HasSuffix(name, "passwords.db") {
-		return os.Remove("qa/passwords.db")
+		return os.Remove("fixtures/passwords.db")
 	}
 
 	return os.Remove(name)
@@ -105,7 +105,7 @@ func RemoveForTesting(name string) error {
 
 func StatForTesting(name string) (os.FileInfo, error) {
 	if strings.HasSuffix(name, "passwords.db") {
-		return os.Stat("qa/passwords.db")
+		return os.Stat("fixtures/passwords.db")
 	}
 
 	return os.Stat(name)

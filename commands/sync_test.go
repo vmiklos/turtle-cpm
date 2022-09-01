@@ -21,13 +21,13 @@ func TestSync(t *testing.T) {
 	os.Args = []string{"", "create", "-m", expectedMachine, "-u", expectedUser}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
-	os.Remove("qa/passwords.db")
+	os.Remove("fixtures/passwords.db")
 	actualRet := Main(inBuf, outBuf)
 	expectedRet := 0
 	if actualRet != expectedRet {
 		t.Fatalf("Main(create) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
 	}
-	os.Rename("qa/passwords.db", "qa/remote.db")
+	os.Rename("fixtures/passwords.db", "fixtures/remote.db")
 	os.Args = []string{"", "sync"}
 	outBuf = new(bytes.Buffer)
 
@@ -49,6 +49,6 @@ func TestSync(t *testing.T) {
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
 	}
-	os.Remove("qa/remote.db")
-	os.Remove("qa/passwords.db")
+	os.Remove("fixtures/remote.db")
+	os.Remove("fixtures/passwords.db")
 }
