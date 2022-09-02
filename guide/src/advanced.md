@@ -49,7 +49,7 @@ cpm import
 ## Inspecting the encrypted database manually
 
 In case you want to inspect the SQLite database of `cpm` manually, you need to decrypt it yourself,
-using:
+using (assuming an empty `XDG_STATE_HOME` environment variable):
 
 ```sh
 gpg --decrypt -a -o decrypted.db ~/.local/state/cpm/passwords.db

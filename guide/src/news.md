@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- in case the `XDG_STATE_HOME` environment variable is set to a custom value, it is now respected
+
 ## 7.1
 
 - when specifying TOTP shared secrets, it is now supported to specify `otpauth://` URLs

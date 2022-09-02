@@ -140,3 +140,20 @@ func CopyPath(inPath, outPath string) error {
 
 	return nil
 }
+
+// TestGetDatabasePath checks if getDatabasePath() handles a custom XDG_STATE_HOME value.
+func TestGetDatabasePath(t *testing.T) {
+	oldEnv := os.Getenv(xdgStateHome)
+	os.Setenv(xdgStateHome, "/tmp")
+	defer func() { os.Setenv(xdgStateHome, oldEnv) }()
+
+	actual, err := getDatabasePath()
+	if err != nil {
+		t.Fatalf("getDatabasePath() err = %q, want nil", err)
+	}
+
+	expected := "/tmp/cpm/passwords.db"
+	if actual != expected {
+		t.Fatalf("getDatabasePath() = %q, want %q", actual, expected)
+	}
+}
