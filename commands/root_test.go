@@ -141,6 +141,12 @@ func CopyPath(inPath, outPath string) error {
 	return nil
 }
 
+func UseDatabaseForTesting(t *testing.T, db *sql.DB) {
+	oldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	t.Cleanup(func() { OpenDatabase = oldOpenDatabase })
+}
+
 // TestGetDatabasePath checks if getDatabasePath() handles a custom XDG_STATE_HOME value.
 func TestGetDatabasePath(t *testing.T) {
 	oldEnv := os.Getenv(xdgStateHome)

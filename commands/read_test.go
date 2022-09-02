@@ -15,9 +15,7 @@ func TestSelect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -57,9 +55,7 @@ func TestQuietSelect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -99,9 +95,7 @@ func TestSelectTotpCode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -148,9 +142,7 @@ func TestQrcodeSelect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -194,9 +186,7 @@ func TestSelectMachineFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -236,9 +226,7 @@ func TestSelectServiceFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -278,9 +266,7 @@ func TestSelectUserFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -320,9 +306,7 @@ func TestSelectTypeFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -362,9 +346,7 @@ func TestSelectImplicitFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -405,9 +387,7 @@ func TestSelectInteractive(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
