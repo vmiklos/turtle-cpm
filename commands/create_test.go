@@ -14,9 +14,7 @@ func TestInsert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -61,9 +59,7 @@ func TestNoServiceInsert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -107,9 +103,7 @@ func TestPwgenInsert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -158,9 +152,7 @@ func TestInsertFail(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -201,9 +193,7 @@ func TestInsertFailBadType(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
@@ -229,9 +219,7 @@ func TestInteractiveInsert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
-	OldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	defer func() { OpenDatabase = OldOpenDatabase }()
+	UseDatabaseForTesting(t, db)
 	OldCloseDatabase := CloseDatabase
 	CloseDatabase = CloseDatabaseForTesting
 	defer func() { CloseDatabase = OldCloseDatabase }()
