@@ -9,10 +9,15 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"path/filepath"
 
 	// register sqlite driver
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/cobra"
+)
+
+const (
+	xdgStateHome = "XDG_STATE_HOME"
 )
 
 // GitCommit is initialized externally during the build. See the Makefile.
@@ -100,15 +105,20 @@ func pathExists(path string) bool {
 }
 
 func getDatabasePath() (string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return "", fmt.Errorf("user.Current() failed: %s", err)
+	var databaseDir string
+	if a := os.Getenv(xdgStateHome); a != "" {
+		databaseDir = filepath.Join(a, "cpm")
+	} else {
+		usr, err := user.Current()
+		if err != nil {
+			return "", fmt.Errorf("user.Current() failed: %s", err)
+		}
+		databaseDir = filepath.Join(usr.HomeDir, ".local", "state", "cpm")
 	}
 
-	databaseDir := usr.HomeDir + "/.local/state/cpm"
 	databasePath := databaseDir + "/passwords.db"
 	if !pathExists(databasePath) {
-		err = os.MkdirAll(databaseDir, os.ModePerm)
+		err := os.MkdirAll(databaseDir, os.ModePerm)
 		if err != nil {
 			return "", fmt.Errorf("os.MkdirAll() failed: %s", err)
 		}
