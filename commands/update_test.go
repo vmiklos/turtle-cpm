@@ -63,10 +63,8 @@ func TestPwgenUpdate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
+	UseCommandForTesting(t)
 	UseDatabaseForTesting(t, db)
-	OldCommand := Command
-	Command = CommandForTesting(t)
-	defer func() { Command = OldCommand }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"

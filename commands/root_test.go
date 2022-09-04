@@ -150,6 +150,12 @@ func UseDatabaseForTesting(t *testing.T, db *sql.DB) {
 	t.Cleanup(func() { CloseDatabase = oldCloseDatabase })
 }
 
+func UseCommandForTesting(t *testing.T) {
+	oldCommand := Command
+	Command = CommandForTesting(t)
+	t.Cleanup(func() { Command = oldCommand })
+}
+
 // TestGetDatabasePath checks if getDatabasePath() handles a custom XDG_STATE_HOME value.
 func TestGetDatabasePath(t *testing.T) {
 	oldEnv := os.Getenv(xdgStateHome)
