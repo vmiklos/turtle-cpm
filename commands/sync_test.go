@@ -7,9 +7,7 @@ import (
 )
 
 func TestSync(t *testing.T) {
-	OldCommand := Command
-	Command = CommandForTesting(t)
-	defer func() { Command = OldCommand }()
+	UseCommandForTesting(t)
 	OldRemove := Remove
 	Remove = RemoveForTesting
 	defer func() { Remove = OldRemove }()
