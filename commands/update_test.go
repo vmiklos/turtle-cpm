@@ -8,18 +8,14 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "plain"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -58,11 +54,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestPwgenUpdate(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseCommandForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
@@ -70,7 +62,7 @@ func TestPwgenUpdate(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "output-from-pwgen"
 	var expectedType PasswordType = "plain"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -109,18 +101,14 @@ func TestPwgenUpdate(t *testing.T) {
 }
 
 func TestInteractiveUpdate(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "plain"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}

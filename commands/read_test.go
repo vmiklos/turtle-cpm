@@ -10,18 +10,14 @@ import (
 )
 
 func TestSelect(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -47,18 +43,14 @@ func TestSelect(t *testing.T) {
 }
 
 func TestQuietSelect(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -84,11 +76,7 @@ func TestQuietSelect(t *testing.T) {
 }
 
 func TestSelectTotpCode(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseCommandForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
@@ -96,7 +84,7 @@ func TestSelectTotpCode(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "totppassword"
 	var expectedType PasswordType = "totp"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -126,11 +114,7 @@ func GenerateQrCodeForTesting(text string, l qr.Level, w io.Writer) {
 }
 
 func TestQrcodeSelect(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	OldGenerateQrCode := GenerateQrCode
 	GenerateQrCode = GenerateQrCodeForTesting
@@ -140,7 +124,7 @@ func TestQrcodeSelect(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "totp"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -167,13 +151,9 @@ func TestQrcodeSelect(t *testing.T) {
 }
 
 func TestSelectMachineFilter(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -204,13 +184,9 @@ func TestSelectMachineFilter(t *testing.T) {
 }
 
 func TestSelectServiceFilter(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -241,13 +217,9 @@ func TestSelectServiceFilter(t *testing.T) {
 }
 
 func TestSelectUserFilter(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -278,13 +250,9 @@ func TestSelectUserFilter(t *testing.T) {
 }
 
 func TestSelectTypeFilter(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -315,13 +283,9 @@ func TestSelectTypeFilter(t *testing.T) {
 }
 
 func TestSelectImplicitFilter(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -353,13 +317,9 @@ func TestSelectImplicitFilter(t *testing.T) {
 }
 
 func TestSelectInteractive(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}

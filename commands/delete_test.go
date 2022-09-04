@@ -7,18 +7,14 @@ import (
 )
 
 func TestDelete(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
@@ -48,18 +44,14 @@ func TestDelete(t *testing.T) {
 }
 
 func TestInteractiveDelete(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err = initDatabase(db)
+	err := initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}

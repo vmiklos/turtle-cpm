@@ -9,11 +9,7 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -51,11 +47,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestNoServiceInsert(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedUser := "myuser"
@@ -92,11 +84,7 @@ func TestNoServiceInsert(t *testing.T) {
 }
 
 func TestPwgenInsert(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseCommandForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
@@ -136,11 +124,7 @@ func TestPwgenInsert(t *testing.T) {
 
 // Insert fails because the password is already inserted.
 func TestInsertFail(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -174,11 +158,7 @@ func TestInsertFail(t *testing.T) {
 
 // Insert fails because -t mytype is not a valid type.
 func TestInsertFailBadType(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
@@ -197,11 +177,7 @@ func TestInsertFailBadType(t *testing.T) {
 }
 
 func TestInteractiveInsert(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
