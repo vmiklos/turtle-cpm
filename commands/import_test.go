@@ -8,11 +8,7 @@ import (
 )
 
 func TestImport(t *testing.T) {
-	db, err := CreateDatabaseForTesting()
-	defer db.Close()
-	if err != nil {
-		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
-	}
+	db := CreateDatabaseForTesting(t)
 	UseCommandForTesting(t)
 	UseDatabaseForTesting(t, db)
 	expectedMachine := "mymachine"

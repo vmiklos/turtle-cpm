@@ -11,13 +11,14 @@ import (
 )
 
 // CreateDatabaseForTesting creates an in-memory database.
-func CreateDatabaseForTesting() (*sql.DB, error) {
+func CreateDatabaseForTesting(t *testing.T) *sql.DB {
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
-		return nil, fmt.Errorf("sql.Open() failed: %s", err)
+		t.Fatalf("sql.Open() failed: %s", err)
 	}
 
-	return db, nil
+	t.Cleanup(func() { db.Close() })
+	return db
 }
 
 // OpenDatabaseForTesting implements OpenDatabase and takes an already opened sql.DB.
