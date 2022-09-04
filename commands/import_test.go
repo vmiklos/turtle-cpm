@@ -14,9 +14,6 @@ func TestImport(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	OldCommand := Command
 	Command = CommandForTesting(t)
 	defer func() { Command = OldCommand }()

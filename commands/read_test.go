@@ -16,9 +16,6 @@ func TestSelect(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -56,9 +53,6 @@ func TestQuietSelect(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -96,9 +90,6 @@ func TestSelectTotpCode(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	OldCommand := Command
 	Command = CommandForTesting(t)
 	defer func() { Command = OldCommand }()
@@ -143,9 +134,6 @@ func TestQrcodeSelect(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	OldGenerateQrCode := GenerateQrCode
 	GenerateQrCode = GenerateQrCodeForTesting
 	defer func() { GenerateQrCode = OldGenerateQrCode }()
@@ -187,9 +175,6 @@ func TestSelectMachineFilter(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -227,9 +212,6 @@ func TestSelectServiceFilter(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -267,9 +249,6 @@ func TestSelectUserFilter(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -307,9 +286,6 @@ func TestSelectTypeFilter(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -347,9 +323,6 @@ func TestSelectImplicitFilter(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -388,9 +361,6 @@ func TestSelectInteractive(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	err = initDatabase(db)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)

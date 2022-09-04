@@ -15,9 +15,6 @@ func TestInsert(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -60,9 +57,6 @@ func TestNoServiceInsert(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
@@ -104,9 +98,6 @@ func TestPwgenInsert(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	OldCommand := Command
 	Command = CommandForTesting(t)
 	defer func() { Command = OldCommand }()
@@ -153,9 +144,6 @@ func TestInsertFail(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -194,9 +182,6 @@ func TestInsertFailBadType(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -220,9 +205,6 @@ func TestInteractiveInsert(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"

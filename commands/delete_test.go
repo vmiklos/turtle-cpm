@@ -13,9 +13,6 @@ func TestDelete(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -57,9 +54,6 @@ func TestInteractiveDelete(t *testing.T) {
 		t.Fatalf("CreateDatabaseForTesting() err = %q, want nil", err)
 	}
 	UseDatabaseForTesting(t, db)
-	OldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	defer func() { CloseDatabase = OldCloseDatabase }()
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
