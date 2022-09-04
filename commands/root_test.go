@@ -145,6 +145,9 @@ func UseDatabaseForTesting(t *testing.T, db *sql.DB) {
 	oldOpenDatabase := OpenDatabase
 	OpenDatabase = OpenDatabaseForTesting(db)
 	t.Cleanup(func() { OpenDatabase = oldOpenDatabase })
+	oldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	t.Cleanup(func() { CloseDatabase = oldCloseDatabase })
 }
 
 // TestGetDatabasePath checks if getDatabasePath() handles a custom XDG_STATE_HOME value.
