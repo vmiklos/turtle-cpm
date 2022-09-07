@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 7.2
 
 - in case the `XDG_STATE_HOME` environment variable is set to a custom value, it is now respected
 
