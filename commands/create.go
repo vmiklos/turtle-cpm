@@ -2,7 +2,6 @@ package commands
 
 import (
 	"bufio"
-	"database/sql"
 	"fmt"
 	"strings"
 
@@ -18,7 +17,7 @@ func generatePassword() (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-func createPassword(db *sql.DB, machine, service, user, password string, passwordType PasswordType) (string, error) {
+func createPassword(context *Context, machine, service, user, password string, passwordType PasswordType) (string, error) {
 	if len(password) == 0 {
 		var err error
 		password, err = generatePassword()
@@ -27,7 +26,7 @@ func createPassword(db *sql.DB, machine, service, user, password string, passwor
 		}
 	}
 
-	query, err := db.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
+	query, err := context.Database.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
 	if err != nil {
 		return "", fmt.Errorf("db.Prepare() failed: %s", err)
 	}
@@ -67,7 +66,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 				user = strings.TrimSuffix(line, "\n")
 			}
 
-			generatedPassword, err := createPassword(ctx.Database, machine, service, user, password, passwordType)
+			generatedPassword, err := createPassword(ctx, machine, service, user, password, passwordType)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)
 			}

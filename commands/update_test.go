@@ -19,7 +19,8 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	context := Context{Database: db}
+	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -66,7 +67,8 @@ func TestPwgenUpdate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	context := Context{Database: db}
+	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -112,7 +114,8 @@ func TestInteractiveUpdate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	context := Context{Database: db}
+	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
