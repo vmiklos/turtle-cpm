@@ -14,6 +14,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	var user string
 	var password string
 	var passwordType PasswordType = "plain"
+	var dryRun bool
 	var cmd = &cobra.Command{
 		Use:   "update",
 		Short: "updates an existing password",
@@ -45,7 +46,8 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				}
 			}
 
-			query, err := ctx.Database.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
+			transaction, err := ctx.Database.Begin()
+			query, err := transaction.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
@@ -63,7 +65,14 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("result.RowsAffected() failed: %s", err)
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), "Updated %v password\n", affected)
+			if dryRun {
+				transaction.Rollback()
+				fmt.Fprintf(cmd.OutOrStdout(), "Would update %v password\n", affected)
+				ctx.NoWriteBack = true
+			} else {
+				transaction.Commit()
+				fmt.Fprintf(cmd.OutOrStdout(), "Updated %v password\n", affected)
+			}
 
 			return nil
 		},
@@ -73,6 +82,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (default: ask)")
 	cmd.Flags().StringVarP(&password, "password", "p", "", "new password")
 	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
+	cmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, `do everything except actually perform the database action (default: false)`)
 
 	return cmd
 }

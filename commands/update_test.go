@@ -150,3 +150,50 @@ func TestInteractiveUpdate(t *testing.T) {
 		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }
+
+func TestDryRunUpdate(t *testing.T) {
+	db := CreateDatabaseForTesting(t)
+	UseDatabaseForTesting(t, db)
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	var expectedType PasswordType = "plain"
+	err := initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+	context := Context{Database: db}
+	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "update", "-n", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", "newpassword"}
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedBuf := "Would update 1 password\n"
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
+	}
+	results, err := readPasswords(db, searchOptions{})
+	if err != nil {
+		t.Fatalf("readPasswords() err = %q, want nil", err)
+	}
+	actualLength := len(results)
+	expectedLength := 1
+	if actualLength != expectedLength {
+		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+	}
+	// dry run, so not newpassword
+	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, "oldpassword"))
+	expectedContains := true
+	if actualContains != expectedContains {
+		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
+	}
+}
