@@ -97,6 +97,7 @@ type Context struct {
 	PermanentPath string
 	Database      *sql.DB
 	NoWriteBack   bool
+	DryRun        bool
 }
 
 func pathExists(path string) bool {
