@@ -18,7 +18,8 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	context := Context{Database: db}
+	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -55,7 +56,8 @@ func TestInteractiveDelete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	_, err = createPassword(db, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	context := Context{Database: db}
+	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
