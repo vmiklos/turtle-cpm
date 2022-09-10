@@ -1,5 +1,10 @@
 # Changelog
 
+## main
+
+- create: new `-n` switch, introducing a dry run mode to see what style of password would be
+  generated
+
 ## 7.2
 
 - in case the `XDG_STATE_HOME` environment variable is set to a custom value, it is now respected

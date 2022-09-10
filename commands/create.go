@@ -31,6 +31,10 @@ func createPassword(context *Context, machine, service, user, password string, p
 		return "", fmt.Errorf("db.Prepare() failed: %s", err)
 	}
 
+	if context.DryRun {
+		return password, nil
+	}
+
 	_, err = query.Exec(machine, service, user, password, passwordType)
 	if err != nil {
 		return "", fmt.Errorf("query.Exec() failed: %s", err)
@@ -44,6 +48,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 	var user string
 	var password string
 	var passwordType PasswordType = "plain"
+	var dryRun bool
 	var cmd = &cobra.Command{
 		Use:   "create",
 		Short: "creates a new password",
@@ -66,6 +71,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 				user = strings.TrimSuffix(line, "\n")
 			}
 
+			ctx.DryRun = dryRun
 			generatedPassword, err := createPassword(ctx, machine, service, user, password, passwordType)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)
@@ -82,6 +88,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (default: ask)")
 	cmd.Flags().StringVarP(&password, "password", "p", "", "password (default: generate)")
 	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
+	cmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, `do everything except actually perform the database action (default: false)`)
 
 	return cmd
 }
