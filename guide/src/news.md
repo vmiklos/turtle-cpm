@@ -4,8 +4,8 @@
 
 - create: new `-n` switch, introducing a dry run mode to see what style of password would be
   generated
-- update: new `-n` switch, showing how many passwords would be updated (typically 0 or 1), without
-  writing the database
+- update and delete: new `-n` switch, showing how many passwords would be updated/deleted (typically
+  0 or 1), without writing the database
 
 ## 7.2
 

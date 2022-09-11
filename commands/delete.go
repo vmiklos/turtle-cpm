@@ -13,6 +13,7 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 	var service string
 	var user string
 	var passwordType PasswordType = "plain"
+	var dryRun bool
 	var cmd = &cobra.Command{
 		Use:   "delete",
 		Short: "deletes an existing password",
@@ -35,7 +36,13 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 				user = strings.TrimSuffix(line, "\n")
 			}
 
-			query, err := ctx.Database.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
+			transaction, err := ctx.Database.Begin()
+			if err != nil {
+				return fmt.Errorf("db.Begin() failed: %s", err)
+			}
+
+			defer transaction.Rollback()
+			query, err := transaction.Prepare("delete from passwords where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
 			}
@@ -49,7 +56,13 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("result.RowsAffected() failed: %s", err)
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), "Deleted %v password\n", affected)
+			if dryRun {
+				fmt.Fprintf(cmd.OutOrStdout(), "Would delete %v password\n", affected)
+				ctx.NoWriteBack = true
+			} else {
+				transaction.Commit()
+				fmt.Fprintf(cmd.OutOrStdout(), "Deleted %v password\n", affected)
+			}
 
 			return nil
 		},
@@ -58,6 +71,7 @@ func newDeleteCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&service, "service", "s", "http", "service")
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (default: ask)")
 	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
+	cmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, `do everything except actually perform the database action (default: false)`)
 
 	return cmd
 }
