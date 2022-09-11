@@ -31,6 +31,7 @@ func createPassword(context *Context, machine, service, user, password string, p
 		return "", fmt.Errorf("db.Begin() failed: %s", err)
 	}
 
+	defer transaction.Rollback()
 	query, err := transaction.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
 	if err != nil {
 		return "", fmt.Errorf("db.Prepare() failed: %s", err)
@@ -42,7 +43,6 @@ func createPassword(context *Context, machine, service, user, password string, p
 	}
 
 	if context.DryRun {
-		transaction.Rollback()
 		context.NoWriteBack = true
 	} else {
 		transaction.Commit()
