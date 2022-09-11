@@ -47,6 +47,11 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 			}
 
 			transaction, err := ctx.Database.Begin()
+			if err != nil {
+				return fmt.Errorf("db.Begin() failed: %s", err)
+			}
+
+			defer transaction.Rollback()
 			query, err := transaction.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
 			if err != nil {
 				return fmt.Errorf("db.Prepare() failed: %s", err)
@@ -66,7 +71,6 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				return fmt.Errorf("result.RowsAffected() failed: %s", err)
 			}
 			if dryRun {
-				transaction.Rollback()
 				fmt.Fprintf(cmd.OutOrStdout(), "Would update %v password\n", affected)
 				ctx.NoWriteBack = true
 			} else {
