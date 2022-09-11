@@ -26,18 +26,26 @@ func createPassword(context *Context, machine, service, user, password string, p
 		}
 	}
 
-	query, err := context.Database.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
+	transaction, err := context.Database.Begin()
 	if err != nil {
-		return "", fmt.Errorf("db.Prepare() failed: %s", err)
+		return "", fmt.Errorf("db.Begin() failed: %s", err)
 	}
 
-	if context.DryRun {
-		return password, nil
+	query, err := transaction.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
+	if err != nil {
+		return "", fmt.Errorf("db.Prepare() failed: %s", err)
 	}
 
 	_, err = query.Exec(machine, service, user, password, passwordType)
 	if err != nil {
 		return "", fmt.Errorf("query.Exec() failed: %s", err)
+	}
+
+	if context.DryRun {
+		transaction.Rollback()
+		context.NoWriteBack = true
+	} else {
+		transaction.Commit()
 	}
 	return password, nil
 }
