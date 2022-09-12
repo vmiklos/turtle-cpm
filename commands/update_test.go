@@ -8,19 +8,18 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -38,7 +37,7 @@ func TestUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -55,20 +54,19 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestPwgenUpdate(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
+	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, db)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "output-from-pwgen"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -86,7 +84,7 @@ func TestPwgenUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -103,19 +101,18 @@ func TestPwgenUpdate(t *testing.T) {
 }
 
 func TestInteractiveUpdate(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -135,7 +132,7 @@ func TestInteractiveUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -152,18 +149,17 @@ func TestInteractiveUpdate(t *testing.T) {
 }
 
 func TestDryRunUpdate(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -181,7 +177,7 @@ func TestDryRunUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}

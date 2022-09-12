@@ -10,15 +10,15 @@ import (
 	"testing"
 )
 
-// CreateDatabaseForTesting creates an in-memory database.
-func CreateDatabaseForTesting(t *testing.T) *sql.DB {
+// CreateContextForTesting creates an in-memory database and a context around it.
+func CreateContextForTesting(t *testing.T) Context {
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatalf("sql.Open() failed: %s", err)
 	}
 
 	t.Cleanup(func() { db.Close() })
-	return db
+	return Context{Database: db}
 }
 
 // OpenDatabaseForTesting implements OpenDatabase and takes an already opened sql.DB.

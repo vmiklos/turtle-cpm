@@ -8,9 +8,9 @@ import (
 )
 
 func TestImport(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
+	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, db)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -26,7 +26,7 @@ func TestImport(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}

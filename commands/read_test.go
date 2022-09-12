@@ -10,19 +10,18 @@ import (
 )
 
 func TestSelect(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -44,19 +43,18 @@ func TestSelect(t *testing.T) {
 }
 
 func TestQuietSelect(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -78,20 +76,19 @@ func TestQuietSelect(t *testing.T) {
 }
 
 func TestSelectTotpCode(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
+	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, db)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "totppassword"
 	var expectedType PasswordType = "totp"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -117,8 +114,8 @@ func GenerateQrCodeForTesting(text string, l qr.Level, w io.Writer) {
 }
 
 func TestQrcodeSelect(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	OldGenerateQrCode := GenerateQrCode
 	GenerateQrCode = GenerateQrCodeForTesting
 	defer func() { GenerateQrCode = OldGenerateQrCode }()
@@ -127,12 +124,11 @@ func TestQrcodeSelect(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "totp"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -155,18 +151,17 @@ func TestQrcodeSelect(t *testing.T) {
 }
 
 func TestSelectMachineFilter(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
-	err := initDatabase(db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(&ctx, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	_, err = createPassword(&context, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(&ctx, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -189,18 +184,17 @@ func TestSelectMachineFilter(t *testing.T) {
 }
 
 func TestSelectServiceFilter(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
-	err := initDatabase(db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(&ctx, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	_, err = createPassword(&context, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(&ctx, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -223,18 +217,17 @@ func TestSelectServiceFilter(t *testing.T) {
 }
 
 func TestSelectUserFilter(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
-	err := initDatabase(db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(&ctx, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	_, err = createPassword(&context, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(&ctx, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -257,18 +250,17 @@ func TestSelectUserFilter(t *testing.T) {
 }
 
 func TestSelectTypeFilter(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
-	err := initDatabase(db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, "mymachine", "myservice", "myuser", "mypassword", "plain")
+	_, err = createPassword(&ctx, "mymachine", "myservice", "myuser", "mypassword", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	_, err = createPassword(&context, "mymachine", "myservice", "myuser", "mypassword", "totp")
+	_, err = createPassword(&ctx, "mymachine", "myservice", "myuser", "mypassword", "totp")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -291,18 +283,17 @@ func TestSelectTypeFilter(t *testing.T) {
 }
 
 func TestSelectImplicitFilter(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
-	err := initDatabase(db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(&ctx, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	_, err = createPassword(&context, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(&ctx, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -326,18 +317,17 @@ func TestSelectImplicitFilter(t *testing.T) {
 }
 
 func TestSelectInteractive(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
-	err := initDatabase(db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
+	_, err = createPassword(&ctx, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	_, err = createPassword(&context, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
+	_, err = createPassword(&ctx, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain")
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
