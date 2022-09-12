@@ -7,19 +7,18 @@ import (
 )
 
 func TestDelete(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -33,7 +32,7 @@ func TestDelete(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -45,19 +44,18 @@ func TestDelete(t *testing.T) {
 }
 
 func TestInteractiveDelete(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -77,7 +75,7 @@ func TestInteractiveDelete(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -89,19 +87,18 @@ func TestInteractiveDelete(t *testing.T) {
 }
 
 func TestDryRunDelete(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(db)
+	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
-	context := Context{Database: db}
-	_, err = createPassword(&context, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -115,7 +112,7 @@ func TestDryRunDelete(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}

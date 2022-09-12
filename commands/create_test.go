@@ -9,8 +9,8 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -30,7 +30,7 @@ func TestInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -47,8 +47,8 @@ func TestInsert(t *testing.T) {
 }
 
 func TestNoServiceInsert(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
@@ -67,7 +67,7 @@ func TestNoServiceInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -84,9 +84,9 @@ func TestNoServiceInsert(t *testing.T) {
 }
 
 func TestPwgenInsert(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
+	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, db)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -106,7 +106,7 @@ func TestPwgenInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -124,8 +124,8 @@ func TestPwgenInsert(t *testing.T) {
 
 // Insert fails because the password is already inserted.
 func TestInsertFail(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -158,8 +158,8 @@ func TestInsertFail(t *testing.T) {
 
 // Insert fails because -t mytype is not a valid type.
 func TestInsertFailBadType(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -177,8 +177,8 @@ func TestInsertFailBadType(t *testing.T) {
 }
 
 func TestInteractiveInsert(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -199,7 +199,7 @@ func TestInteractiveInsert(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -216,8 +216,8 @@ func TestInteractiveInsert(t *testing.T) {
 }
 
 func TestDryRunInsert(t *testing.T) {
-	db := CreateDatabaseForTesting(t)
-	UseDatabaseForTesting(t, db)
+	ctx := CreateContextForTesting(t)
+	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -236,7 +236,7 @@ func TestDryRunInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(db, searchOptions{})
+	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
