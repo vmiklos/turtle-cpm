@@ -11,7 +11,6 @@ import (
 
 func TestSelect(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -44,7 +43,6 @@ func TestSelect(t *testing.T) {
 
 func TestQuietSelect(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -78,7 +76,6 @@ func TestQuietSelect(t *testing.T) {
 func TestSelectTotpCode(t *testing.T) {
 	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -115,7 +112,6 @@ func GenerateQrCodeForTesting(text string, l qr.Level, w io.Writer) {
 
 func TestQrcodeSelect(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	OldGenerateQrCode := GenerateQrCode
 	GenerateQrCode = GenerateQrCodeForTesting
 	defer func() { GenerateQrCode = OldGenerateQrCode }()
@@ -152,7 +148,6 @@ func TestQrcodeSelect(t *testing.T) {
 
 func TestSelectMachineFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -185,7 +180,6 @@ func TestSelectMachineFilter(t *testing.T) {
 
 func TestSelectServiceFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -218,7 +212,6 @@ func TestSelectServiceFilter(t *testing.T) {
 
 func TestSelectUserFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -251,7 +244,6 @@ func TestSelectUserFilter(t *testing.T) {
 
 func TestSelectTypeFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -284,7 +276,6 @@ func TestSelectTypeFilter(t *testing.T) {
 
 func TestSelectImplicitFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
@@ -318,7 +309,6 @@ func TestSelectImplicitFilter(t *testing.T) {
 
 func TestSelectInteractive(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	err := initDatabase(ctx.Database)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)

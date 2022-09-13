@@ -12,12 +12,22 @@ import (
 
 // CreateContextForTesting creates an in-memory database and a context around it.
 func CreateContextForTesting(t *testing.T) Context {
+	// Create an in-memory database.
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
 		t.Fatalf("sql.Open() failed: %s", err)
 	}
 
 	t.Cleanup(func() { db.Close() })
+
+	// Make sure that open/close database works with our test database.
+	oldOpenDatabase := OpenDatabase
+	OpenDatabase = OpenDatabaseForTesting(db)
+	t.Cleanup(func() { OpenDatabase = oldOpenDatabase })
+	oldCloseDatabase := CloseDatabase
+	CloseDatabase = CloseDatabaseForTesting
+	t.Cleanup(func() { CloseDatabase = oldCloseDatabase })
+
 	return Context{Database: db}
 }
 
@@ -140,15 +150,6 @@ func CopyPath(inPath, outPath string) error {
 	}
 
 	return nil
-}
-
-func UseDatabaseForTesting(t *testing.T, db *sql.DB) {
-	oldOpenDatabase := OpenDatabase
-	OpenDatabase = OpenDatabaseForTesting(db)
-	t.Cleanup(func() { OpenDatabase = oldOpenDatabase })
-	oldCloseDatabase := CloseDatabase
-	CloseDatabase = CloseDatabaseForTesting
-	t.Cleanup(func() { CloseDatabase = oldCloseDatabase })
 }
 
 func UseCommandForTesting(t *testing.T) {

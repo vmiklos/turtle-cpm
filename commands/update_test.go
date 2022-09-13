@@ -9,7 +9,6 @@ import (
 
 func TestUpdate(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -56,7 +55,6 @@ func TestUpdate(t *testing.T) {
 func TestPwgenUpdate(t *testing.T) {
 	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -102,7 +100,6 @@ func TestPwgenUpdate(t *testing.T) {
 
 func TestInteractiveUpdate(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -150,7 +147,6 @@ func TestInteractiveUpdate(t *testing.T) {
 
 func TestDryRunUpdate(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
