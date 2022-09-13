@@ -10,7 +10,6 @@ import (
 func TestImport(t *testing.T) {
 	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"

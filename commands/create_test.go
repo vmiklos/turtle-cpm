@@ -10,7 +10,6 @@ import (
 
 func TestInsert(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -48,7 +47,6 @@ func TestInsert(t *testing.T) {
 
 func TestNoServiceInsert(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
@@ -86,7 +84,6 @@ func TestNoServiceInsert(t *testing.T) {
 func TestPwgenInsert(t *testing.T) {
 	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -124,8 +121,7 @@ func TestPwgenInsert(t *testing.T) {
 
 // Insert fails because the password is already inserted.
 func TestInsertFail(t *testing.T) {
-	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
+	CreateContextForTesting(t)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -158,8 +154,7 @@ func TestInsertFail(t *testing.T) {
 
 // Insert fails because -t mytype is not a valid type.
 func TestInsertFailBadType(t *testing.T) {
-	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
+	CreateContextForTesting(t)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -178,7 +173,6 @@ func TestInsertFailBadType(t *testing.T) {
 
 func TestInteractiveInsert(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -217,7 +211,6 @@ func TestInteractiveInsert(t *testing.T) {
 
 func TestDryRunInsert(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"

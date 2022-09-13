@@ -8,7 +8,6 @@ import (
 
 func TestDelete(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -45,7 +44,6 @@ func TestDelete(t *testing.T) {
 
 func TestInteractiveDelete(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
@@ -88,7 +86,6 @@ func TestInteractiveDelete(t *testing.T) {
 
 func TestDryRunDelete(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	UseDatabaseForTesting(t, ctx.Database)
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
