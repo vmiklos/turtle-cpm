@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 7.3
 
 - create: new `-n` switch, introducing a dry run mode to see what style of password would be
   generated
