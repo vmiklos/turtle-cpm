@@ -28,6 +28,11 @@ func CreateContextForTesting(t *testing.T) Context {
 	CloseDatabase = CloseDatabaseForTesting
 	t.Cleanup(func() { CloseDatabase = oldCloseDatabase })
 
+	err = initDatabase(db)
+	if err != nil {
+		t.Fatalf("initDatabase() = %q, want nil", err)
+	}
+
 	return Context{Database: db}
 }
 
