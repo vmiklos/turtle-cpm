@@ -14,11 +14,7 @@ func TestUpdate(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(ctx.Database)
-	if err != nil {
-		t.Fatalf("initDatabase() = %q, want nil", err)
-	}
-	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -60,11 +56,7 @@ func TestPwgenUpdate(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "output-from-pwgen"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(ctx.Database)
-	if err != nil {
-		t.Fatalf("initDatabase() = %q, want nil", err)
-	}
-	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -105,11 +97,7 @@ func TestInteractiveUpdate(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(ctx.Database)
-	if err != nil {
-		t.Fatalf("initDatabase() = %q, want nil", err)
-	}
-	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -151,11 +139,7 @@ func TestDryRunUpdate(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	var expectedType PasswordType = "plain"
-	err := initDatabase(ctx.Database)
-	if err != nil {
-		t.Fatalf("initDatabase() = %q, want nil", err)
-	}
-	_, err = createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
