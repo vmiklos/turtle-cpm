@@ -80,6 +80,7 @@ func getCommands() []string {
 		"-h",
 		"--help",
 		"completion",
+		"__complete",
 		"create",
 		"delete",
 		"help",
@@ -278,7 +279,6 @@ func Main(input io.Reader, output io.Writer) int {
 	cmd.SetArgs(args)
 	cmd.SetIn(input)
 	cmd.SetOut(output)
-	cmd.SetErr(output)
 
 	err := cmd.Execute()
 	if err != nil {
