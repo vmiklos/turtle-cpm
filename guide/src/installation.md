@@ -8,8 +8,8 @@ macOS or Windows.
 You need to install [GPG](https://gnupg.org/) if you don't have it already and need to generate at
 least a key using:
 
-```sh
-gpg --gen-key
+```console
+$ gpg --gen-key
 ```
 
 This will allow cpm to encrypt and decrypt your password database. Don't fear from specifying a
@@ -28,9 +28,23 @@ auto-generated passwords.
 
 You can install cpm using:
 
-```sh
-go install vmiklos.hu/go/cpm@latest
+```console
+$ go install vmiklos.hu/go/cpm@latest
 ```
 
 If `$(go env GOPATH)/bin` is not in your `PATH` yet, you may want to add it, so typing `cpm` will
 invoke the installed executable.
+
+## Optional shell completion
+
+Optionally, you can install shell completion for cpm, example for bash:
+
+```console
+$ cpm completion bash |sudo tee /usr/share/bash-completion/completions/cpm
+```
+
+You can test if it works in a new shell using:
+
+```console
+$ cpm <tab><tab>
+```
