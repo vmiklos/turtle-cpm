@@ -25,7 +25,7 @@ Specifying parameters can be useful if:
 Example for such usage:
 
 ```console
-$ cpm create -m example.com -s http -u myuser -t plain -p 7U1FvIzubR95Itg
+cpm create -m example.com -s http -u myuser -t plain -p 7U1FvIzubR95Itg
 ```
 
 When the machine is not yours, it can be e.g. the domain of a website.
@@ -60,7 +60,7 @@ TOTP is one from of Two-Factor Authentication (2FA), currently used by many popu
 shared secret and then add it to cpm using:
 
 ```console
-$ cpm create -m mymachine -u myuser -p "MY TOTP SHARED SECRET" -t totp
+cpm create -m mymachine -u myuser -p "MY TOTP SHARED SECRET" -t totp
 ```
 
 When searching, it's a good idea to first narrow down your search results to a single hit, e.g.

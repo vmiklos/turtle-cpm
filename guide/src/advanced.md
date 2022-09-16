@@ -18,7 +18,7 @@ Host cpm
 
 Finally pull the remote database to your local one, using:
 
-```sh
+```console
 cpm sync
 ```
 
@@ -32,7 +32,7 @@ templates, `cpm` can be integrated into such a workflow, using the quiet mode of
 subcommand. For example, if you have an app password at your mail provider, and you want to generate
 your mutt configuration, you can query just the password from `cpm` using:
 
-```sh
+```console
 cpm -q -m accounts.example.com -u $USER-mail-$HOSTNAME
 ```
 
@@ -42,7 +42,7 @@ In case you used the old `cpm` tool, it used to store its data at `~/.cpmdb` as 
 compressed and encrypted. If you want to import that into turtle-cpm's database, you can do so
 using:
 
-```sh
+```console
 cpm import
 ```
 
@@ -51,13 +51,13 @@ cpm import
 In case you want to inspect the SQLite database of `cpm` manually, you need to decrypt it yourself,
 using (assuming an empty `XDG_STATE_HOME` environment variable):
 
-```sh
+```console
 gpg --decrypt -a -o decrypted.db ~/.local/state/cpm/passwords.db
 ```
 
 After this, you can inspect the database using a GUI like:
 
-```sh
+```console
 sqlitebrowser decrypted.db
 ```
 
@@ -68,13 +68,13 @@ Don't forget to delete the decrypted database after you're done with your invest
 Apart from this guide, reference documentation is available in `cpm` itself. You can learn about the
 possible subcommands using:
 
-```sh
+```console
 cpm -h
 ```
 
 You can also check all the available options for one given subcommand using e.g.:
 
-```sh
+```console
 cpm create -h
 ```
 
@@ -96,7 +96,7 @@ The benefit of storing the full URL in the `cpm` database is that later you can 
 codes using e.g.:
 
 ```console
-$ cpm -t totp --qrcode twitter
+cpm -t totp --qrcode twitter
 machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password:
 ...
 ```
