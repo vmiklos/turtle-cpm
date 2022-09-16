@@ -9,7 +9,7 @@ You need to install [GPG](https://gnupg.org/) if you don't have it already and n
 least a key using:
 
 ```console
-$ gpg --gen-key
+gpg --gen-key
 ```
 
 This will allow cpm to encrypt and decrypt your password database. Don't fear from specifying a
@@ -29,7 +29,7 @@ auto-generated passwords.
 You can install cpm using:
 
 ```console
-$ go install vmiklos.hu/go/cpm@latest
+go install vmiklos.hu/go/cpm@latest
 ```
 
 If `$(go env GOPATH)/bin` is not in your `PATH` yet, you may want to add it, so typing `cpm` will
@@ -40,11 +40,11 @@ invoke the installed executable.
 Optionally, you can install shell completion for cpm, example for bash:
 
 ```console
-$ cpm completion bash |sudo tee /usr/share/bash-completion/completions/cpm
+cpm completion bash > ~/.local/share/bash-completion/completions/cpm
 ```
 
 You can test if it works in a new shell using:
 
 ```console
-$ cpm <tab><tab>
+cpm <tab><tab>
 ```
