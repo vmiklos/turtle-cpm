@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 7.4
 
 - added shell completion support
 
