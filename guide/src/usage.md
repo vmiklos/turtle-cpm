@@ -45,7 +45,7 @@ machine: example.com, service: http, user: myuser, password type: plain, passwor
 
 The search term can also be specified as an argument if non-interactive mode is wanted.
 
-Or you can specify paramters to create additional filters for the search:
+Or you can specify parameters to create additional filters for the search:
 
 ```console
 $ cpm search -m example.com -s http -u myuser -t plain

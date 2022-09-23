@@ -45,3 +45,6 @@ generate-man:
 
 run-guide:
 	cd guide && mdbook serve --hostname 127.0.0.1
+
+codespell:
+	codespell $(shell git ls-files)

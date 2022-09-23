@@ -82,7 +82,7 @@ An alternative to this is the manual pages under `man/`, which provide the same 
 
 ## Re-sharing TOTP shared secrets
 
-TOTP shared secrets are typically transfered as QR codes, though there is usually a fallback option
+TOTP shared secrets are typically transferred as QR codes, though there is usually a fallback option
 to get the shared secret string itself, which is what `cpm` can manage. However, the QR code also
 contains other information about the shared secret, and there are tools like
 [2fa-qr](https://stefansundin.github.io/2fa-qr/) that allow obtaining the full `otpauth://` URL from the
