@@ -40,12 +40,6 @@ func CreateContextForTesting(t *testing.T) Context {
 func OpenDatabaseForTesting(sqlDb *sql.DB) func(*Context) error {
 	return func(ctx *Context) error {
 		ctx.Database = sqlDb
-
-		err := initDatabase(ctx.Database)
-		if err != nil {
-			return fmt.Errorf("initDatabase() failed: %s", err)
-		}
-
 		return nil
 	}
 }
