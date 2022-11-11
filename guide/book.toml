@@ -3,3 +3,4 @@ title = "turtle-cpm user guide"
 
 [output.html]
 edit-url-template = "https://github.com/vmiklos/turtle-cpm/edit/main/guide/{path}"
+additional-js = ["matomo.js"]
