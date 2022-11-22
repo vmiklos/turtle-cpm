@@ -8,7 +8,12 @@ most of the time, though.
 You can ask cpm to generate a password for you and remember it using:
 
 ```console
-$ cpm create
+cpm create
+```
+
+You'll have to provide the machine and the user:
+
+```console
 Machine: example.com
 User: myuser
 Generated password: 7U1FvIzubR95Itg
@@ -38,7 +43,12 @@ an error. You can update or delete a password, though (see below).
 You can search in your passwords by entering a search term. You can do this interactively:
 
 ```console
-$ cpm
+cpm
+```
+
+You'll have to provide a search term:
+
+```console
 Search term: example.com
 machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
@@ -48,7 +58,12 @@ The search term can also be specified as an argument if non-interactive mode is 
 Or you can specify parameters to create additional filters for the search:
 
 ```console
-$ cpm search -m example.com -s http -u myuser -t plain
+cpm search -m example.com -s http -u myuser -t plain
+```
+
+The search term is already specified in this case:
+
+```
 machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
 
@@ -67,7 +82,12 @@ When searching, it's a good idea to first narrow down your search results to a s
 first confirm that:
 
 ```console
-$ cpm twitter
+cpm twitter
+```
+
+The search term is already specified in this case:
+
+```
 machine: twitter.com, service: http, user: myuser, password type: plain, password: ...
 machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password: ...
 ```
@@ -76,7 +96,12 @@ just returns your password and your TOTP shared secret, and then you can generat
 code using:
 
 ```console
-$ cpm --totp twitter
+cpm --totp twitter
+```
+
+The search term is already specified in this case:
+
+```console
 machine: twitter.com, service: http, user: myuser, password type: TOTP code, password: ...
 ```
 
@@ -85,7 +110,12 @@ machine: twitter.com, service: http, user: myuser, password type: TOTP code, pas
 Update is quite similar to creation. You can generate a new password using:
 
 ```console
-$ cpm update
+cpm update
+```
+
+You'll have to specify the machine and the user:
+
+```console
 Machine: example.com
 User: myuser
 Generated new password: D95Rx2PlOcPwKbL
@@ -95,14 +125,24 @@ Updated 1 password
 You can also specify parameters for `cpm update`:
 
 ```console
-$ cpm update -m mymachine -s myservice -u myuser -t plain -p mynewpassword
+cpm update -m mymachine -s myservice -u myuser -t plain -p mynewpassword
+```
+
+You'll see the amount of updated passwords:
+
+```console
 Updated 1 password
 ```
 
 Finally if you want to delete a password, you can do so by using:
 
 ```console
-$ cpm delete
+cpm delete
+```
+
+You'll have to specify the machine and the user:
+
+```console:
 Machine: mymachine
 User: myuser
 Deleted 1 password
@@ -111,6 +151,11 @@ Deleted 1 password
 You can also specify parameters for `cpm delete`:
 
 ```console
-$ cpm delete -m mymachine -s myservice -u myuser -t plain
+cpm delete -m mymachine -s myservice -u myuser -t plain
+```
+
+In which case the command is not interactive:
+
+```console
 Deleted 1 password
 ```
