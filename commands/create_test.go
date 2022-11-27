@@ -29,7 +29,9 @@ func TestInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -65,7 +67,9 @@ func TestNoServiceInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -103,7 +107,9 @@ func TestPwgenInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -193,7 +199,9 @@ func TestInteractiveInsert(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
