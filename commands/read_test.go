@@ -20,7 +20,7 @@ func TestSelect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -77,7 +77,7 @@ func TestSelectTotpCode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "search", "--totp", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	os.Args = []string{"", "search", "--noid", "--totp", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -112,7 +112,7 @@ func TestQrcodeSelect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "--qrcode"}
+	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "--qrcode"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -140,7 +140,7 @@ func TestSelectMachineFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "search", "-m", "mymachine1"}
+	os.Args = []string{"", "search", "--noid", "-m", "mymachine1"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -168,7 +168,7 @@ func TestSelectServiceFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "search", "-s", "myservice1"}
+	os.Args = []string{"", "search", "--noid", "-s", "myservice1"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -196,7 +196,7 @@ func TestSelectUserFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "search", "-u", "myuser1"}
+	os.Args = []string{"", "search", "--noid", "-u", "myuser1"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -224,7 +224,7 @@ func TestSelectTypeFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "search", "-t", "totp"}
+	os.Args = []string{"", "search", "--noid", "-t", "totp"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -253,7 +253,7 @@ func TestSelectImplicitFilter(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	// Implicit search, also not telling that myservice1 is a service.
-	os.Args = []string{"", "myservice1"}
+	os.Args = []string{"", "--noid", "myservice1"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -282,7 +282,7 @@ func TestSelectInteractive(t *testing.T) {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
 	// Interactive search.
-	os.Args = []string{""}
+	os.Args = []string{"", "--noid"}
 	inBuf := new(bytes.Buffer)
 	inBuf.Write([]byte("mymachine1" + "\n"))
 	outBuf := new(bytes.Buffer)
@@ -327,7 +327,7 @@ func TestOpenCloseDatabase(t *testing.T) {
 		t.Fatalf("Main(create) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
 	}
 
-	os.Args = []string{"", "search", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
 	inBuf = new(bytes.Buffer)
 	outBuf = new(bytes.Buffer)
 

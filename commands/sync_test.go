@@ -35,7 +35,7 @@ func TestSync(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main(sync) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
 	}
-	os.Args = []string{"", "search", "-m", expectedMachine, "-u", expectedUser}
+	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-u", expectedUser}
 	outBuf = new(bytes.Buffer)
 	actualRet = Main(inBuf, outBuf)
 	expectedRet = 0

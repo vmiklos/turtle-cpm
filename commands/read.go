@@ -45,6 +45,7 @@ type searchOptions struct {
 	totp          bool
 	quiet         bool
 	qrcode        bool
+	noid          bool
 	args          []string
 }
 
@@ -56,19 +57,20 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 	if opts.totp {
 		opts.wantedType = "totp"
 	}
-	rows, err := db.Query("select machine, service, user, password, type from passwords")
+	rows, err := db.Query("select id, machine, service, user, password, type from passwords")
 	if err != nil {
 		return nil, fmt.Errorf("db.Query(insert) failed: %s", err)
 	}
 
 	defer rows.Close()
 	for rows.Next() {
+		var id int
 		var machine string
 		var service string
 		var user string
 		var password string
 		var passwordType PasswordType
-		err = rows.Scan(&machine, &service, &user, &password, &passwordType)
+		err = rows.Scan(&id, &machine, &service, &user, &password, &passwordType)
 		if err != nil {
 			return nil, fmt.Errorf("rows.Scan() failed: %s", err)
 		}
@@ -93,7 +95,7 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 			// Allow simply matching a sub-string: e.g. search for a service type or a part
 			// of a machine without explicitly telling if the query is a service or a
 			// machine.
-			s := fmt.Sprintf("%s %s %s %s", machine, service, user, passwordType)
+			s := fmt.Sprintf("%d %s %s %s %s", id, machine, service, user, passwordType)
 			if !strings.Contains(s, opts.args[0]) {
 				continue
 			}
@@ -123,7 +125,10 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 		if opts.quiet {
 			result = password
 		} else {
-			result = fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password:", machine, service, user, passwordType)
+			if !opts.noid {
+				result = fmt.Sprintf("id: %8d, ", id)
+			}
+			result += fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password:", machine, service, user, passwordType)
 			if opts.qrcode {
 				qrcode := new(bytes.Buffer)
 				GenerateQrCode(password, qrterminal.L, qrcode)
@@ -147,6 +152,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	var totpFlag bool
 	var quietFlag bool
 	var qrcodeFlag bool
+	var noidFlag bool
 	var cmd = &cobra.Command{
 		Use:   "search",
 		Short: "searches passwords",
@@ -170,6 +176,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 			opts.totp = totpFlag
 			opts.quiet = quietFlag
 			opts.qrcode = qrcodeFlag
+			opts.noid = noidFlag
 			opts.args = args
 			results, err := readPasswords(ctx.Database, opts)
 			if err != nil {
@@ -191,6 +198,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().BoolVarP(&totpFlag, "totp", "T", false, `show the current TOTP code, not the TOTP shared secret (default: false, implies "--type totp")`)
 	cmd.Flags().BoolVarP(&quietFlag, "quiet", "q", false, "quite mode: only print the password itself (default: false)")
 	cmd.Flags().BoolVarP(&qrcodeFlag, "qrcode", "Q", false, "qrcode mode: print the TOTP shared secret as a QR code (default: false)")
+	cmd.Flags().BoolVarP(&noidFlag, "noid", "I", false, "noid mode: omit password ID from the output (default: false)")
 
 	return cmd
 }

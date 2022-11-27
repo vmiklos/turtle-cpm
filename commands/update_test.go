@@ -32,7 +32,9 @@ func TestUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -74,7 +76,9 @@ func TestPwgenUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -117,7 +121,9 @@ func TestInteractiveUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
@@ -157,7 +163,9 @@ func TestDryRunUpdate(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
 	if err != nil {
 		t.Fatalf("readPasswords() err = %q, want nil", err)
 	}
