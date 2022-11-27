@@ -28,12 +28,13 @@ func CreateContextForTesting(t *testing.T) Context {
 	CloseDatabase = CloseDatabaseForTesting
 	t.Cleanup(func() { CloseDatabase = oldCloseDatabase })
 
-	err = initDatabase(db)
+	ctx := Context{Database: db}
+	err = initDatabase(&ctx, true)
 	if err != nil {
 		t.Fatalf("initDatabase() = %q, want nil", err)
 	}
 
-	return Context{Database: db}
+	return ctx
 }
 
 // OpenDatabaseForTesting implements OpenDatabase and takes an already opened sql.DB.
@@ -171,5 +172,40 @@ func TestGetDatabasePath(t *testing.T) {
 	expected := "/tmp/cpm/passwords.db"
 	if actual != expected {
 		t.Fatalf("getDatabasePath() = %q, want %q", actual, expected)
+	}
+}
+
+func TestMigration(t *testing.T) {
+	// Create an in-memory database.
+	db, err := sql.Open("sqlite3", ":memory:")
+	if err != nil {
+		t.Fatalf("sql.Open() failed: %s", err)
+	}
+	ctx := Context{Database: db}
+	err = initDatabaseWithVersion(&ctx, 0)
+	if err != nil {
+		t.Fatalf("initDatabaseWithVersion() failed: %s", err)
+	}
+
+	err = initDatabase(&ctx, false)
+	if err != nil {
+		t.Fatalf("initDatabase() failed: %s", err)
+	}
+
+	var actual int
+	rows, err := db.Query("pragma user_version")
+	if err != nil {
+		t.Fatalf("Query() failed: %s", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&actual)
+		if err != nil {
+			t.Fatalf("rows.Scan() failed: %s", err)
+		}
+	}
+	expected := 1
+	if actual != expected {
+		t.Fatalf("initDatabase() = %q, want %q", actual, expected)
 	}
 }
