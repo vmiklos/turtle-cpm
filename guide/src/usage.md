@@ -50,7 +50,7 @@ You'll have to provide a search term:
 
 ```console
 Search term: example.com
-machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
+id:        1, machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
 
 The search term can also be specified as an argument if non-interactive mode is wanted.
@@ -64,7 +64,7 @@ cpm search -m example.com -s http -u myuser -t plain
 The search term is already specified in this case:
 
 ```
-machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
+id:        1, machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
 
 ## TOTP support
@@ -88,8 +88,8 @@ cpm twitter
 The search term is already specified in this case:
 
 ```
-machine: twitter.com, service: http, user: myuser, password type: plain, password: ...
-machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password: ...
+id:        1, machine: twitter.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
+id:        2, machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password: ...
 ```
 
 just returns your password and your TOTP shared secret, and then you can generate the current TOTP
@@ -102,7 +102,7 @@ cpm --totp twitter
 The search term is already specified in this case:
 
 ```console
-machine: twitter.com, service: http, user: myuser, password type: TOTP code, password: ...
+id:        2, machine: twitter.com, service: http, user: myuser, password type: TOTP code, password: ...
 ```
 
 ## Update and deletion
@@ -132,6 +132,13 @@ You'll see the amount of updated passwords:
 
 ```console
 Updated 1 password
+```
+
+If you want to update some property other than the password itself, then for use `cpm search` to
+find its ID, then you can edit based on that ID:
+
+```
+cpm update -i <id> -m example2.com
 ```
 
 Finally if you want to delete a password, you can do so by using:

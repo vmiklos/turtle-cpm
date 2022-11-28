@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- update: new `-i` switch to edit the `machine` of a password without changing the password itself
+
 ## 7.4
 
 - added shell completion support
