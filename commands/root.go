@@ -18,10 +18,9 @@ import (
 
 const (
 	xdgStateHome = "XDG_STATE_HOME"
+	// Version specifies the number for the version subcommand
+	Version = "7.4"
 )
-
-// GitCommit is initialized externally during the build. See the Makefile.
-var GitCommit string
 
 // Command returns the Cmd struct to execute the named program
 var Command = exec.Command

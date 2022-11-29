@@ -11,7 +11,7 @@ func newVersionCommand(ctx *Context) *cobra.Command {
 		Use:   "version",
 		Short: "shows version information",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Fprintf(cmd.OutOrStdout(), "turtle-cpm %s\n", GitCommit)
+			fmt.Fprintf(cmd.OutOrStdout(), "turtle-cpm version %s\n", Version)
 			ctx.NoWriteBack = true
 			return nil
 		},
