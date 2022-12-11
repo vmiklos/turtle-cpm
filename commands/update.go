@@ -42,6 +42,17 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 						return fmt.Errorf("db.Exec() failed: %s", err)
 					}
 				}
+				if len(service) > 0 {
+					query, err := transaction.Prepare("update passwords set service=? where id=?")
+					if err != nil {
+						return fmt.Errorf("db.Prepare() failed: %s", err)
+					}
+
+					result, err = query.Exec(service, id)
+					if err != nil {
+						return fmt.Errorf("db.Exec() failed: %s", err)
+					}
+				}
 
 				affected, err = result.RowsAffected()
 				if err != nil {
@@ -56,6 +67,9 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 						return fmt.Errorf("ReadString() failed: %s", err)
 					}
 					machine = strings.TrimSuffix(line, "\n")
+				}
+				if len(service) == 0 {
+					service = "http"
 				}
 				if len(user) == 0 {
 					fmt.Fprintf(cmd.OutOrStdout(), "User: ")
@@ -106,7 +120,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 		},
 	}
 	cmd.Flags().StringVarP(&machine, "machine", "m", "", "machine (default: ask)")
-	cmd.Flags().StringVarP(&service, "service", "s", "http", "service")
+	cmd.Flags().StringVarP(&service, "service", "s", "", "service")
 	cmd.Flags().StringVarP(&user, "user", "u", "", "user (default: ask)")
 	cmd.Flags().StringVarP(&password, "password", "p", "", "new password")
 	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
