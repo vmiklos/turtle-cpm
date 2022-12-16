@@ -268,3 +268,46 @@ func TestUpdateService(t *testing.T) {
 		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
 	}
 }
+
+func TestUpdateUser(t *testing.T) {
+	ctx := CreateContextForTesting(t)
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	var expectedType PasswordType = "plain"
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	expectedUser = "myuser2"
+	os.Args = []string{"", "update", "--id", "1", "-u", expectedUser}
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedBuf := "Updated 1 password\n"
+	if outBuf.String() != expectedBuf {
+		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
+	}
+	opts := searchOptions{}
+	opts.noid = true
+	results, err := readPasswords(ctx.Database, opts)
+	if err != nil {
+		t.Fatalf("readPasswords() err = %q, want nil", err)
+	}
+	actualLength := len(results)
+	expectedLength := 1
+	if actualLength != expectedLength {
+		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+	}
+	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, "oldpassword"))
+	expectedContains := true
+	if actualContains != expectedContains {
+		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
+	}
+}

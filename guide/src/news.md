@@ -2,7 +2,8 @@
 
 ## main
 
-- update: new `-i` switch to edit the `machine` or `service` of a password without changing the password itself
+- update: new `-i` switch to edit the `machine`, `service` or `user` of a password without changing
+  the password itself
 
 ## 7.4
 
