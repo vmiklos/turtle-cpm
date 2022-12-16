@@ -53,6 +53,17 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 						return fmt.Errorf("db.Exec() failed: %s", err)
 					}
 				}
+				if len(user) > 0 {
+					query, err := transaction.Prepare("update passwords set user=? where id=?")
+					if err != nil {
+						return fmt.Errorf("db.Prepare() failed: %s", err)
+					}
+
+					result, err = query.Exec(user, id)
+					if err != nil {
+						return fmt.Errorf("db.Exec() failed: %s", err)
+					}
+				}
 
 				affected, err = result.RowsAffected()
 				if err != nil {
