@@ -15,36 +15,28 @@ Notable features:
 - A little bit better than trivial search: you can search for e.g. `ldap` or `mybank` without
   telling if you are searching for a service type or machine name
 
+## Website
+
+Check out the [project's website](https://vmiklos.hu/turtle-cpm/) for a list of features and
+installation and usage information.
+
+## Platforms
+
+cpm has been used on Linux, but nothing was done intentionally to prevent it from working on e.g.
+macOS or Windows.
+
+## The important bits of the code
+
+- The entry point is the `Main()` function in `commands/root.go`.
+
+- The test code lives under `commands/*_test.go`.
+
+- The documentation is undeer `guide/`.
+
 ## The turtle
 
 The turtle-cpm codebase is independent from the original cpm. It's turtle because this project is
 not in C, so might be a little bit slower (though not significantly in practice).
-
-## Contributing
-
-turtle-cpm is free and open source. You can find the source code on
-[GitHub](https://github.com/vmiklos/turtle-cpm) and issues and feature requests can be posted on the
-issue tracker. If you'd like to contribute, please consider opening a pull request.
-
-## Reporting problems
-
-If you post a bugreport in the issue tracker, please always describe a single problem in one issue.
-
-Here is what to include in a bugreport:
-
-**Reproducer steps**
-1. First step
-2. Second step
-3. Third step
-
-**Actual result**
-A description of what happens currently.
-
-**Expected behavior**
-A description of what you expected to happen.
-
-**Version information**
-The output of `cpm version`.
 
 ## License
 
