@@ -1,8 +1,5 @@
 # Installation
 
-cpm has been used on Linux, but nothing was done intentionally to prevent it from working on e.g.
-macOS or Windows.
-
 ## Dependencies
 
 You need to install [GPG](https://gnupg.org/) if you don't have it already and need to generate at
