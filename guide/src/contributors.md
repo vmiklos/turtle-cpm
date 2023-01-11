@@ -1,12 +1,5 @@
 # Contributors
 
-Here is a list of the contributors who have helped improving turtle-cpm. Big
-shout-out to them!
-
-- Miklos Vajna <turtle-cpm@vmiklos.hu>
-
-If you feel you're missing from this list, feel free to add yourself in a PR.
-
 ## Contributing
 
 turtle-cpm is free and open source. You can find the source code on
