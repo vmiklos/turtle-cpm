@@ -19,11 +19,11 @@ Host cpm
 Finally pull the remote database to your local one, using:
 
 ```console
-cpm sync
+cpm pull
 ```
 
 This allows searching in your passwords even when you're offline. Keep in mind that editing the
-database on the slaves is not a good idea as the next sync will overwrite your local changes.
+database on the slaves is not a good idea as the next pull will overwrite your local changes.
 
 ## Toolkit integration
 
