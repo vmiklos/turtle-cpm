@@ -16,7 +16,7 @@ func TestVersion(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main(sync) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
+		t.Fatalf("Main(version) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
 	}
 	expectedPrefix := "turtle-cpm "
 	actualOutput := outBuf.String()

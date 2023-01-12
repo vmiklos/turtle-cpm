@@ -68,7 +68,7 @@ func NewRootCommand(ctx *Context) *cobra.Command {
 	cmd.AddCommand(newUpdateCommand(ctx))
 	cmd.AddCommand(newDeleteCommand(ctx))
 	cmd.AddCommand(newImportCommand(ctx))
-	cmd.AddCommand(newSyncCommand(ctx))
+	cmd.AddCommand(newPullCommand(ctx))
 	cmd.AddCommand(newVersionCommand(ctx))
 
 	return cmd
@@ -84,9 +84,9 @@ func getCommands() []string {
 		"delete",
 		"help",
 		"import",
+		"pull",
 		"search",
 		"update",
-		"sync",
 		"version",
 	}
 }

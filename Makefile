@@ -5,12 +5,12 @@ GO_OBJECTS = \
 	commands/delete_test.go \
 	commands/import.go \
 	commands/import_test.go \
+	commands/pull.go \
+	commands/pull.go \
 	commands/read.go \
 	commands/read_test.go \
 	commands/root.go \
 	commands/root_test.go \
-	commands/sync.go \
-	commands/sync_test.go \
 	commands/update.go \
 	commands/update_test.go \
 	commands/version.go \

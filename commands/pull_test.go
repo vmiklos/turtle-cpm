@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestSync(t *testing.T) {
+func TestPull(t *testing.T) {
 	UseCommandForTesting(t)
 	OldRemove := Remove
 	Remove = RemoveForTesting
@@ -26,14 +26,14 @@ func TestSync(t *testing.T) {
 		t.Fatalf("Main(create) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
 	}
 	os.Rename("fixtures/passwords.db", "fixtures/remote.db")
-	os.Args = []string{"", "sync"}
+	os.Args = []string{"", "pull"}
 	outBuf = new(bytes.Buffer)
 
 	actualRet = Main(inBuf, outBuf)
 
 	expectedRet = 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main(sync) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
+		t.Fatalf("Main(pull) = %v, want %v, output is %q", actualRet, expectedRet, outBuf.String())
 	}
 	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-u", expectedUser}
 	outBuf = new(bytes.Buffer)

@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newSyncCommand(ctx *Context) *cobra.Command {
+func newPullCommand(ctx *Context) *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "sync",
+		Use:   "pull",
 		Short: "copies a remote database to a local one",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			databasePath, err := getDatabasePath()
