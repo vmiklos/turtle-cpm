@@ -166,3 +166,10 @@ In which case the command is not interactive:
 ```console
 Deleted 1 password
 ```
+
+An alternative approach is to use `cpm search` to find the password ID, then you can delete based on
+that ID:
+
+```
+cpm delete -i <id>
+```

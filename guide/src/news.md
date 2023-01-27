@@ -5,6 +5,7 @@
 - update: new `-i` switch to edit the `machine`, `service` or `user` of a password without changing
   the password itself
 - `sync` is renamed to `pull`, since it's a remote -> local copy only
+- delete: new `-i` switch to delete a password based on the search result
 
 ## 7.4
 
