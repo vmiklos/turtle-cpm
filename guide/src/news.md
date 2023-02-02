@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 7.5
 
 - update: new `-i` switch to edit the `machine`, `service` or `user` of a password without changing
   the password itself
