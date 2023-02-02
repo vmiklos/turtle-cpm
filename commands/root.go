@@ -19,7 +19,7 @@ import (
 const (
 	xdgStateHome = "XDG_STATE_HOME"
 	// Version specifies the number for the version subcommand
-	Version = "7.4"
+	Version = "7.5"
 )
 
 // Command returns the Cmd struct to execute the named program
