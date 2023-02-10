@@ -1,5 +1,10 @@
 # Changelog
 
+## main
+
+- `create` / `create -n` now confirms if the password was actually created or it only would be
+  created.
+
 ## 7.5
 
 - update: new `-i` switch to edit the `machine`, `service` or `user` of a password without changing

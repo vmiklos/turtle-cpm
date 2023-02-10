@@ -25,7 +25,7 @@ func TestInsert(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedBuf := ""
+	expectedBuf := "Created 1 password\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
@@ -63,7 +63,7 @@ func TestNoServiceInsert(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedBuf := ""
+	expectedBuf := "Created 1 password\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
@@ -103,7 +103,7 @@ func TestPwgenInsert(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedBuf := "Generated password: output-from-pwgen\n"
+	expectedBuf := "Created 1 password\nGenerated password: output-from-pwgen\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
@@ -191,7 +191,7 @@ func TestInteractiveInsert(t *testing.T) {
 
 	actualRet := Main(inBuf, outBuf)
 
-	expectedBuf := "Machine: User: "
+	expectedBuf := "Machine: User: Created 1 password\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
@@ -233,7 +233,7 @@ func TestDryRunInsert(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedBuf := ""
+	expectedBuf := "Would create 1 password\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
