@@ -28,6 +28,10 @@ func CreateContextForTesting(t *testing.T) Context {
 	CloseDatabase = CloseDatabaseForTesting
 	t.Cleanup(func() { CloseDatabase = oldCloseDatabase })
 
+	oldGeneratePassword := GeneratePassword
+	GeneratePassword = GeneratePasswordForTesting
+	t.Cleanup(func() { GeneratePassword = oldGeneratePassword })
+
 	ctx := Context{Database: db}
 	err = initDatabase(&ctx, true)
 	if err != nil {
@@ -92,8 +96,6 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 			return exec.Command("true")
 		} else if len(arg) == 3 && name == "oathtool" && arg[0] == "-b" && arg[1] == "--totp" && arg[2] == "totppassword" {
 			return exec.Command("echo", "output-from-oathtool")
-		} else if name == "pwgen" {
-			return exec.Command("echo", "output-from-pwgen")
 		} else if name == "scp" && len(arg) == 2 && strings.HasPrefix(arg[0], "cpm:") && strings.HasSuffix(arg[0], "passwords.db") && strings.HasSuffix(arg[1], "passwords.db") {
 			err := CopyPath("fixtures/remote.db", "fixtures/passwords.db")
 			if err != nil {

@@ -5,14 +5,18 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/sethvargo/go-password/password"
 	"github.com/spf13/cobra"
 )
 
+// GeneratePassword is the package shortcut for password.Generator.Generate.
+var GeneratePassword = password.Generate
+
 func generatePassword() (string, error) {
-	// Length of 15 and no symbols matches current Firefox.
-	output, err := Command("pwgen", "--secure", "15", "1").Output()
+	// Length of 15 and no symbols matches current Firefox and `pwgen --secure 15 1`.
+	output, err := GeneratePassword(15, 3, 0, false, false)
 	if err != nil {
-		return "", fmt.Errorf("Command(pwgen) failed: %s", err)
+		return "", fmt.Errorf("password.Generate() failed: %s", err)
 	}
 	return strings.TrimSpace(string(output)), nil
 }
