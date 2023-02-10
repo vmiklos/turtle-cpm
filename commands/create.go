@@ -37,14 +37,25 @@ func createPassword(context *Context, machine, service, user, password string, p
 		return "", fmt.Errorf("db.Prepare() failed: %s", err)
 	}
 
-	_, err = query.Exec(machine, service, user, password, passwordType)
+	result, err := query.Exec(machine, service, user, password, passwordType)
 	if err != nil {
 		return "", fmt.Errorf("query.Exec() failed: %s", err)
 	}
 
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("result.RowsAffected() failed: %s", err)
+	}
+
 	if context.DryRun {
+		if context.OutOrStdout != nil {
+			fmt.Fprintf(*context.OutOrStdout, "Would create %v password\n", affected)
+		}
 		context.NoWriteBack = true
 	} else {
+		if context.OutOrStdout != nil {
+			fmt.Fprintf(*context.OutOrStdout, "Created %v password\n", affected)
+		}
 		transaction.Commit()
 	}
 	return password, nil
@@ -80,6 +91,9 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 			}
 
 			ctx.DryRun = dryRun
+			writer := cmd.OutOrStdout()
+			ctx.OutOrStdout = &writer
+			defer func() { ctx.OutOrStdout = nil }()
 			generatedPassword, err := createPassword(ctx, machine, service, user, password, passwordType)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)

@@ -99,6 +99,7 @@ type Context struct {
 	NoWriteBack      bool
 	DryRun           bool
 	DatabaseMigrated bool
+	OutOrStdout      *io.Writer
 }
 
 func pathExists(path string) bool {
