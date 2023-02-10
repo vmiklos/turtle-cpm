@@ -85,6 +85,10 @@ func TestNoServiceInsert(t *testing.T) {
 	}
 }
 
+func GeneratePasswordForTesting(length, numDigits, numSymbols int, noUpper, allowRepeat bool) (string, error) {
+	return "output-from-pwgen", nil
+}
+
 func TestPwgenInsert(t *testing.T) {
 	ctx := CreateContextForTesting(t)
 	UseCommandForTesting(t)

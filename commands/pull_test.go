@@ -14,6 +14,9 @@ func TestPull(t *testing.T) {
 	OldStat := Stat
 	Stat = StatForTesting
 	defer func() { Stat = OldStat }()
+	oldGeneratePassword := GeneratePassword
+	GeneratePassword = GeneratePasswordForTesting
+	t.Cleanup(func() { GeneratePassword = oldGeneratePassword })
 	expectedMachine := "mymachine"
 	expectedUser := "myuser"
 	os.Args = []string{"", "create", "-m", expectedMachine, "-u", expectedUser}

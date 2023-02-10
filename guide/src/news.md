@@ -4,6 +4,8 @@
 
 - `create` / `create -n` now confirms if the password was actually created or it only would be
   created.
+- [pwgen](http://sourceforge.net/projects/pwgen/) installation is not necessary, `cpm` now uses
+  [go-password](https://github.com/sethvargo/go-password) instead.
 
 ## 7.5
 
