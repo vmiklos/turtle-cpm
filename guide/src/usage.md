@@ -147,18 +147,17 @@ Finally if you want to delete a password, you can do so by using:
 cpm delete
 ```
 
-You'll have to specify the machine and the user:
+You'll have to specify the ID:
 
 ```console:
-Machine: mymachine
-User: myuser
+Id: 2
 Deleted 1 password
 ```
 
-You can also specify parameters for `cpm delete`:
+You can also specify a parameter for `cpm delete`:
 
 ```console
-cpm delete -m mymachine -s myservice -u myuser -t plain
+cpm delete -i 2
 ```
 
 In which case the command is not interactive:
@@ -167,9 +166,4 @@ In which case the command is not interactive:
 Deleted 1 password
 ```
 
-An alternative approach is to use `cpm search` to find the password ID, then you can delete based on
-that ID:
-
-```
-cpm delete -i <id>
-```
+You can use `cpm search` to find the password ID.
