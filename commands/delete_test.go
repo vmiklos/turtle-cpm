@@ -17,38 +17,6 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "delete", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
-	inBuf := new(bytes.Buffer)
-	outBuf := new(bytes.Buffer)
-
-	actualRet := Main(inBuf, outBuf)
-
-	expectedRet := 0
-	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
-	}
-	results, err := readPasswords(ctx.Database, searchOptions{})
-	if err != nil {
-		t.Fatalf("readPasswords() err = %q, want nil", err)
-	}
-	actualLength := len(results)
-	expectedLength := 0
-	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
-	}
-}
-
-func TestDeleteById(t *testing.T) {
-	ctx := CreateContextForTesting(t)
-	expectedMachine := "mymachine"
-	expectedService := "myservice"
-	expectedUser := "myuser"
-	expectedPassword := "mypassword"
-	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
-	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
-	}
 	os.Args = []string{"", "delete", "--id", "1"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
@@ -81,9 +49,9 @@ func TestInteractiveDelete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "delete", "-s", expectedService}
+	os.Args = []string{"", "delete"}
 	inBuf := new(bytes.Buffer)
-	inBuf.Write([]byte(expectedMachine + "\n" + expectedUser + "\n"))
+	inBuf.Write([]byte("1\n"))
 	outBuf := new(bytes.Buffer)
 
 	actualRet := Main(inBuf, outBuf)
@@ -92,7 +60,7 @@ func TestInteractiveDelete(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedBuf := "Machine: User: "
+	expectedBuf := "Id: "
 	expectedBuf += "Deleted 1 password\n"
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
@@ -119,7 +87,7 @@ func TestDryRunDelete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	os.Args = []string{"", "delete", "-n", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	os.Args = []string{"", "delete", "-n", "-i", "1"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 

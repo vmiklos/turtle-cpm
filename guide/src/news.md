@@ -6,6 +6,8 @@
   created.
 - [pwgen](http://sourceforge.net/projects/pwgen/) installation is not necessary, `cpm` now uses
   [go-password](https://github.com/sethvargo/go-password) instead.
+- `delete` now has only a single way to select which password to delete: the ID has to be specified
+  using `-i` or interactively.
 
 ## 7.5
 
