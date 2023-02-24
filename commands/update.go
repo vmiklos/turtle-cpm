@@ -2,7 +2,6 @@ package commands
 
 import (
 	"bufio"
-	"database/sql"
 	"fmt"
 	"strings"
 
@@ -13,8 +12,8 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	var machine string
 	var service string
 	var user string
+	var passwordType PasswordType
 	var password string
-	var passwordType PasswordType = "plain"
 	var dryRun bool
 	var id string
 	var cmd = &cobra.Command{
@@ -29,89 +28,24 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 			defer transaction.Rollback()
 
 			var affected int64
-			if len(id) > 0 {
-				var result sql.Result
-				if len(machine) > 0 {
-					query, err := transaction.Prepare("update passwords set machine=? where id=?")
-					if err != nil {
-						return fmt.Errorf("db.Prepare() failed: %s", err)
-					}
-
-					result, err = query.Exec(machine, id)
-					if err != nil {
-						return fmt.Errorf("db.Exec() failed: %s", err)
-					}
-				}
-				if len(service) > 0 {
-					query, err := transaction.Prepare("update passwords set service=? where id=?")
-					if err != nil {
-						return fmt.Errorf("db.Prepare() failed: %s", err)
-					}
-
-					result, err = query.Exec(service, id)
-					if err != nil {
-						return fmt.Errorf("db.Exec() failed: %s", err)
-					}
-				}
-				if len(user) > 0 {
-					query, err := transaction.Prepare("update passwords set user=? where id=?")
-					if err != nil {
-						return fmt.Errorf("db.Prepare() failed: %s", err)
-					}
-
-					result, err = query.Exec(user, id)
-					if err != nil {
-						return fmt.Errorf("db.Exec() failed: %s", err)
-					}
-				}
-
-				affected, err = result.RowsAffected()
-				if err != nil {
-					return fmt.Errorf("result.RowsAffected() failed: %s", err)
-				}
-			} else {
+			if len(id) == 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "Id: ")
 				reader := bufio.NewReader(cmd.InOrStdin())
-				if len(machine) == 0 {
-					fmt.Fprintf(cmd.OutOrStdout(), "Machine: ")
-					line, err := reader.ReadString('\n')
-					if err != nil {
-						return fmt.Errorf("ReadString() failed: %s", err)
-					}
-					machine = strings.TrimSuffix(line, "\n")
+				line, err := reader.ReadString('\n')
+				if err != nil {
+					return fmt.Errorf("ReadString() failed: %s", err)
 				}
-				if len(service) == 0 {
-					service = "http"
-				}
-				if len(user) == 0 {
-					fmt.Fprintf(cmd.OutOrStdout(), "User: ")
-					line, err := reader.ReadString('\n')
-					if err != nil {
-						return fmt.Errorf("ReadString() failed: %s", err)
-					}
-					user = strings.TrimSuffix(line, "\n")
-				}
-
-				generatedPassword := password
-				if len(password) == 0 {
-					var err error
-					generatedPassword, err = generatePassword()
-					if err != nil {
-						return fmt.Errorf("generatePassword() failed: %s", err)
-					}
-				}
-
-				query, err := transaction.Prepare("update passwords set password=? where machine=? and service=? and user=? and type=?")
+				id = strings.TrimSuffix(line, "\n")
+			}
+			if len(machine) > 0 {
+				query, err := transaction.Prepare("update passwords set machine=? where id=?")
 				if err != nil {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
 
-				result, err := query.Exec(generatedPassword, machine, service, user, passwordType)
+				result, err := query.Exec(machine, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
-				}
-
-				if generatedPassword != password {
-					fmt.Fprintf(cmd.OutOrStdout(), "Generated new password: %s\n", generatedPassword)
 				}
 
 				affected, err = result.RowsAffected()
@@ -119,7 +53,78 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 					return fmt.Errorf("result.RowsAffected() failed: %s", err)
 				}
 			}
+			if len(service) > 0 {
+				query, err := transaction.Prepare("update passwords set service=? where id=?")
+				if err != nil {
+					return fmt.Errorf("db.Prepare() failed: %s", err)
+				}
 
+				result, err := query.Exec(service, id)
+				if err != nil {
+					return fmt.Errorf("db.Exec() failed: %s", err)
+				}
+
+				affected, err = result.RowsAffected()
+				if err != nil {
+					return fmt.Errorf("result.RowsAffected() failed: %s", err)
+				}
+			}
+			if len(user) > 0 {
+				query, err := transaction.Prepare("update passwords set user=? where id=?")
+				if err != nil {
+					return fmt.Errorf("db.Prepare() failed: %s", err)
+				}
+
+				result, err := query.Exec(user, id)
+				if err != nil {
+					return fmt.Errorf("db.Exec() failed: %s", err)
+				}
+
+				affected, err = result.RowsAffected()
+				if err != nil {
+					return fmt.Errorf("result.RowsAffected() failed: %s", err)
+				}
+			}
+			if len(passwordType) > 0 {
+				query, err := transaction.Prepare("update passwords set type=? where id=?")
+				if err != nil {
+					return fmt.Errorf("db.Prepare() failed: %s", err)
+				}
+
+				result, err := query.Exec(passwordType, id)
+				if err != nil {
+					return fmt.Errorf("db.Exec() failed: %s", err)
+				}
+
+				affected, err = result.RowsAffected()
+				if err != nil {
+					return fmt.Errorf("result.RowsAffected() failed: %s", err)
+				}
+			}
+			generatedPassword := false
+			if len(password) > 0 {
+				if password == "-" {
+					password, err = generatePassword()
+					if err != nil {
+						return fmt.Errorf("generatePassword() failed: %s", err)
+					}
+					generatedPassword = true
+				}
+				query, err := transaction.Prepare("update passwords set password=? where id=?")
+				if err != nil {
+					return fmt.Errorf("db.Prepare() failed: %s", err)
+				}
+
+				result, err := query.Exec(password, id)
+				if err != nil {
+					return fmt.Errorf("db.Exec() failed: %s", err)
+				}
+
+				affected, err = result.RowsAffected()
+				if err != nil {
+					return fmt.Errorf("result.RowsAffected() failed: %s", err)
+				}
+			}
 			if dryRun {
 				fmt.Fprintf(cmd.OutOrStdout(), "Would update %v password\n", affected)
 				ctx.NoWriteBack = true
@@ -127,16 +132,19 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				transaction.Commit()
 				fmt.Fprintf(cmd.OutOrStdout(), "Updated %v password\n", affected)
 			}
+			if generatedPassword {
+				fmt.Fprintf(cmd.OutOrStdout(), "Generated password: %s\n", password)
+			}
 			return nil
 		},
 	}
-	cmd.Flags().StringVarP(&machine, "machine", "m", "", "machine (default: ask)")
-	cmd.Flags().StringVarP(&service, "service", "s", "", "service")
-	cmd.Flags().StringVarP(&user, "user", "u", "", "user (default: ask)")
-	cmd.Flags().StringVarP(&password, "password", "p", "", "new password")
-	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
 	cmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, `do everything except actually perform the database action (default: false)`)
-	cmd.Flags().StringVarP(&id, "id", "i", "", `other parameters specify new values for this id (default: '')`)
+	cmd.Flags().StringVarP(&id, "id", "i", "", `unique identifier (default: ask)`)
+	cmd.Flags().StringVarP(&machine, "machine", "m", "", "new machine (default: keep unchanged)")
+	cmd.Flags().StringVarP(&service, "service", "s", "", "new service (default: keep unchanged)")
+	cmd.Flags().StringVarP(&user, "user", "u", "", "new user (default: keep unchanged)")
+	cmd.Flags().VarP(&passwordType, "type", "t", `new password type ("plain" or "totp"; default: keep unchanged)`)
+	cmd.Flags().StringVarP(&password, "password", "p", "", `new password ("-" generates a new one; default: keep unchanged)`)
 
 	return cmd
 }

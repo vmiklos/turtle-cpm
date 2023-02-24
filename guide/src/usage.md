@@ -78,68 +78,55 @@ shared secret and then add it to cpm using:
 cpm create -m mymachine -u myuser -p "MY TOTP SHARED SECRET" -t totp
 ```
 
-When searching, it's a good idea to first narrow down your search results to a single hit, e.g.
-first confirm that:
+When searching, only the TOTP shared secret is shown by default:
 
 ```console
 cpm twitter
-```
-
-The search term is already specified in this case:
-
-```
 id:        1, machine: twitter.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 id:        2, machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password: ...
 ```
 
-just returns your password and your TOTP shared secret, and then you can generate the current TOTP
-code using:
+You can generate the current TOTP code using:
 
 ```console
 cpm --totp twitter
-```
-
-The search term is already specified in this case:
-
-```console
 id:        2, machine: twitter.com, service: http, user: myuser, password type: TOTP code, password: ...
 ```
 
 ## Update and deletion
 
-Update is quite similar to creation. You can generate a new password using:
+Update is quite similar to creation. If you want to update a password to a new, generated value, you
+can do so by using:
 
 ```console
-cpm update
+cpm update -p -
 ```
 
-You'll have to specify the machine and the user:
+You'll have to specify the ID:
 
-```console
-Machine: example.com
-User: myuser
-Generated new password: D95Rx2PlOcPwKbL
+```console:
+Id: 2
 Updated 1 password
+Generated password: aDu3WwGlVP60HEn
 ```
 
-You can also specify parameters for `cpm update`:
+You can also specify more parameters for `cpm update`:
 
 ```console
-cpm update -m mymachine -s myservice -u myuser -t plain -p mynewpassword
+cpm update -i 2 -p -
 ```
 
-You'll see the amount of updated passwords:
+In which case the command is not interactive:
 
 ```console
 Updated 1 password
+Generated password: Ilsd08zGov5JyBR
 ```
 
-If you want to update some property other than the password itself, then for use `cpm search` to
-find its ID, then you can edit based on that ID:
+You can use `cpm search` to find the password ID.
 
-```
-cpm update -i <id> -m example2.com
-```
+The rest of the `cpm update` parameters allow explicitly setting the
+machine/service/user/type/password of an ID to a new, specified value.
 
 Finally if you want to delete a password, you can do so by using:
 
@@ -166,4 +153,4 @@ In which case the command is not interactive:
 Deleted 1 password
 ```
 
-You can use `cpm search` to find the password ID.
+Again, you can use `cpm search` to find the password ID.

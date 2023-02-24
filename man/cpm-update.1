@@ -27,27 +27,27 @@ updates an existing password
 
 .PP
 \fB-i\fP, \fB--id\fP=""
-	other parameters specify new values for this id (default: '')
+	unique identifier (default: ask)
 
 .PP
 \fB-m\fP, \fB--machine\fP=""
-	machine (default: ask)
+	new machine (default: keep unchanged)
 
 .PP
 \fB-p\fP, \fB--password\fP=""
-	new password
+	new password ("-" generates a new one; default: keep unchanged)
 
 .PP
 \fB-s\fP, \fB--service\fP=""
-	service
+	new service (default: keep unchanged)
 
 .PP
-\fB-t\fP, \fB--type\fP=plain
-	password type ("plain" or "totp")
+\fB-t\fP, \fB--type\fP=
+	new password type ("plain" or "totp"; default: keep unchanged)
 
 .PP
 \fB-u\fP, \fB--user\fP=""
-	user (default: ask)
+	new user (default: keep unchanged)
 
 
 .SH SEE ALSO
