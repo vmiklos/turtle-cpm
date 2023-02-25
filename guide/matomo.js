@@ -1,3 +1,9 @@
+/**
+ * Copyright 2023 Miklos Vajna
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
   var _paq = window._paq || [];
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(['trackPageView']);
