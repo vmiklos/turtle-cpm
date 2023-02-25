@@ -25,11 +25,14 @@ build: turtle-cpm
 turtle-cpm: Makefile ${GO_OBJECTS}
 	go build .
 
-check: build check-format check-lint check-unit
+check: build check-format check-lint check-unit check-headers
 	@echo "make check: ok"
 
 check-lint:
 	golint -set_exit_status ./...
+
+check-headers:
+	addlicense -c '$(git config user.name)' -ignore '.github/**' -l mit -s=only -check .
 
 check-format:
 	[ -z "$(shell gofmt -l ${GO_OBJECTS})" ]
