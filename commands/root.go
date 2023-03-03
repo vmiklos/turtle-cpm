@@ -287,7 +287,7 @@ func closeDatabase(ctx *Context) error {
 	command := Command("gpg", "--encrypt", "--sign", "-a", "--default-recipient-self", "-o", ctx.PermanentPath, ctx.TempFile.Name())
 	err := command.Run()
 	if err != nil {
-		return fmt.Errorf("Command() failed to run 'gpg --encrypt --sign -a --default-recipient-self -o %s %s': %s", ctx.PermanentPath, ctx.TempFile.Name(), err)
+		return fmt.Errorf("Command() failed to run 'gpg --encrypt --sign -a --default-recipient-self -o %s %s': %s (run 'gpg --gen-key' to generate an encryption key)", ctx.PermanentPath, ctx.TempFile.Name(), err)
 	}
 
 	return nil
