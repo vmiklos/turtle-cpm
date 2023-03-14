@@ -53,9 +53,6 @@ type searchOptions struct {
 	args          []string
 }
 
-// GenerateQrCode creates a QR Code and writes it out to io.Writer.
-var GenerateQrCode = qrterminal.Generate
-
 func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 	var results []string
 	if opts.totp {
