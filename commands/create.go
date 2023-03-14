@@ -9,12 +9,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sethvargo/go-password/password"
 	"github.com/spf13/cobra"
 )
-
-// GeneratePassword is the package shortcut for password.Generator.Generate.
-var GeneratePassword = password.Generate
 
 func generatePassword() (string, error) {
 	// Length of 15 and no symbols matches current Firefox and `pwgen --secure 15 1`.

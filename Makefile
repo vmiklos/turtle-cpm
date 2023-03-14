@@ -1,4 +1,5 @@
 GO_OBJECTS = \
+	commands/context.go \
 	commands/create.go \
 	commands/create_test.go \
 	commands/delete.go \
@@ -50,3 +51,6 @@ run-guide:
 
 codespell:
 	codespell $(shell git ls-files)
+
+check-globals:
+	tools/find-global-variables.py ${GO_OBJECTS}

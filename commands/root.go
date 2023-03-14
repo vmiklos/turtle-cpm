@@ -11,7 +11,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"os/user"
 	"path/filepath"
 
@@ -25,21 +24,6 @@ const (
 	// Version specifies the number for the version subcommand
 	Version = "7.5"
 )
-
-// Command returns the Cmd struct to execute the named program
-var Command = exec.Command
-
-// Remove removes the named file or (empty) directory.
-var Remove = os.Remove
-
-// Stat returns a FileInfo describing the named file.
-var Stat = os.Stat
-
-// OpenDatabase opens the database before running a subcommand.
-var OpenDatabase = openDatabase
-
-// CloseDatabase opens the database before running a subcommand.
-var CloseDatabase = closeDatabase
 
 // NewRootCommand creates the parent of all subcommands.
 func NewRootCommand(ctx *Context) *cobra.Command {
