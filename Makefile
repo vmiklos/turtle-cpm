@@ -18,6 +18,7 @@ GO_OBJECTS = \
 	commands/version_test.go \
 	main.go \
 	man/generate.go \
+	tools/check-ast.go \
 
 COMMANDS_PATH = vmiklos.hu/go/cpm/commands
 
@@ -26,7 +27,7 @@ build: turtle-cpm
 turtle-cpm: Makefile ${GO_OBJECTS}
 	go build .
 
-check: build check-format check-lint check-unit check-headers
+check: build check-format check-lint check-unit check-headers check-ast
 	@echo "make check: ok"
 
 check-lint:
@@ -52,5 +53,5 @@ run-guide:
 codespell:
 	codespell $(shell git ls-files)
 
-check-globals:
-	tools/find-global-variables.py ${GO_OBJECTS}
+check-ast:
+	go run tools/check-ast.go -- ${GO_OBJECTS}
