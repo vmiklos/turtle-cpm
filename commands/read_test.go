@@ -9,9 +9,14 @@ import (
 	"io"
 	"os"
 	"testing"
+	"time"
 
 	"rsc.io/qr"
 )
+
+func GenerateTotpCodeForTesting(secret string, t time.Time) (string, error) {
+	return "output-from-oathtool", nil
+}
 
 func TestSelect(t *testing.T) {
 	ctx := CreateContextForTesting(t)
