@@ -36,6 +36,10 @@ func CreateContextForTesting(t *testing.T) Context {
 	GeneratePassword = GeneratePasswordForTesting
 	t.Cleanup(func() { GeneratePassword = oldGeneratePassword })
 
+	oldGenerateTotpCode := GenerateTotpCode
+	GenerateTotpCode = GenerateTotpCodeForTesting
+	t.Cleanup(func() { GenerateTotpCode = oldGenerateTotpCode })
+
 	ctx := Context{Database: db}
 	err = initDatabase(&ctx, true)
 	if err != nil {
@@ -98,8 +102,6 @@ func CommandForTesting(t *testing.T) func(name string, arg ...string) *exec.Cmd 
 				t.Fatalf("CopyPath() failed: %s", err)
 			}
 			return exec.Command("true")
-		} else if len(arg) == 3 && name == "oathtool" && arg[0] == "-b" && arg[1] == "--totp" && arg[2] == "totppassword" {
-			return exec.Command("echo", "output-from-oathtool")
 		} else if name == "scp" && len(arg) == 2 && strings.HasPrefix(arg[0], "cpm:") && strings.HasSuffix(arg[0], "passwords.db") && strings.HasSuffix(arg[1], "passwords.db") {
 			err := CopyPath("fixtures/remote.db", "fixtures/passwords.db")
 			if err != nil {

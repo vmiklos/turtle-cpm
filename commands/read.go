@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/mdp/qrterminal/v3"
 	"github.com/spf13/cobra"
@@ -105,18 +106,17 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 		if passwordType == "totp" {
 			if opts.totp {
 				// This is a TOTP password and the current value is required: invoke
-				// oathtool to generate it.
+				// the totp library to generate it.
 				passwordType = "TOTP code"
 				sharedSecret, err := parsePassword(password)
 				if err != nil {
 					return nil, fmt.Errorf("parsePassword() failed: %s", err)
 				}
 
-				output, err := Command("oathtool", "-b", "--totp", sharedSecret).Output()
+				password, err = GenerateTotpCode(sharedSecret, time.Now())
 				if err != nil {
-					return nil, fmt.Errorf("exec.Command(oathtool) failed: %s", err)
+					return nil, fmt.Errorf("totp.GenerateCode() failed: %s", err)
 				}
-				password = strings.TrimSpace(string(output))
 			} else {
 				passwordType = "TOTP shared secret"
 			}

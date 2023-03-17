@@ -11,6 +11,8 @@
   only specifying an ID.
 - `delete` now has only a single way to select which password to delete: the ID has to be specified
   using `-i` or interactively.
+- [oathtool](https://www.nongnu.org/oath-toolkit/) installation is no longer necessary, `cpm` now
+  uses [otp](https://github.com/pquerna/otp) instead.
 
 ## 7.5
 

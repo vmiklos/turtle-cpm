@@ -15,9 +15,6 @@ passphrase for your key: you'll only have to enter it once after login (thanks t
 this way an attacker can't get access to your passwords, even if they steal both your private key &
 your cpm database.
 
-Optionally, you can install [oathtool](https://www.nongnu.org/oath-toolkit/) in case you're
-interested in TOTP support.
-
 ## Build from source
 
 You can install cpm using:

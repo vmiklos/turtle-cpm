@@ -10,7 +10,7 @@ Notable features:
 - Simple database format: encrypted SQLite (via `gpg`), tracking machines, services, users and
   passwords
 - Supports plain passwords and also Time-based one-time password (TOTP) shared secrets, calculating
-  the actual TOTP code via `oathtool`
+  the actual TOTP code
 - Can import the original cpm's XML database
 - A little bit better than trivial search: you can search for e.g. `ldap` or `mybank` without
   telling if you are searching for a service type or machine name
