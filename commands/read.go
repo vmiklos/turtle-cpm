@@ -21,7 +21,8 @@ import (
 // as-is.
 func parsePassword(s string) (string, error) {
 	if !strings.HasPrefix(s, "otpauth://") {
-		return s, nil
+		// Strip spaces, oathtool does this as well.
+		return strings.ReplaceAll(s, " ", ""), nil
 	}
 
 	u, err := url.Parse(s)
