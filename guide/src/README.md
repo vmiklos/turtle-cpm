@@ -15,6 +15,9 @@ Notable features:
 - A little bit better than trivial search: you can search for e.g. `ldap` or `mybank` without
   telling if you are searching for a service type or machine name
 
+Naturally it lacks telemetry, unlike e.g.
+[1Password](https://blog.1password.com/privacy-preserving-app-telemetry/).
+
 ## Website
 
 Check out the [project's website](https://vmiklos.hu/turtle-cpm/) for a list of features and
