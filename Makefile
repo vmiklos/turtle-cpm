@@ -34,7 +34,7 @@ check-lint:
 	golint -set_exit_status ./...
 
 check-headers:
-	addlicense -c '$(shell git config user.name)' -ignore '.github/**' -l mit -s=only -check .
+	addlicense -c '$(shell git config user.name)' -ignore '.github/**' -ignore 'guide/book/**' -l mit -s=only -check .
 
 check-format:
 	[ -z "$(shell gofmt -l ${GO_OBJECTS})" ]
