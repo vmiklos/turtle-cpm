@@ -7,7 +7,7 @@ require (
 	github.com/mdp/qrterminal/v3 v3.0.0
 	github.com/pquerna/otp v1.4.0
 	github.com/sethvargo/go-password v0.2.0
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.7.0
 	rsc.io/qr v0.2.0
 )
 
