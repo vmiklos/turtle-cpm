@@ -3,8 +3,8 @@ module vmiklos.hu/go/cpm
 go 1.17
 
 require (
-	github.com/mattn/go-sqlite3 v1.14.16
-	github.com/mdp/qrterminal/v3 v3.0.0
+	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/mdp/qrterminal/v3 v3.1.1
 	github.com/pquerna/otp v1.4.0
 	github.com/sethvargo/go-password v0.2.0
 	github.com/spf13/cobra v1.7.0
