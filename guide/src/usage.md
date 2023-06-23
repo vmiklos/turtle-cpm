@@ -102,6 +102,8 @@ can do so by using:
 cpm update -p -
 ```
 
+Notice the trailing hyphen.
+
 You'll have to specify the ID:
 
 ```console:
