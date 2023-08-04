@@ -22,7 +22,7 @@ import (
 const (
 	xdgStateHome = "XDG_STATE_HOME"
 	// Version specifies the number for the version subcommand
-	Version = "7.5"
+	Version = "7.6"
 )
 
 // NewRootCommand creates the parent of all subcommands.
