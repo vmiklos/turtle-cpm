@@ -70,7 +70,7 @@ id:        1, machine: example.com, service: http, user: myuser, password type: 
 ## TOTP support
 
 TOTP is one from of Two-Factor Authentication (2FA), currently used by many popular websites
-(Facebook, Twitter, etc). Once a website asks you to scan a QR code for
+(Facebook, Mastodon, etc). Once a website asks you to scan a QR code for
 [TOTP](https://en.wikipedia.org/wiki/Time-based_one-time_password) purposes, just ask for the TOTP
 shared secret and then add it to cpm using:
 
@@ -81,16 +81,29 @@ cpm create -m mymachine -u myuser -p "MY TOTP SHARED SECRET" -t totp
 When searching, only the TOTP shared secret is shown by default:
 
 ```console
-cpm twitter
-id:        1, machine: twitter.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
-id:        2, machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password: ...
+cpm facebook
+id:        1, machine: facebook.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
+id:        2, machine: facebook.com, service: http, user: myuser, password type: TOTP shared secret, password: ...
 ```
 
 You can generate the current TOTP code using:
 
 ```console
-cpm --totp twitter
-id:        2, machine: twitter.com, service: http, user: myuser, password type: TOTP code, password: ...
+cpm --totp facebook
+id:        2, machine: facebook.com, service: http, user: myuser, password type: TOTP code, password: ...
+```
+
+You can make this interaction easier using:
+
+```console
+alias 2fa='cpm --totp'
+```
+
+And then you can generate the current TOTP code just by:
+
+```console
+2fa facebook
+id:        2, machine: facebook.com, service: http, user: myuser, password type: TOTP code, password: ...
 ```
 
 ## Update and deletion

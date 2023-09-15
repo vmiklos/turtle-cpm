@@ -96,8 +96,8 @@ The benefit of storing the full URL in the `cpm` database is that later you can 
 codes using e.g.:
 
 ```console
-cpm -t totp --qrcode twitter
-machine: twitter.com, service: http, user: myuser, password type: TOTP shared secret, password:
+cpm -t totp --qrcode facebook
+machine: facebook.com, service: http, user: myuser, password type: TOTP shared secret, password:
 ...
 ```
 
