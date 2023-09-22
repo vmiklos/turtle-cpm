@@ -1,5 +1,10 @@
 # Changelog
 
+## main
+
+- create / update: new `-y` switch to generate more secure passwords (3 instead of 0 numeric
+  symbols)
+
 ## 7.6
 
 - `create` / `create -n` now confirms if the password was actually created or it only would be

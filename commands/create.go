@@ -12,19 +12,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func generatePassword() (string, error) {
+func generatePassword(secure bool) (string, error) {
+	numSymbols := 0
+	if secure {
+		numSymbols = 3
+	}
 	// Length of 15 and no symbols matches current Firefox and `pwgen --secure 15 1`.
-	output, err := GeneratePassword(15, 3, 0, false, false)
+	output, err := GeneratePassword( /*length*/ 15 /*numDigits=*/, 3, numSymbols /*noUpper=*/, false /*allowRepeat=*/, false)
 	if err != nil {
 		return "", fmt.Errorf("password.Generate() failed: %s", err)
 	}
 	return strings.TrimSpace(string(output)), nil
 }
 
-func createPassword(context *Context, machine, service, user, password string, passwordType PasswordType) (string, error) {
+func createPassword(context *Context, machine, service, user, password string, passwordType PasswordType, secure bool) (string, error) {
 	if len(password) == 0 {
 		var err error
-		password, err = generatePassword()
+		password, err = generatePassword(secure)
 		if err != nil {
 			return "", fmt.Errorf("generatePassword() failed: %s", err)
 		}
@@ -72,6 +76,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 	var password string
 	var passwordType PasswordType = "plain"
 	var dryRun bool
+	var secure bool
 	var cmd = &cobra.Command{
 		Use:   "create",
 		Short: "creates a new password",
@@ -98,7 +103,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 			writer := cmd.OutOrStdout()
 			ctx.OutOrStdout = &writer
 			defer func() { ctx.OutOrStdout = nil }()
-			generatedPassword, err := createPassword(ctx, machine, service, user, password, passwordType)
+			generatedPassword, err := createPassword(ctx, machine, service, user, password, passwordType, secure)
 			if err != nil {
 				return fmt.Errorf("createPassword() failed: %s", err)
 			}
@@ -115,6 +120,7 @@ func newCreateCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&password, "password", "p", "", "password (default: generate)")
 	cmd.Flags().VarP(&passwordType, "type", "t", `password type ("plain" or "totp")`)
 	cmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, `do everything except actually perform the database action (default: false)`)
+	cmd.Flags().BoolVarP(&secure, "secure", "y", false, `increase number of symbols from 0 to 3 (default: false)`)
 
 	return cmd
 }

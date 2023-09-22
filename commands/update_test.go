@@ -18,7 +18,8 @@ func TestUpdate(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "newtype"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -62,7 +63,8 @@ func TestPwgenUpdate(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "output-from-pwgen"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -105,7 +107,8 @@ func TestInteractiveUpdate(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "newpassword"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -149,7 +152,8 @@ func TestDryRunUpdate(t *testing.T) {
 	expectedService := "http"
 	expectedUser := "myuser"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -192,7 +196,8 @@ func TestUpdateMachine(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -235,7 +240,8 @@ func TestUpdateService(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -278,7 +284,8 @@ func TestUpdateUser(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, "oldpassword", expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -322,7 +329,8 @@ func TestUpdateType(t *testing.T) {
 	expectedUser := "myuser"
 	expectedType := "plain"
 	expectedPassword := "mypassword"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, "oldtype")
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, "oldtype", secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
