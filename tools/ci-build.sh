@@ -11,7 +11,7 @@
 
 if [ -n "${GITHUB_WORKFLOW}" ]; then
     go install golang.org/x/lint/golint@latest
-    go install github.com/dave/courtney@latest
+    go install github.com/dave/courtney@master
     go install github.com/google/addlicense@latest
 fi
 
