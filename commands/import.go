@@ -116,7 +116,7 @@ func newImportCommand(ctx *Context) *cobra.Command {
 								passwordType = "plain"
 							}
 
-							_, err = createPassword(ctx, machineLabel, serviceLabel, userLabel, passwordLabel, passwordType)
+							_, err = createPassword(ctx, machineLabel, serviceLabel, userLabel, passwordLabel, passwordType /*secure=*/, false)
 							if err != nil {
 								return fmt.Errorf("createPassword(machine='%s', service='%s', user='%s', type='%s') failed: %s", machineLabel, serviceLabel, userLabel, passwordType, err)
 							}

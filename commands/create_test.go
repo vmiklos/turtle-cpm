@@ -90,7 +90,22 @@ func TestNoServiceInsert(t *testing.T) {
 }
 
 func GeneratePasswordForTesting(length, numDigits, numSymbols int, noUpper, allowRepeat bool) (string, error) {
+	if numSymbols > 0 {
+		return "0utput-from-pwgen", nil
+	}
 	return "output-from-pwgen", nil
+}
+
+func TestGeneratePasswordSecure(t *testing.T) {
+	CreateContextForTesting(t)
+	actualPassword, err := generatePassword( /*secure=*/ true)
+	if err != nil {
+		t.Fatalf("generatePassword() err = %q, want nil", err)
+	}
+	expectedPassword := "0utput-from-pwgen"
+	if actualPassword != expectedPassword {
+		t.Fatalf("actualPassword = %q, want %q", actualPassword, expectedPassword)
+	}
 }
 
 func TestPwgenInsert(t *testing.T) {

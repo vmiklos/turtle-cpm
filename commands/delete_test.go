@@ -17,7 +17,8 @@ func TestDelete(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -49,7 +50,8 @@ func TestInteractiveDelete(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
@@ -87,7 +89,8 @@ func TestDryRunDelete(t *testing.T) {
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
 	var expectedType PasswordType = "plain"
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType)
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}

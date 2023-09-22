@@ -19,6 +19,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	var passwordType PasswordType
 	var password string
 	var dryRun bool
+	var secure bool
 	var id string
 	var cmd = &cobra.Command{
 		Use:   "update",
@@ -108,7 +109,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 			generatedPassword := false
 			if len(password) > 0 {
 				if password == "-" {
-					password, err = generatePassword()
+					password, err = generatePassword(secure)
 					if err != nil {
 						return fmt.Errorf("generatePassword() failed: %s", err)
 					}
@@ -143,6 +144,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, `do everything except actually perform the database action (default: false)`)
+	cmd.Flags().BoolVarP(&secure, "secure", "y", false, `increase number of symbols from 0 to 3 (default: false)`)
 	cmd.Flags().StringVarP(&id, "id", "i", "", `unique identifier (default: ask)`)
 	cmd.Flags().StringVarP(&machine, "machine", "m", "", "new machine (default: keep unchanged)")
 	cmd.Flags().StringVarP(&service, "service", "s", "", "new service (default: keep unchanged)")
