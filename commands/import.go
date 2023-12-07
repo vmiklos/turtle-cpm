@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/user"
 
@@ -61,9 +61,9 @@ func newImportCommand(ctx *Context) *cobra.Command {
 			}
 
 			encryptedPath := usr.HomeDir + "/.cpmdb"
-			decryptedFile, err := ioutil.TempFile("", "cpm")
+			decryptedFile, err := os.CreateTemp("", "cpm")
 			if err != nil {
-				return fmt.Errorf("ioutil.TempFile() failed: %s", err)
+				return fmt.Errorf("os.CreateTemp() failed: %s", err)
 			}
 
 			decryptedPath := decryptedFile.Name()
@@ -86,7 +86,7 @@ func newImportCommand(ctx *Context) *cobra.Command {
 			}
 			defer xmlFile.Close()
 
-			xmlBytes, err := ioutil.ReadAll(xmlFile)
+			xmlBytes, err := io.ReadAll(xmlFile)
 			if err != nil {
 				return fmt.Errorf("ioutil.ReadAll(xmlFile) failed: %s", err)
 			}
