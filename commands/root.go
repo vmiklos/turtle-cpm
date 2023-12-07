@@ -121,7 +121,7 @@ func openDatabase(ctx *Context) error {
 	var err error
 	ctx.TempFile, err = os.CreateTemp("", "cpm")
 	if err != nil {
-		return fmt.Errorf("ioutil.TempFile() failed: %s", err)
+		return fmt.Errorf("os.CreateTemp() failed: %s", err)
 	}
 
 	ctx.PermanentPath, err = getDatabasePath()

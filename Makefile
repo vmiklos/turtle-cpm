@@ -27,11 +27,14 @@ build: turtle-cpm
 turtle-cpm: Makefile ${GO_OBJECTS}
 	go build .
 
-check: build check-format check-lint check-unit check-headers check-ast
+check: build check-format check-lint check-unit check-headers check-ast check-static
 	@echo "make check: ok"
 
 check-lint:
 	golint -set_exit_status ./...
+
+check-static:
+	staticcheck ./...
 
 check-headers:
 	addlicense -c '$(shell git config user.name)' -ignore '.github/**' -ignore 'guide/book/**' -l mit -s=only -check .
