@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -120,7 +119,7 @@ func getDatabasePath() (string, error) {
 
 func openDatabase(ctx *Context) error {
 	var err error
-	ctx.TempFile, err = ioutil.TempFile("", "cpm")
+	ctx.TempFile, err = os.CreateTemp("", "cpm")
 	if err != nil {
 		return fmt.Errorf("ioutil.TempFile() failed: %s", err)
 	}
