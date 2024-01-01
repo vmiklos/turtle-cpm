@@ -3,7 +3,7 @@ module vmiklos.hu/go/cpm
 go 1.21
 
 require (
-	github.com/mattn/go-sqlite3 v1.14.18
+	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/mdp/qrterminal/v3 v3.2.0
 	github.com/pquerna/otp v1.4.0
 	github.com/sethvargo/go-password v0.2.0
