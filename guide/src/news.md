@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 24.2
 
 - create / update: new `-y` switch to generate more secure passwords (3 instead of 0 numeric
   symbols)
