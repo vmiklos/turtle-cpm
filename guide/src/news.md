@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- drop compatibility with cpm < 7.5: update from old versions to 24.2 first
+
 ## 24.2
 
 - create / update: new `-y` switch to generate more secure passwords (3 instead of 0 numeric

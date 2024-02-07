@@ -128,7 +128,6 @@ func openDatabase(ctx *Context) error {
 	if err != nil {
 		return fmt.Errorf("getDatabasePath() failed: %s", err)
 	}
-	createNew := true
 	if pathExists(ctx.PermanentPath) {
 		Remove(ctx.TempFile.Name())
 		command := Command("gpg", "--decrypt", "-a", "-o", ctx.TempFile.Name(), ctx.PermanentPath)
@@ -136,7 +135,6 @@ func openDatabase(ctx *Context) error {
 		if err != nil {
 			return fmt.Errorf("Command() failed: %s", err)
 		}
-		createNew = false
 	}
 
 	ctx.Database, err = sql.Open("sqlite3", ctx.TempFile.Name())
@@ -144,7 +142,7 @@ func openDatabase(ctx *Context) error {
 		return fmt.Errorf("sql.Open() failed: %s", err)
 	}
 
-	err = initDatabase(ctx, createNew)
+	err = initDatabase(ctx)
 	if err != nil {
 		return fmt.Errorf("initDatabase() failed: %s", err)
 	}
@@ -152,55 +150,7 @@ func openDatabase(ctx *Context) error {
 	return nil
 }
 
-func initDatabaseWithVersion(ctx *Context, version int) error {
-	var statement string
-	if version == 0 {
-		statement = `create table passwords (
-		machine text not null,
-		service text not null,
-		user text not null,
-		password text not null,
-		type text not null,
-		unique(machine, service, user, type)
-		)`
-	} else {
-		statement = `create table passwords (
-		id integer primary key autoincrement,
-		machine text not null,
-		service text not null,
-		user text not null,
-		password text not null,
-		type text not null,
-		unique(machine, service, user, type)
-		)`
-	}
-	query, err := ctx.Database.Prepare(statement)
-	if err != nil {
-		return fmt.Errorf("db.Prepare() failed: %s", err)
-	}
-	_, err = query.Exec()
-	if err != nil {
-		return fmt.Errorf("db.Exec() failed: %s", err)
-	}
-
-	return nil
-}
-
-func initDatabase(ctx *Context, createNew bool) error {
-	// We need createNew because both an empty db and the first schema was user_version == 0.
-	if createNew {
-		initDatabaseWithVersion(ctx, 1)
-
-		query, err := ctx.Database.Prepare("pragma user_version = 1")
-		if err != nil {
-			return fmt.Errorf("db.Prepare() failed: %s", err)
-		}
-		_, err = query.Exec()
-		if err != nil {
-			return fmt.Errorf("db.Exec() failed: %s", err)
-		}
-	}
-
+func initDatabase(ctx *Context) error {
 	var version int
 	rows, err := ctx.Database.Query("pragma user_version")
 	if err != nil {
@@ -215,31 +165,24 @@ func initDatabase(ctx *Context, createNew bool) error {
 	}
 
 	if version < 1 {
-		statements := []string{`create table passwords_copy(
-		id integer primary key autoincrement,
-		machine text not null,
-		service text not null,
-		user text not null,
-		password text not null,
-		type text not null,
-		unique(machine, service, user, type)
-	)`,
-			"insert into passwords_copy(machine, service, user, password, type) select machine, service, user, password, type from passwords",
-			"drop table passwords",
-			"alter table passwords_copy rename to passwords",
+		query, err := ctx.Database.Prepare(`create table passwords (
+				id integer primary key autoincrement,
+				machine text not null,
+				service text not null,
+				user text not null,
+				password text not null,
+				type text not null,
+				unique(machine, service, user, type)
+		);`)
+		if err != nil {
+			return fmt.Errorf("db.Prepare() failed: %s", err)
 		}
-		for _, statement := range statements {
-			query, err := ctx.Database.Prepare(statement)
-			if err != nil {
-				return fmt.Errorf("db.Prepare() failed: %s", err)
-			}
-			_, err = query.Exec()
-			if err != nil {
-				return fmt.Errorf("db.Exec() failed: %s", err)
-			}
+		_, err = query.Exec()
+		if err != nil {
+			return fmt.Errorf("db.Exec() failed: %s", err)
 		}
 
-		query, err := ctx.Database.Prepare("pragma user_version = 1")
+		query, err = ctx.Database.Prepare("pragma user_version = 1")
 		if err != nil {
 			return fmt.Errorf("db.Prepare() failed: %s", err)
 		}

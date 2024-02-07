@@ -26,6 +26,8 @@ func newPullCommand(ctx *Context) *cobra.Command {
 			}
 
 			ctx.NoWriteBack = true
+			// Prefer the pull result over the migration result.
+			ctx.DatabaseMigrated = false
 			return nil
 		},
 	}

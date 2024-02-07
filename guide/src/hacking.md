@@ -17,3 +17,11 @@ Changes to the shell completion can be tested, without restarting the shell usin
 ```console
 source <(cpm completion bash)
 ```
+
+## Go debugging
+
+To run a single test:
+
+```console
+go test -run=TestInsert ./...
+```
