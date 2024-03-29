@@ -2,6 +2,8 @@
 
 ## main
 
+- search / update: passwords can be now archived, search hides these by default without deleting the
+  password
 - drop compatibility with cpm < 7.5: update from old versions to 24.2 first
 
 ## 24.2

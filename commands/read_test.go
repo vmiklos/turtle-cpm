@@ -387,3 +387,87 @@ func TestParsePasswordBadURL(t *testing.T) {
 		t.Fatalf("err = nil, want !nil")
 	}
 }
+
+func TestSelectArchived(t *testing.T) {
+	ctx := CreateContextForTesting(t)
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	var expectedType PasswordType = "plain"
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	transaction, err := ctx.Database.Begin()
+	if err != nil {
+		t.Fatalf("db.Begin() failed: %s", err)
+	}
+	query, err := transaction.Prepare("update passwords set archived = 1 where id = 1")
+	if err != nil {
+		t.Fatalf("db.Prepare() failed: %s", err)
+	}
+	_, err = query.Exec()
+	if err != nil {
+		t.Fatalf("query.Exec() failed: %s", err)
+	}
+	transaction.Commit()
+	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := ""
+	actualOutput := outBuf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}
+
+func TestSelectArchivedVerbose(t *testing.T) {
+	ctx := CreateContextForTesting(t)
+	expectedMachine := "mymachine"
+	expectedService := "myservice"
+	expectedUser := "myuser"
+	expectedPassword := "mypassword"
+	var expectedType PasswordType = "plain"
+	secure := false
+	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	transaction, err := ctx.Database.Begin()
+	if err != nil {
+		t.Fatalf("db.Begin() failed: %s", err)
+	}
+	query, err := transaction.Prepare("update passwords set archived = 1 where id = 1")
+	if err != nil {
+		t.Fatalf("db.Prepare() failed: %s", err)
+	}
+	_, err = query.Exec()
+	if err != nil {
+		t.Fatalf("query.Exec() failed: %s", err)
+	}
+	transaction.Commit()
+	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-v"}
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword, archived: true\n"
+	actualOutput := outBuf.String()
+	if actualOutput != expectedOutput {
+		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)
+	}
+}

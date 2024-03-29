@@ -21,6 +21,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	var dryRun bool
 	var secure bool
 	var id string
+	var archived string
 	var cmd = &cobra.Command{
 		Use:   "update",
 		Short: "updates an existing password",
@@ -130,6 +131,22 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 					return fmt.Errorf("result.RowsAffected() failed: %s", err)
 				}
 			}
+			if len(archived) > 0 {
+				query, err := transaction.Prepare("update passwords set archived=? where id=?")
+				if err != nil {
+					return fmt.Errorf("db.Prepare() failed: %s", err)
+				}
+
+				result, err := query.Exec(archived, id)
+				if err != nil {
+					return fmt.Errorf("db.Exec() failed: %s", err)
+				}
+
+				affected, err = result.RowsAffected()
+				if err != nil {
+					return fmt.Errorf("result.RowsAffected() failed: %s", err)
+				}
+			}
 			if dryRun {
 				fmt.Fprintf(cmd.OutOrStdout(), "Would update %v password\n", affected)
 				ctx.NoWriteBack = true
@@ -151,6 +168,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&user, "user", "u", "", "new user (default: keep unchanged)")
 	cmd.Flags().VarP(&passwordType, "type", "t", `new password type ("plain" or "totp"; default: keep unchanged)`)
 	cmd.Flags().StringVarP(&password, "password", "p", "", `new password ("-" generates a new one; default: keep unchanged)`)
+	cmd.Flags().StringVarP(&archived, "archived", "a", "", `new archived value (default: keep unchanged)`)
 
 	return cmd
 }
