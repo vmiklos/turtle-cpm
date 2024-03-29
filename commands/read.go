@@ -52,6 +52,7 @@ type searchOptions struct {
 	quiet         bool
 	qrcode        bool
 	noid          bool
+	verbose       bool
 	args          []string
 }
 
@@ -60,9 +61,9 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 	if opts.totp {
 		opts.wantedType = "totp"
 	}
-	rows, err := db.Query("select id, machine, service, user, password, type from passwords")
+	rows, err := db.Query("select id, machine, service, user, password, type, archived from passwords")
 	if err != nil {
-		return nil, fmt.Errorf("db.Query(insert) failed: %s", err)
+		return nil, fmt.Errorf("db.Query(select) failed: %s", err)
 	}
 
 	defer rows.Close()
@@ -73,9 +74,14 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 		var user string
 		var password string
 		var passwordType PasswordType
-		err = rows.Scan(&id, &machine, &service, &user, &password, &passwordType)
+		var archived bool
+		err = rows.Scan(&id, &machine, &service, &user, &password, &passwordType, &archived)
 		if err != nil {
 			return nil, fmt.Errorf("rows.Scan() failed: %s", err)
+		}
+
+		if !opts.verbose && archived {
+			continue
 		}
 
 		if len(opts.wantedMachine) > 0 && machine != opts.wantedMachine {
@@ -138,6 +144,9 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 			} else {
 				result += fmt.Sprintf(" %s", password)
 			}
+			if opts.verbose {
+				result += fmt.Sprintf(", archived: %v", archived)
+			}
 		}
 		results = append(results, result)
 	}
@@ -155,6 +164,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	var quietFlag bool
 	var qrcodeFlag bool
 	var noidFlag bool
+	var verboseFlag bool
 	var cmd = &cobra.Command{
 		Use:   "search",
 		Short: "searches passwords",
@@ -179,6 +189,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 			opts.quiet = quietFlag
 			opts.qrcode = qrcodeFlag
 			opts.noid = noidFlag
+			opts.verbose = verboseFlag
 			opts.args = args
 			results, err := readPasswords(ctx.Database, opts)
 			if err != nil {
@@ -201,6 +212,7 @@ func newReadCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().BoolVarP(&quietFlag, "quiet", "q", false, "quite mode: only print the password itself (default: false)")
 	cmd.Flags().BoolVarP(&qrcodeFlag, "qrcode", "Q", false, "qrcode mode: print the TOTP shared secret as a QR code (default: false)")
 	cmd.Flags().BoolVarP(&noidFlag, "noid", "I", false, "noid mode: omit password ID from the output (default: false)")
+	cmd.Flags().BoolVarP(&verboseFlag, "verbose", "v", false, "verbose mode: show if the password is archived (default: false)")
 
 	return cmd
 }

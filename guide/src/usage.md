@@ -67,6 +67,8 @@ The search term is already specified in this case:
 id:        1, machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
 
+Archived passwords are not shown, unless `-v` or `--verbose` is used.
+
 ## TOTP support
 
 TOTP is one from of Two-Factor Authentication (2FA), currently used by many popular websites
@@ -169,3 +171,9 @@ Deleted 1 password
 ```
 
 Again, you can use `cpm search` to find the password ID.
+
+An alternative for deletion is to just mark the password as archived:
+
+```console
+cpm update -i ... -a 1
+```
