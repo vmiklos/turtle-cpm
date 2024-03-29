@@ -442,19 +442,10 @@ func TestSelectArchivedVerbose(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
-	transaction, err := ctx.Database.Begin()
-	if err != nil {
-		t.Fatalf("db.Begin() failed: %s", err)
-	}
-	query, err := transaction.Prepare("update passwords set archived = 1 where id = 1")
+	_, err = ctx.Database.Exec("update passwords set archived = 1 where id = 1")
 	if err != nil {
 		t.Fatalf("db.Prepare() failed: %s", err)
 	}
-	_, err = query.Exec()
-	if err != nil {
-		t.Fatalf("query.Exec() failed: %s", err)
-	}
-	transaction.Commit()
 	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-v"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
