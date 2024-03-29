@@ -390,30 +390,11 @@ func TestParsePasswordBadURL(t *testing.T) {
 
 func TestSelectArchived(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	expectedMachine := "mymachine"
-	expectedService := "myservice"
-	expectedUser := "myuser"
-	expectedPassword := "mypassword"
-	var expectedType PasswordType = "plain"
-	secure := false
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
+	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type, archived) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain', '1')")
 	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
+		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
-	transaction, err := ctx.Database.Begin()
-	if err != nil {
-		t.Fatalf("db.Begin() failed: %s", err)
-	}
-	query, err := transaction.Prepare("update passwords set archived = 1 where id = 1")
-	if err != nil {
-		t.Fatalf("db.Prepare() failed: %s", err)
-	}
-	_, err = query.Exec()
-	if err != nil {
-		t.Fatalf("query.Exec() failed: %s", err)
-	}
-	transaction.Commit()
-	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser}
+	os.Args = []string{"", "search", "--noid", "-m", "mymachine", "-s", "myservice", "-u", "myservice"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
@@ -432,13 +413,9 @@ func TestSelectArchived(t *testing.T) {
 
 func TestSelectArchivedVerbose(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain')")
+	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type, archived) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain', '1')")
 	if err != nil {
 		t.Fatalf("db.Exec() = %q, want nil", err)
-	}
-	_, err = ctx.Database.Exec("update passwords set archived = 1 where id = 1")
-	if err != nil {
-		t.Fatalf("db.Exec() failed: %s", err)
 	}
 	os.Args = []string{"", "search", "--noid", "-m", "mymachine", "-s", "myservice", "-u", "myuser", "-v"}
 	inBuf := new(bytes.Buffer)
