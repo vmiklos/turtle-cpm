@@ -432,21 +432,15 @@ func TestSelectArchived(t *testing.T) {
 
 func TestSelectArchivedVerbose(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	expectedMachine := "mymachine"
-	expectedService := "myservice"
-	expectedUser := "myuser"
-	expectedPassword := "mypassword"
-	var expectedType PasswordType = "plain"
-	secure := false
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
+	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain')")
 	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
+		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
 	_, err = ctx.Database.Exec("update passwords set archived = 1 where id = 1")
 	if err != nil {
-		t.Fatalf("db.Prepare() failed: %s", err)
+		t.Fatalf("db.Exec() failed: %s", err)
 	}
-	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-v"}
+	os.Args = []string{"", "search", "--noid", "-m", "mymachine", "-s", "myservice", "-u", "myuser", "-v"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
 
