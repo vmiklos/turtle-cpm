@@ -291,14 +291,13 @@ func TestSelectImplicitFilter(t *testing.T) {
 
 func TestSelectInteractive(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	secure := false
-	_, err := createPassword(&ctx, "mymachine1", "myservice1", "myuser1", "mypassword1", "plain", secure)
+	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine1', 'myservice1', 'myuser1', 'mypassword1', 'plain')")
 	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
+		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
-	_, err = createPassword(&ctx, "mymachine2", "myservice2", "myuser2", "mypassword2", "plain", secure)
+	_, err = ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine2', 'myservice2', 'myuser2', 'mypassword2', 'plain')")
 	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
+		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
 	// Interactive search.
 	os.Args = []string{"", "--noid"}
