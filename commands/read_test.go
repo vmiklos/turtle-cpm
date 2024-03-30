@@ -232,14 +232,13 @@ func TestSelectUserFilter(t *testing.T) {
 
 func TestSelectTypeFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	secure := false
-	_, err := createPassword(&ctx, "mymachine", "myservice", "myuser", "mypassword", "plain", secure)
+	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain')")
 	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
+		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
-	_, err = createPassword(&ctx, "mymachine", "myservice", "myuser", "mypassword", "totp", secure)
+	_, err = ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'totp')")
 	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
+		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "--noid", "-t", "totp"}
 	inBuf := new(bytes.Buffer)
