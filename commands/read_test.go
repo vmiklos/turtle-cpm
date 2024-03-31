@@ -203,11 +203,8 @@ func TestSelectServiceFilter(t *testing.T) {
 
 func TestSelectUserFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine1', 'myservice1', 'myuser1', 'mypassword1', 'plain')")
-	if err != nil {
-		t.Fatalf("db.Exec() = %q, want nil", err)
-	}
-	_, err = ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine2', 'myservice2', 'myuser2', 'mypassword2', 'plain')")
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine1', 'myservice1', 'myuser1', 'mypassword1', 'plain');
+	                             insert into passwords (machine, service, user, password, type) values('mymachine2', 'myservice2', 'myuser2', 'mypassword2', 'plain');`)
 	if err != nil {
 		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
@@ -231,11 +228,8 @@ func TestSelectUserFilter(t *testing.T) {
 
 func TestSelectTypeFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain')")
-	if err != nil {
-		t.Fatalf("db.Exec() = %q, want nil", err)
-	}
-	_, err = ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'totp')")
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain');
+	                             insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'totp');`)
 	if err != nil {
 		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
@@ -259,11 +253,8 @@ func TestSelectTypeFilter(t *testing.T) {
 
 func TestSelectImplicitFilter(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine1', 'myservice1', 'myuser1', 'mypassword1', 'plain')")
-	if err != nil {
-		t.Fatalf("db.Exec() = %q, want nil", err)
-	}
-	_, err = ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine2', 'myservice2', 'myuser2', 'mypassword2', 'plain')")
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine1', 'myservice1', 'myuser1', 'mypassword1', 'plain');
+	                             insert into passwords (machine, service, user, password, type) values('mymachine2', 'myservice2', 'myuser2', 'mypassword2', 'plain');`)
 	if err != nil {
 		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
@@ -288,11 +279,8 @@ func TestSelectImplicitFilter(t *testing.T) {
 
 func TestSelectInteractive(t *testing.T) {
 	ctx := CreateContextForTesting(t)
-	_, err := ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine1', 'myservice1', 'myuser1', 'mypassword1', 'plain')")
-	if err != nil {
-		t.Fatalf("db.Exec() = %q, want nil", err)
-	}
-	_, err = ctx.Database.Exec("insert into passwords (machine, service, user, password, type) values('mymachine2', 'myservice2', 'myuser2', 'mypassword2', 'plain')")
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine1', 'myservice1', 'myuser1', 'mypassword1', 'plain');
+	                             insert into passwords (machine, service, user, password, type) values('mymachine2', 'myservice2', 'myuser2', 'mypassword2', 'plain');`)
 	if err != nil {
 		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
