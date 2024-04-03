@@ -118,12 +118,9 @@ func TestQrcodeSelect(t *testing.T) {
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
-	expectedPassword := "mypassword"
-	var expectedType PasswordType = "totp"
-	secure := false
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'totp');`)
 	if err != nil {
-		t.Fatalf("createPassword() = %q, want nil", err)
+		t.Fatalf("db.Exec() = %q, want nil", err)
 	}
 	os.Args = []string{"", "search", "--noid", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "--qrcode"}
 	inBuf := new(bytes.Buffer)
