@@ -23,10 +23,7 @@ func TestSelect(t *testing.T) {
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
-	expectedPassword := "mypassword"
-	var expectedType PasswordType = "plain"
-	secure := false
-	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, expectedType, secure)
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain');`)
 	if err != nil {
 		t.Fatalf("createPassword() = %q, want nil", err)
 	}
