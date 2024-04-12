@@ -18,7 +18,8 @@ func TestInsert(t *testing.T) {
 	expectedService := "myservice"
 	expectedUser := "myuser"
 	expectedPassword := "mypassword"
-	expectedType := "plain"
+	expectedPasswordType := "plain"
+	expectedArchived := false
 	os.Args = []string{"", "create", "-m", expectedMachine, "-s", expectedService, "-u", expectedUser, "-p", expectedPassword, "-t", "plain"}
 	inBuf := new(bytes.Buffer)
 	outBuf := new(bytes.Buffer)
@@ -33,21 +34,40 @@ func TestInsert(t *testing.T) {
 	if outBuf.String() != expectedBuf {
 		t.Fatalf("Main() output is %q, want %q", outBuf.String(), expectedBuf)
 	}
-	opts := searchOptions{}
-	opts.noid = true
-	results, err := readPasswords(ctx.Database, opts)
+	rows, err := ctx.Database.Query("select machine, service, user, password, type, archived from passwords")
 	if err != nil {
-		t.Fatalf("readPasswords() err = %q, want nil", err)
+		t.Fatalf("db.Query(select) failed: %s", err)
 	}
-	actualLength := len(results)
-	expectedLength := 1
-	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
-	}
-	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
-	expectedContains := true
-	if actualContains != expectedContains {
-		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)
+	defer rows.Close()
+	for rows.Next() {
+		var machine string
+		var service string
+		var user string
+		var password string
+		var passwordType string
+		var archived bool
+		err = rows.Scan(&machine, &service, &user, &password, &passwordType, &archived)
+		if err != nil {
+			t.Fatalf("rows.Scan() failed: %s", err)
+		}
+		if machine != expectedMachine {
+			t.Fatalf("machine = %v, want %v", machine, expectedMachine)
+		}
+		if service != expectedService {
+			t.Fatalf("service = %v, want %v", service, expectedService)
+		}
+		if user != expectedUser {
+			t.Fatalf("user = %v, want %v", user, expectedUser)
+		}
+		if password != expectedPassword {
+			t.Fatalf("password = %v, want %v", password, expectedPassword)
+		}
+		if passwordType != expectedPasswordType {
+			t.Fatalf("passwordType = %v, want %v", passwordType, expectedPasswordType)
+		}
+		if archived != expectedArchived {
+			t.Fatalf("archived = %v, want %v", archived, expectedArchived)
+		}
 	}
 }
 
