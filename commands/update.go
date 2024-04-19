@@ -7,6 +7,7 @@ package commands
 import (
 	"bufio"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -137,7 +138,11 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
 
-				result, err := query.Exec(archived, id)
+				parsed, err := strconv.ParseBool(archived)
+				if err != nil {
+					return fmt.Errorf("ParseBool() failed: %s", err)
+				}
+				result, err := query.Exec(parsed, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
 				}
@@ -168,7 +173,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 	cmd.Flags().StringVarP(&user, "user", "u", "", "new user (default: keep unchanged)")
 	cmd.Flags().VarP(&passwordType, "type", "t", `new password type ("plain" or "totp"; default: keep unchanged)`)
 	cmd.Flags().StringVarP(&password, "password", "p", "", `new password ("-" generates a new one; default: keep unchanged)`)
-	cmd.Flags().StringVarP(&archived, "archived", "a", "", `new archived value (default: keep unchanged)`)
+	cmd.Flags().StringVarP(&archived, "archived", "a", "", `new archived value ("true" or "false"; default: keep unchanged)`)
 
 	return cmd
 }

@@ -175,5 +175,5 @@ Again, you can use `cpm search` to find the password ID.
 An alternative for deletion is to just mark the password as archived:
 
 ```console
-cpm update -i ... -a 1
+cpm update -i ... --archived true
 ```

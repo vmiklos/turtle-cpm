@@ -371,7 +371,7 @@ func TestUpdateArchived(t *testing.T) {
 	expectedMachine := "mymachine"
 	expectedService := "myservice"
 	expectedUser := "myuser"
-	expectedArchived := "1"
+	expectedArchived := "true"
 	expectedPassword := "mypassword"
 	secure := false
 	_, err := createPassword(&ctx, expectedMachine, expectedService, expectedUser, expectedPassword, "plain", secure)
