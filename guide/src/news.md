@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 24.8
 
 - search / update: passwords can be now archived, search hides these by default without deleting the
   password
