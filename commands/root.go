@@ -181,15 +181,6 @@ func initDatabase(ctx *Context) error {
 		if err != nil {
 			return fmt.Errorf("db.Exec() failed: %s", err)
 		}
-
-		query, err = ctx.Database.Prepare("pragma user_version = 1")
-		if err != nil {
-			return fmt.Errorf("db.Prepare() failed: %s", err)
-		}
-		_, err = query.Exec()
-		if err != nil {
-			return fmt.Errorf("db.Exec() failed: %s", err)
-		}
 		ctx.DatabaseMigrated = true
 	}
 
@@ -203,8 +194,11 @@ func initDatabase(ctx *Context) error {
 		if err != nil {
 			return fmt.Errorf("db.Exec() failed: %s", err)
 		}
+		ctx.DatabaseMigrated = true
+	}
 
-		query, err = ctx.Database.Prepare("pragma user_version = 2")
+	if ctx.DatabaseMigrated {
+		query, err := ctx.Database.Prepare("pragma user_version = 2")
 		if err != nil {
 			return fmt.Errorf("db.Prepare() failed: %s", err)
 		}
@@ -212,7 +206,6 @@ func initDatabase(ctx *Context) error {
 		if err != nil {
 			return fmt.Errorf("db.Exec() failed: %s", err)
 		}
-		ctx.DatabaseMigrated = true
 	}
 
 	return nil
