@@ -9,7 +9,14 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 )
+
+func NowForTesting() time.Time {
+	t := "2020-05-10T00:00:00+02:00"
+	ret, _ := time.Parse(time.RFC3339, t)
+	return ret
+}
 
 func TestUpdate(t *testing.T) {
 	ctx := CreateContextForTesting(t)
@@ -404,7 +411,7 @@ func TestUpdateArchived(t *testing.T) {
 	if actualLength != expectedLength {
 		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
 	}
-	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: plain, password: %s, archived: true", expectedMachine, expectedService, expectedUser, expectedPassword))
+	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: plain, password: %s, archived: true, created: 2020-05-10 00:00, modified: 2020-05-10 00:00", expectedMachine, expectedService, expectedUser, expectedPassword))
 	expectedContains := true
 	if actualContains != expectedContains {
 		t.Fatalf("actualContains = %v, want %v", actualContains, expectedContains)

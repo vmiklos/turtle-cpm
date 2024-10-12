@@ -67,7 +67,8 @@ The search term is already specified in this case:
 id:        1, machine: example.com, service: http, user: myuser, password type: plain, password: 7U1FvIzubR95Itg
 ```
 
-Archived passwords are not shown, unless `-v` or `--verbose` is used.
+Archived passwords are not shown, unless `-v` or `--verbose` is used. The verbose mode also shows
+when the password was created and modified.
 
 ## TOTP support
 

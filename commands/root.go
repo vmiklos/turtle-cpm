@@ -197,8 +197,30 @@ func initDatabase(ctx *Context) error {
 		ctx.DatabaseMigrated = true
 	}
 
+	if version < 3 {
+		query, err := ctx.Database.Prepare(`alter table passwords add column
+				created text not null default ''`)
+		if err != nil {
+			return fmt.Errorf("db.Prepare() failed: %s", err)
+		}
+		_, err = query.Exec()
+		if err != nil {
+			return fmt.Errorf("db.Exec() failed: %s", err)
+		}
+		query, err = ctx.Database.Prepare(`alter table passwords add column
+				modified text not null default ''`)
+		if err != nil {
+			return fmt.Errorf("db.Prepare() failed: %s", err)
+		}
+		_, err = query.Exec()
+		if err != nil {
+			return fmt.Errorf("db.Exec() failed: %s", err)
+		}
+		ctx.DatabaseMigrated = true
+	}
+
 	if ctx.DatabaseMigrated {
-		query, err := ctx.Database.Prepare("pragma user_version = 2")
+		query, err := ctx.Database.Prepare("pragma user_version = 3")
 		if err != nil {
 			return fmt.Errorf("db.Prepare() failed: %s", err)
 		}
