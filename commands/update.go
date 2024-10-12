@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -44,13 +45,14 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				}
 				id = strings.TrimSuffix(line, "\n")
 			}
+			now := Now().Format(time.RFC3339)
 			if len(machine) > 0 {
-				query, err := transaction.Prepare("update passwords set machine=? where id=?")
+				query, err := transaction.Prepare("update passwords set machine=?, modified=? where id=?")
 				if err != nil {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
 
-				result, err := query.Exec(machine, id)
+				result, err := query.Exec(machine, now, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
 				}
@@ -61,12 +63,12 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				}
 			}
 			if len(service) > 0 {
-				query, err := transaction.Prepare("update passwords set service=? where id=?")
+				query, err := transaction.Prepare("update passwords set service=?, modified=? where id=?")
 				if err != nil {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
 
-				result, err := query.Exec(service, id)
+				result, err := query.Exec(service, now, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
 				}
@@ -77,12 +79,12 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				}
 			}
 			if len(user) > 0 {
-				query, err := transaction.Prepare("update passwords set user=? where id=?")
+				query, err := transaction.Prepare("update passwords set user=?, modified=? where id=?")
 				if err != nil {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
 
-				result, err := query.Exec(user, id)
+				result, err := query.Exec(user, now, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
 				}
@@ -93,12 +95,12 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				}
 			}
 			if len(passwordType) > 0 {
-				query, err := transaction.Prepare("update passwords set type=? where id=?")
+				query, err := transaction.Prepare("update passwords set type=?, modified=? where id=?")
 				if err != nil {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
 
-				result, err := query.Exec(passwordType, id)
+				result, err := query.Exec(passwordType, now, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
 				}
@@ -117,12 +119,12 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 					}
 					generatedPassword = true
 				}
-				query, err := transaction.Prepare("update passwords set password=? where id=?")
+				query, err := transaction.Prepare("update passwords set password=?, modified=? where id=?")
 				if err != nil {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
 
-				result, err := query.Exec(password, id)
+				result, err := query.Exec(password, now, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
 				}
@@ -133,7 +135,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				}
 			}
 			if len(archived) > 0 {
-				query, err := transaction.Prepare("update passwords set archived=? where id=?")
+				query, err := transaction.Prepare("update passwords set archived=?, modified=? where id=?")
 				if err != nil {
 					return fmt.Errorf("db.Prepare() failed: %s", err)
 				}
@@ -142,7 +144,7 @@ func newUpdateCommand(ctx *Context) *cobra.Command {
 				if err != nil {
 					return fmt.Errorf("ParseBool() failed: %s", err)
 				}
-				result, err := query.Exec(parsed, id)
+				result, err := query.Exec(parsed, now, id)
 				if err != nil {
 					return fmt.Errorf("db.Exec() failed: %s", err)
 				}

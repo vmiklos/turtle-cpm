@@ -7,6 +7,7 @@ package commands
 import (
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/mdp/qrterminal/v3"
 	"github.com/pquerna/otp/totp"
@@ -36,3 +37,6 @@ var OpenDatabase = openDatabase
 
 // CloseDatabase opens the database before running a subcommand.
 var CloseDatabase = closeDatabase
+
+// Now returns the current local time.
+var Now = time.Now

@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -40,12 +41,13 @@ func createPassword(context *Context, machine, service, user, password string, p
 	}
 
 	defer transaction.Rollback()
-	query, err := transaction.Prepare("insert into passwords (machine, service, user, password, type) values(?, ?, ?, ?, ?)")
+	query, err := transaction.Prepare("insert into passwords (machine, service, user, password, type, created, modified) values(?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return "", fmt.Errorf("db.Prepare() failed: %s", err)
 	}
 
-	result, err := query.Exec(machine, service, user, password, passwordType)
+	now := Now().Format(time.RFC3339)
+	result, err := query.Exec(machine, service, user, password, passwordType, now, now)
 	if err != nil {
 		return "", fmt.Errorf("query.Exec() failed: %s", err)
 	}

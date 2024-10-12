@@ -40,6 +40,10 @@ func CreateContextForTesting(t *testing.T) Context {
 	GenerateTotpCode = GenerateTotpCodeForTesting
 	t.Cleanup(func() { GenerateTotpCode = oldGenerateTotpCode })
 
+	oldNow := Now
+	Now = NowForTesting
+	t.Cleanup(func() { Now = oldNow })
+
 	ctx := Context{Database: db}
 	err = initDatabase(&ctx)
 	if err != nil {

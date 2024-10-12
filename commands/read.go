@@ -61,7 +61,7 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 	if opts.totp {
 		opts.wantedType = "totp"
 	}
-	rows, err := db.Query("select id, machine, service, user, password, type, archived from passwords")
+	rows, err := db.Query("select id, machine, service, user, password, type, archived, created, modified from passwords")
 	if err != nil {
 		return nil, fmt.Errorf("db.Query(select) failed: %s", err)
 	}
@@ -75,7 +75,9 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 		var password string
 		var passwordType PasswordType
 		var archived bool
-		err = rows.Scan(&id, &machine, &service, &user, &password, &passwordType, &archived)
+		var created string
+		var modified string
+		err = rows.Scan(&id, &machine, &service, &user, &password, &passwordType, &archived, &created, &modified)
 		if err != nil {
 			return nil, fmt.Errorf("rows.Scan() failed: %s", err)
 		}
@@ -146,6 +148,20 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 			}
 			if opts.verbose {
 				result += fmt.Sprintf(", archived: %v", archived)
+				if len(created) > 0 {
+					t, err := time.Parse(time.RFC3339, created)
+					if err != nil {
+						return nil, fmt.Errorf("time.Parse() failed: %s", err)
+					}
+					result += fmt.Sprintf(", created: %v", t.Format("2006-01-02 15:04"))
+				}
+				if len(modified) > 0 {
+					t, err := time.Parse(time.RFC3339, modified)
+					if err != nil {
+						return nil, fmt.Errorf("time.Parse() failed: %s", err)
+					}
+					result += fmt.Sprintf(", modified: %v", t.Format("2006-01-02 15:04"))
+				}
 			}
 		}
 		results = append(results, result)
