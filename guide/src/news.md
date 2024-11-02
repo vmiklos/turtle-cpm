@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- create / update: passwords now have a create / modify date, search shows these in verbose mode
+
 ## 24.8
 
 - search / update: passwords can be now archived, search hides these by default without deleting the
