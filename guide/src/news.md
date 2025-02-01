@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 25.2
 
 - create / update: passwords now have a create / modify date, search shows these in verbose mode
 
