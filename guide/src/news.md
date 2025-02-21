@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- new `gc` command to rebuild the database file, repacking it into a minimal amount of disk space
+
 ## 25.2
 
 - create / update: passwords now have a create / modify date, search shows these in verbose mode
