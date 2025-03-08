@@ -10,6 +10,8 @@ go get -u && go mod tidy
 
 from time to time and make sure Go dependencies are reasonably up to date.
 
+- Update `.github/workflows/tests.yml` based on `github-outdated`.
+
 ## Shell completion
 
 Changes to the shell completion can be tested, without restarting the shell using:
