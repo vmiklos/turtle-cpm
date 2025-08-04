@@ -9,14 +9,9 @@ import (
 	"io"
 	"os"
 	"testing"
-	"time"
 
 	"rsc.io/qr"
 )
-
-func GenerateTotpCodeForTesting(secret string, t time.Time) (string, error) {
-	return "output-from-oathtool", nil
-}
 
 func TestSelect(t *testing.T) {
 	ctx := CreateContextForTesting(t)
@@ -90,7 +85,8 @@ func TestSelectTotpCode(t *testing.T) {
 	if actualRet != expectedRet {
 		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
 	}
-	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP code, password: output-from-oathtool\n"
+	// TOTP code depends on the 2020 time produced by NowForTesting()
+	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP code, password: 013567\n"
 	actualOutput := outBuf.String()
 	if actualOutput != expectedOutput {
 		t.Fatalf("actualOutput = %q, want %q", actualOutput, expectedOutput)

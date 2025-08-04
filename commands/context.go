@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/mdp/qrterminal/v3"
-	"github.com/pquerna/otp/totp"
 	"github.com/sethvargo/go-password/password"
 )
 
@@ -28,9 +27,6 @@ var GeneratePassword = password.Generate
 
 // GenerateQrCode creates a QR Code and writes it out to io.Writer.
 var GenerateQrCode = qrterminal.Generate
-
-// GenerateTotpCode creates a TOTP token using the current time.
-var GenerateTotpCode = totp.GenerateCode
 
 // OpenDatabase opens the database before running a subcommand.
 var OpenDatabase = openDatabase

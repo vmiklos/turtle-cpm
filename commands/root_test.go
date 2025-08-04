@@ -36,10 +36,6 @@ func CreateContextForTesting(t *testing.T) Context {
 	GeneratePassword = GeneratePasswordForTesting
 	t.Cleanup(func() { GeneratePassword = oldGeneratePassword })
 
-	oldGenerateTotpCode := GenerateTotpCode
-	GenerateTotpCode = GenerateTotpCodeForTesting
-	t.Cleanup(func() { GenerateTotpCode = oldGenerateTotpCode })
-
 	oldNow := Now
 	Now = NowForTesting
 	t.Cleanup(func() { Now = oldNow })

@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/mdp/qrterminal/v3"
+	"github.com/pquerna/otp/totp"
 	"github.com/spf13/cobra"
 )
 
@@ -122,7 +123,7 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 					return nil, fmt.Errorf("parsePassword() failed: %s", err)
 				}
 
-				password, err = GenerateTotpCode(sharedSecret, time.Now())
+				password, err = totp.GenerateCode(sharedSecret, Now())
 				if err != nil {
 					return nil, fmt.Errorf("totp.GenerateCode() failed: %s", err)
 				}
