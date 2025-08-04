@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 25.8
 
 - new `gc` command to rebuild the database file, repacking it into a minimal amount of disk space
 

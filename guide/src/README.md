@@ -3,7 +3,7 @@
 turtle-cpm is a command line tool to manage passwords, a replacement of the now gone [cpm
 project](https://www.harry-b.de/dokuwiki/doku.php?id=harry:cpm).
 
-The latest version is v25.2, released on 2025-02-01.  See the [release notes](news.md).
+The latest version is v25.8, released on 2025-08-04.  See the [release notes](news.md).
 
 Notable features:
 
