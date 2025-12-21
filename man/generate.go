@@ -15,7 +15,7 @@ import (
 func main() {
 	var ctx commands.Context
 	cmd := commands.NewRootCommand(&ctx)
-	date := time.Date(2022, 7, 22, 12, 0, 0, 0, time.UTC)
+	date := time.Date(2025, 12, 21, 12, 0, 0, 0, time.UTC)
 	header := &doc.GenManHeader{
 		Title:   "CPM",
 		Section: "1",

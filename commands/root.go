@@ -58,6 +58,7 @@ func NewRootCommand(ctx *Context) *cobra.Command {
 	cmd.AddCommand(newPullCommand(ctx))
 	cmd.AddCommand(newVersionCommand(ctx))
 	cmd.AddCommand(newGcCommand(ctx))
+	cmd.AddCommand(newExportCommand(ctx))
 
 	return cmd
 }
@@ -77,6 +78,7 @@ func getCommands() []string {
 		"update",
 		"version",
 		"gc",
+		"export",
 	}
 }
 

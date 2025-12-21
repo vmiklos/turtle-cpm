@@ -4,7 +4,10 @@ GO_OBJECTS = \
 	commands/create_test.go \
 	commands/delete.go \
 	commands/delete_test.go \
+	commands/export.go \
+	commands/export_test.go \
 	commands/gc.go \
+	commands/gc_test.go \
 	commands/import.go \
 	commands/import_test.go \
 	commands/pull.go \
