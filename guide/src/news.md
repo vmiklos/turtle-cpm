@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 26.2
 
 - new `export` command to write the password database as a JSON file
 
