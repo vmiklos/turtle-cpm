@@ -99,15 +99,13 @@ func pathExists(path string) bool {
 }
 
 func getDatabasePath() (string, error) {
-	var databaseDir string
+	usr, err := user.Current()
+	if err != nil {
+		return "", fmt.Errorf("user.Current() failed: %s", err)
+	}
+	databaseDir := filepath.Join(usr.HomeDir, ".local", "state", "cpm")
 	if a := os.Getenv(xdgStateHome); a != "" {
 		databaseDir = filepath.Join(a, "cpm")
-	} else {
-		usr, err := user.Current()
-		if err != nil {
-			return "", fmt.Errorf("user.Current() failed: %s", err)
-		}
-		databaseDir = filepath.Join(usr.HomeDir, ".local", "state", "cpm")
 	}
 
 	databasePath := databaseDir + "/passwords.db"
