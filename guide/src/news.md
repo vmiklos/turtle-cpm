@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## 26.8
 
 - export: now takes an optional search query, the same way `search` does, to limit what is exported
 
