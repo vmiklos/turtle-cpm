@@ -24,7 +24,7 @@ type passwordRow struct {
 	Modified     string
 }
 
-func exportPasswords(db *sql.DB) ([]byte, error) {
+func exportPasswords(db *sql.DB, args []string) ([]byte, error) {
 	var results []passwordRow
 	rows, err := db.Query("select id, machine, service, user, password, type, archived, created, modified from passwords")
 	if err != nil {
@@ -37,6 +37,10 @@ func exportPasswords(db *sql.DB) ([]byte, error) {
 		err = rows.Scan(&row.ID, &row.Machine, &row.Service, &row.User, &row.Password, &row.PasswordType, &row.Archived, &row.Created, &row.Modified)
 		if err != nil {
 			return nil, fmt.Errorf("rows.Scan() failed: %s", err)
+		}
+
+		if len(args) > 0 && !matchesQuery(args[0], row.ID, row.Machine, row.Service, row.User, row.PasswordType) {
+			continue
 		}
 
 		results = append(results, row)
@@ -54,8 +58,9 @@ func newExportCommand(ctx *Context) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "export",
 		Short: "exports passwords as JSON",
+		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			j, err := exportPasswords(ctx.Database)
+			j, err := exportPasswords(ctx.Database, args)
 			if err != nil {
 				return fmt.Errorf("readPasswords() failed: %s", err)
 			}

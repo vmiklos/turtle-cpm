@@ -44,6 +44,14 @@ func parsePassword(s string) (string, error) {
 	return secrets[0], nil
 }
 
+// matchesQuery decides if a password matches a free-form search query.
+func matchesQuery(query string, id int, machine string, service string, user string, passwordType PasswordType) bool {
+	// Allow simply matching a sub-string: e.g. search for a service type or a part of a machine
+	// without explicitly telling if the query is a service or a machine.
+	s := fmt.Sprintf("%d %s %s %s %s", id, machine, service, user, passwordType)
+	return strings.Contains(s, query)
+}
+
 type searchOptions struct {
 	wantedMachine string
 	wantedService string
@@ -103,14 +111,8 @@ func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 			continue
 		}
 
-		if len(opts.args) > 0 {
-			// Allow simply matching a sub-string: e.g. search for a service type or a part
-			// of a machine without explicitly telling if the query is a service or a
-			// machine.
-			s := fmt.Sprintf("%d %s %s %s %s", id, machine, service, user, passwordType)
-			if !strings.Contains(s, opts.args[0]) {
-				continue
-			}
+		if len(opts.args) > 0 && !matchesQuery(opts.args[0], id, machine, service, user, passwordType) {
+			continue
 		}
 
 		if passwordType == "totp" {
