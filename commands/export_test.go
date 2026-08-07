@@ -65,3 +65,38 @@ func TestExport(t *testing.T) {
 		t.Fatalf("password.Modified = %q, want %q", password.Modified, "")
 	}
 }
+
+func TestExportSearch(t *testing.T) {
+	ctx := CreateContextForTesting(t)
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain');`)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	_, err = ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('othermachine', 'otherservice', 'otheruser', 'otherpassword', 'plain');`)
+	if err != nil {
+		t.Fatalf("createPassword() = %q, want nil", err)
+	}
+	os.Args = []string{"", "export", "othermachine"}
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+	}
+	actualOutput := outBuf.String()
+	var passwords []passwordRow
+	err = json.NewDecoder(bytes.NewBufferString(actualOutput)).Decode(&passwords)
+	if err != nil {
+		t.Fatalf("json.Decode() = %q, want nil", err)
+	}
+	if len(passwords) != 1 {
+		t.Fatalf("passwords len = %q, want %q", len(passwords), 1)
+	}
+	password := passwords[0]
+	if password.Machine != "othermachine" {
+		t.Fatalf("password.Machine = %q, want %q", password.Machine, "othermachine")
+	}
+}

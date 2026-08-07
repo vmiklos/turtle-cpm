@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- export: now takes an optional search query, the same way `search` does, to limit what is exported
+
 ## 26.2
 
 - new `export` command to write the password database as a JSON file
