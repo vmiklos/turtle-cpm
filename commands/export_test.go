@@ -25,7 +25,7 @@ func TestExport(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	actualOutput := outBuf.String()
 	var passwords []passwordRow
@@ -34,11 +34,11 @@ func TestExport(t *testing.T) {
 		t.Fatalf("json.Decode() = %q, want nil", err)
 	}
 	if len(passwords) != 1 {
-		t.Fatalf("passwords len = %q, want %q", len(passwords), 1)
+		t.Fatalf("passwords len = %d, want %d", len(passwords), 1)
 	}
 	password := passwords[0]
 	if password.ID != 1 {
-		t.Fatalf("password.ID = %q, want %q", password.ID, 1)
+		t.Fatalf("password.ID = %d, want %d", password.ID, 1)
 	}
 	if password.Machine != "mymachine" {
 		t.Fatalf("password.Machine = %q, want %q", password.Machine, "mymachine")
@@ -84,7 +84,7 @@ func TestExportSearch(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	actualOutput := outBuf.String()
 	var passwords []passwordRow
@@ -93,7 +93,7 @@ func TestExportSearch(t *testing.T) {
 		t.Fatalf("json.Decode() = %q, want nil", err)
 	}
 	if len(passwords) != 1 {
-		t.Fatalf("passwords len = %q, want %q", len(passwords), 1)
+		t.Fatalf("passwords len = %d, want %d", len(passwords), 1)
 	}
 	password := passwords[0]
 	if password.Machine != "othermachine" {

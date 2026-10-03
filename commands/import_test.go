@@ -27,7 +27,7 @@ func TestImport(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	opts := searchOptions{}
 	opts.noid = true
@@ -38,7 +38,7 @@ func TestImport(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 2
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
 	expectedContains := true

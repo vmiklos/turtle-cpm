@@ -21,7 +21,7 @@ func TestGc(t *testing.T) {
 	// Just make sure we don't fail / don't report an error.
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := ""
 	if outBuf.String() != expectedBuf {

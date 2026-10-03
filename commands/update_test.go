@@ -38,7 +38,7 @@ func TestUpdate(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Updated 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -53,7 +53,7 @@ func TestUpdate(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
 	expectedContains := true
@@ -83,7 +83,7 @@ func TestPwgenUpdate(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Updated 1 password\nGenerated password: output-from-pwgen\n"
 	if outBuf.String() != expectedBuf {
@@ -98,7 +98,7 @@ func TestPwgenUpdate(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
 	expectedContains := true
@@ -128,7 +128,7 @@ func TestInteractiveUpdate(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Id: "
 	expectedBuf += "Updated 1 password\n"
@@ -144,7 +144,7 @@ func TestInteractiveUpdate(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
 	expectedContains := true
@@ -172,7 +172,7 @@ func TestDryRunUpdate(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Would update 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -187,7 +187,7 @@ func TestDryRunUpdate(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	// dry run, so not newpassword
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, "oldpassword"))
@@ -217,7 +217,7 @@ func TestUpdateMachine(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Updated 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -232,7 +232,7 @@ func TestUpdateMachine(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, "oldpassword"))
 	expectedContains := true
@@ -261,7 +261,7 @@ func TestUpdateService(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Updated 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -276,7 +276,7 @@ func TestUpdateService(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, "oldpassword"))
 	expectedContains := true
@@ -305,7 +305,7 @@ func TestUpdateUser(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Updated 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -320,7 +320,7 @@ func TestUpdateUser(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, "oldpassword"))
 	expectedContains := true
@@ -349,7 +349,7 @@ func TestUpdateType(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Updated 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -364,7 +364,7 @@ func TestUpdateType(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
 	expectedContains := true
@@ -393,7 +393,7 @@ func TestUpdateArchived(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Updated 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -409,7 +409,7 @@ func TestUpdateArchived(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: plain, password: %s, archived: true, created: 2020-05-10 00:00, modified: 2020-05-10 00:00", expectedMachine, expectedService, expectedUser, expectedPassword))
 	expectedContains := true

@@ -47,7 +47,7 @@ func TestPull(t *testing.T) {
 	actualRet = Main(inBuf, outBuf)
 	expectedRet = 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main(search) = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main(search) = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: http, user: myuser, password type: plain, password: output-from-pwgen\n"
 	actualOutput := outBuf.String()

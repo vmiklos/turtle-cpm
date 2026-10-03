@@ -30,7 +30,7 @@ func TestDelete(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
@@ -39,7 +39,7 @@ func TestDelete(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 0
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 }
 
@@ -64,7 +64,7 @@ func TestInteractiveDelete(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Id: "
 	expectedBuf += "Deleted 1 password\n"
@@ -78,7 +78,7 @@ func TestInteractiveDelete(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 0
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 }
 
@@ -102,7 +102,7 @@ func TestDryRunDelete(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	results, err := readPasswords(ctx.Database, searchOptions{})
 	if err != nil {
@@ -112,6 +112,6 @@ func TestDryRunDelete(t *testing.T) {
 	// dry run, so not 0
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 }

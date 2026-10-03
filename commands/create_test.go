@@ -28,7 +28,7 @@ func TestInsert(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Created 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -85,7 +85,7 @@ func TestNoServiceInsert(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Created 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -100,7 +100,7 @@ func TestNoServiceInsert(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: http, user: %s, password type: %s, password: %s", expectedMachine, expectedUser, expectedType, expectedPassword))
 	expectedContains := true
@@ -144,7 +144,7 @@ func TestPwgenInsert(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Created 1 password\nGenerated password: output-from-pwgen\n"
 	if outBuf.String() != expectedBuf {
@@ -159,7 +159,7 @@ func TestPwgenInsert(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
 	expectedContains := true
@@ -184,7 +184,7 @@ func TestInsertFail(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 
 	// Second run fails as the machine/service/user already has a password.
@@ -192,7 +192,7 @@ func TestInsertFail(t *testing.T) {
 
 	expectedRet = 1
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedPrefix := "Error: createPassword() failed: query.Exec() failed: UNIQUE constraint failed\n"
 	actualOutput := outBuf.String()
@@ -216,7 +216,7 @@ func TestInsertFailBadType(t *testing.T) {
 
 	expectedRet := 1
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 }
 
@@ -240,7 +240,7 @@ func TestInteractiveInsert(t *testing.T) {
 	}
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	opts := searchOptions{}
 	opts.noid = true
@@ -251,7 +251,7 @@ func TestInteractiveInsert(t *testing.T) {
 	actualLength := len(results)
 	expectedLength := 1
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 	actualContains := ContainsString(results, fmt.Sprintf("machine: %s, service: %s, user: %s, password type: %s, password: %s", expectedMachine, expectedService, expectedUser, expectedType, expectedPassword))
 	expectedContains := true
@@ -274,7 +274,7 @@ func TestDryRunInsert(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedBuf := "Would create 1 password\n"
 	if outBuf.String() != expectedBuf {
@@ -288,6 +288,6 @@ func TestDryRunInsert(t *testing.T) {
 	// This is a dry run, so not 1.
 	expectedLength := 0
 	if actualLength != expectedLength {
-		t.Fatalf("actualLength = %q, want %q", actualLength, expectedLength)
+		t.Fatalf("actualLength = %d, want %d", actualLength, expectedLength)
 	}
 }
