@@ -30,7 +30,7 @@ func TestSelect(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
 	actualOutput := outBuf.String()
@@ -56,7 +56,7 @@ func TestQuietSelect(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "mypassword\n"
 	actualOutput := outBuf.String()
@@ -83,7 +83,7 @@ func TestSelectTotpCode(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	// TOTP code depends on the 2020 time produced by NowForTesting()
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP code, password: 013567\n"
@@ -117,7 +117,7 @@ func TestQrcodeSelect(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP shared secret, password:\n"
 	expectedOutput += "qrcode-output\n"
@@ -143,7 +143,7 @@ func TestSelectMachineFilter(t *testing.T) {
 	// mymachine1 is found, mymachine2 is not found.
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
 	actualOutput := outBuf.String()
@@ -168,7 +168,7 @@ func TestSelectServiceFilter(t *testing.T) {
 	// myservice1 is found, myservice2 is not found.
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
 	actualOutput := outBuf.String()
@@ -193,7 +193,7 @@ func TestSelectUserFilter(t *testing.T) {
 	// myuser1 is found, myuser2 is not found.
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
 	actualOutput := outBuf.String()
@@ -218,7 +218,7 @@ func TestSelectTypeFilter(t *testing.T) {
 	// totp is found, plain is not found.
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: TOTP shared secret, password: mypassword\n"
 	actualOutput := outBuf.String()
@@ -244,7 +244,7 @@ func TestSelectImplicitFilter(t *testing.T) {
 	// myservice1 is found, myservice2 is not found.
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
 	actualOutput := outBuf.String()
@@ -271,7 +271,7 @@ func TestSelectInteractive(t *testing.T) {
 	// myservice1 is found, myservice2 is not found.
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "Search term: "
 	expectedOutput += "machine: mymachine1, service: myservice1, user: myuser1, password type: plain, password: mypassword1\n"
@@ -314,7 +314,7 @@ func TestOpenCloseDatabase(t *testing.T) {
 
 	expectedRet = 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main(search) = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main(search) = %d, want %d", actualRet, expectedRet)
 	}
 
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword\n"
@@ -362,7 +362,7 @@ func TestSelectArchived(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := ""
 	actualOutput := outBuf.String()
@@ -385,7 +385,7 @@ func TestSelectArchivedVerbose(t *testing.T) {
 
 	expectedRet := 0
 	if actualRet != expectedRet {
-		t.Fatalf("Main() = %q, want %q", actualRet, expectedRet)
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
 	}
 	expectedOutput := "machine: mymachine, service: myservice, user: myuser, password type: plain, password: mypassword, archived: true\n"
 	actualOutput := outBuf.String()
