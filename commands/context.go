@@ -34,5 +34,8 @@ var OpenDatabase = openDatabase
 // CloseDatabase opens the database before running a subcommand.
 var CloseDatabase = closeDatabase
 
+// AppendPasswordLog appends a line to the password log file.
+var AppendPasswordLog = appendPasswordLog
+
 // Now returns the current local time.
 var Now = time.Now

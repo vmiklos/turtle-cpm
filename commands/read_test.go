@@ -39,6 +39,40 @@ func TestSelect(t *testing.T) {
 	}
 }
 
+func TestSearchLog(t *testing.T) {
+	ctx := CreateContextForTesting(t)
+	_, err := ctx.Database.Exec(`insert into passwords (machine, service, user, password, type) values('mymachine', 'myservice', 'myuser', 'mypassword', 'plain');`)
+	if err != nil {
+		t.Fatalf("db.Exec() = %q, want nil", err)
+	}
+
+	var lines []string
+	oldAppendPasswordLog := AppendPasswordLog
+	AppendPasswordLog = func(line string) error {
+		lines = append(lines, line)
+		return nil
+	}
+	t.Cleanup(func() { AppendPasswordLog = oldAppendPasswordLog })
+
+	os.Args = []string{"", "search", "myuser"}
+	inBuf := new(bytes.Buffer)
+	outBuf := new(bytes.Buffer)
+
+	actualRet := Main(inBuf, outBuf)
+
+	expectedRet := 0
+	if actualRet != expectedRet {
+		t.Fatalf("Main() = %d, want %d", actualRet, expectedRet)
+	}
+	expected := "[2020-05-10 00:00:00] search: totp is false, query is myuser"
+	if len(lines) != 1 {
+		t.Fatalf("log lines = %v, want 1 line", lines)
+	}
+	if lines[0] != expected {
+		t.Fatalf("log line = %q, want %q", lines[0], expected)
+	}
+}
+
 func TestQuietSelect(t *testing.T) {
 	ctx := CreateContextForTesting(t)
 	expectedMachine := "mymachine"

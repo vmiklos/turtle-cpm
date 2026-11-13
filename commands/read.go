@@ -65,6 +65,16 @@ type searchOptions struct {
 	args          []string
 }
 
+func logSearch(opts searchOptions) error {
+	query := ""
+	if len(opts.args) > 0 {
+		query = opts.args[0]
+	}
+
+	line := fmt.Sprintf("[%s] search: totp is %v, query is %s", Now().Format("2006-01-02 15:04:05"), opts.totp, query)
+	return AppendPasswordLog(line)
+}
+
 func readPasswords(db *sql.DB, opts searchOptions) ([]string, error) {
 	var results []string
 	if opts.totp {
@@ -210,6 +220,10 @@ func newReadCommand(ctx *Context) *cobra.Command {
 			opts.noid = noidFlag
 			opts.verbose = verboseFlag
 			opts.args = args
+			err := logSearch(opts)
+			if err != nil {
+				return fmt.Errorf("logSearch() failed: %s", err)
+			}
 			results, err := readPasswords(ctx.Database, opts)
 			if err != nil {
 				return fmt.Errorf("readPasswords() failed: %s", err)
