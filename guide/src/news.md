@@ -1,5 +1,9 @@
 # Changelog
 
+## main
+
+- search queries are now logged in `~/.local/state/cpm/passwords.log`
+
 ## 26.8
 
 - export: now takes an optional search query, the same way `search` does, to limit what is exported

@@ -98,25 +98,68 @@ func pathExists(path string) bool {
 	return err == nil
 }
 
-func getDatabasePath() (string, error) {
+func getStateDir() (string, error) {
 	usr, err := user.Current()
 	if err != nil {
 		return "", fmt.Errorf("user.Current() failed: %s", err)
 	}
-	databaseDir := filepath.Join(usr.HomeDir, ".local", "state", "cpm")
+	stateDir := filepath.Join(usr.HomeDir, ".local", "state", "cpm")
 	if a := os.Getenv(xdgStateHome); a != "" {
-		databaseDir = filepath.Join(a, "cpm")
+		stateDir = filepath.Join(a, "cpm")
 	}
 
-	databasePath := databaseDir + "/passwords.db"
+	return stateDir, nil
+}
+
+func getDatabasePath() (string, error) {
+	stateDir, err := getStateDir()
+	if err != nil {
+		return "", fmt.Errorf("getStateDir() failed: %s", err)
+	}
+
+	databasePath := stateDir + "/passwords.db"
 	if !pathExists(databasePath) {
-		err := os.MkdirAll(databaseDir, os.ModePerm)
+		err := os.MkdirAll(stateDir, os.ModePerm)
 		if err != nil {
 			return "", fmt.Errorf("os.MkdirAll() failed: %s", err)
 		}
 	}
 
 	return databasePath, nil
+}
+
+func getLogPath() (string, error) {
+	stateDir, err := getStateDir()
+	if err != nil {
+		return "", fmt.Errorf("getStateDir() failed: %s", err)
+	}
+
+	err = os.MkdirAll(stateDir, os.ModePerm)
+	if err != nil {
+		return "", fmt.Errorf("os.MkdirAll() failed: %s", err)
+	}
+
+	return filepath.Join(stateDir, "passwords.log"), nil
+}
+
+func appendPasswordLog(line string) error {
+	logPath, err := getLogPath()
+	if err != nil {
+		return fmt.Errorf("getLogPath() failed: %s", err)
+	}
+
+	logFile, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	if err != nil {
+		return fmt.Errorf("os.OpenFile() failed: %s", err)
+	}
+	defer logFile.Close()
+
+	_, err = logFile.WriteString(line + "\n")
+	if err != nil {
+		return fmt.Errorf("WriteString() failed: %s", err)
+	}
+
+	return nil
 }
 
 func openDatabase(ctx *Context) error {

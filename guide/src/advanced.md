@@ -63,6 +63,17 @@ sqlitebrowser decrypted.db
 
 Don't forget to delete the decrypted database after you're done with your investigation.
 
+## Password search log
+
+Searches are appended to `~/.local/state/cpm/passwords.log` (or under `XDG_STATE_HOME`, if set), so
+you can see e.g. how often you had to re-login to a site. Each line looks like:
+
+```console
+[2026-11-13 22:51:45] search: totp is true, query is example.com
+```
+
+The file is plain text, so avoid putting secrets in search queries if that is a concern.
+
 ## Reference documentation
 
 Apart from this guide, reference documentation is available in `cpm` itself. You can learn about the

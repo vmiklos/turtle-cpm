@@ -40,6 +40,10 @@ func CreateContextForTesting(t *testing.T) Context {
 	Now = NowForTesting
 	t.Cleanup(func() { Now = oldNow })
 
+	oldAppendPasswordLog := AppendPasswordLog
+	AppendPasswordLog = AppendPasswordLogForTesting
+	t.Cleanup(func() { AppendPasswordLog = oldAppendPasswordLog })
+
 	ctx := Context{Database: db}
 	err = initDatabase(&ctx)
 	if err != nil {
@@ -59,6 +63,11 @@ func OpenDatabaseForTesting(sqlDb *sql.DB) func(*Context) error {
 
 // CloseDatabaseForTesting implements CloseDatabase and does nothing.
 func CloseDatabaseForTesting(ctx *Context) error {
+	return nil
+}
+
+// AppendPasswordLogForTesting implements AppendPasswordLog and does nothing.
+func AppendPasswordLogForTesting(line string) error {
 	return nil
 }
 
@@ -180,5 +189,49 @@ func TestGetDatabasePath(t *testing.T) {
 	expected := "/tmp/cpm/passwords.db"
 	if actual != expected {
 		t.Fatalf("getDatabasePath() = %q, want %q", actual, expected)
+	}
+}
+
+// TestGetLogPath checks if getLogPath() handles a custom XDG_STATE_HOME value.
+func TestGetLogPath(t *testing.T) {
+	oldEnv := os.Getenv(xdgStateHome)
+	os.Setenv(xdgStateHome, "/tmp")
+	defer func() { os.Setenv(xdgStateHome, oldEnv) }()
+
+	actual, err := getLogPath()
+	if err != nil {
+		t.Fatalf("getLogPath() err = %q, want nil", err)
+	}
+
+	expected := "/tmp/cpm/passwords.log"
+	if actual != expected {
+		t.Fatalf("getLogPath() = %q, want %q", actual, expected)
+	}
+}
+
+// TestAppendPasswordLog checks if appendPasswordLog() writes a single line to the log file.
+func TestAppendPasswordLog(t *testing.T) {
+	oldEnv := os.Getenv(xdgStateHome)
+	os.Setenv(xdgStateHome, t.TempDir())
+	defer func() { os.Setenv(xdgStateHome, oldEnv) }()
+
+	err := appendPasswordLog("[2020-05-10 00:00:00] search: totp is false, query is foo")
+	if err != nil {
+		t.Fatalf("appendPasswordLog() err = %q, want nil", err)
+	}
+
+	logPath, err := getLogPath()
+	if err != nil {
+		t.Fatalf("getLogPath() err = %q, want nil", err)
+	}
+
+	actual, err := os.ReadFile(logPath)
+	if err != nil {
+		t.Fatalf("os.ReadFile() err = %q, want nil", err)
+	}
+
+	expected := "[2020-05-10 00:00:00] search: totp is false, query is foo\n"
+	if string(actual) != expected {
+		t.Fatalf("log content = %q, want %q", string(actual), expected)
 	}
 }
